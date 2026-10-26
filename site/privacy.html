@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="it" data-lang="it" data-title-it="Privacy di Mitayo" data-title-en="Mitayo privacy">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Quali dati usa Mitayo, dove restano e con chi comunica: il tuo telefono, MyAnimeList, GitHub e, solo se lo consenti, Google Firebase.">
+  <title>Privacy di Mitayo</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/site.js"></script>
+</head>
+<body>
+<main>
+  <!-- Accepted with the terms of use: POLICIES_VERSION in ui/AppLinks.kt (2 since 1.0.0), raise it on substantial changes -->
+  <div class="top">
+    <a class="home" href="/"><img src="/icon.svg" alt="">Mitayo</a>
+    <div class="lang" role="group" aria-label="Lingua / Language">
+      <button type="button" data-lang="it" aria-pressed="true">IT</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+  <h1><span class="it">Informativa sulla privacy</span><span class="en">Privacy policy</span></h1>
+  <p class="muted"><span class="it">Aggiornata il 26 ottobre 2026 (Mitayo 1.1.0).</span><span class="en">Updated on 26 October 2026 (Mitayo 1.1.0).</span></p>
+
+  <section class="card">
+    <div class="it">
+      <h2>In breve</h2>
+      <p>Mitayo non ha account né server suoi. Accedi con il tuo account MyAnimeList sulla pagina di
+        MyAnimeList, e tutto quello che l'app usa (la tua lista e gli anime ignorati) resta sul
+        telefono. L'app comunica con MyAnimeList, con GitHub per gli aggiornamenti e con Google
+        Firebase per le notifiche delle novità. Le statistiche d'uso e i report dei crash partono
+        spenti e si attivano solo se acconsenti; non contengono mai la tua lista, i titoli o il tuo
+        nome MyAnimeList. Niente pubblicità.</p>
+    </div>
+    <div class="en">
+      <h2>In short</h2>
+      <p>Mitayo has no accounts and no servers of its own. You log in with your MyAnimeList account
+        on MyAnimeList's own page, and everything the app uses (your list and the skipped anime)
+        stays on the phone. The app talks to MyAnimeList, to GitHub for updates and to Google
+        Firebase for the news notifications. Usage statistics and crash reports start off and are
+        turned on only if you agree; they never contain your list, the titles or your MyAnimeList
+        name. No ads.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="it">
+      <h2>Chi gestisce Mitayo</h2>
+      <p>Mitayo è un progetto personale, gratuito e non commerciale di Emanuele Melini. Non è
+        affiliata a MyAnimeList: usa l'API ufficiale di MyAnimeList secondo il loro accordo per gli
+        sviluppatori.</p>
+    </div>
+    <div class="en">
+      <h2>Who runs Mitayo</h2>
+      <p>Mitayo is a personal, free and non-commercial project by Emanuele Melini. It isn't
+        affiliated with MyAnimeList: it uses the official MyAnimeList API under their developer
+        agreement.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="it">
+      <h2>Accesso a MyAnimeList</h2>
+      <p>Il login avviene sulla pagina di MyAnimeList, aperta nel browser (OAuth 2.0). Mitayo non
+        vede né salva la tua password: riceve solo un token di accesso, che conserva sul telefono
+        cifrato con una chiave dell'Android Keystore e rinnova da solo finché resti collegato.</p>
+    </div>
+    <div class="en">
+      <h2>MyAnimeList access</h2>
+      <p>You log in on MyAnimeList's page, opened in the browser (OAuth 2.0). Mitayo neither sees
+        nor stores your password: it only gets an access token, which it keeps on the phone
+        encrypted with an Android Keystore key and renews by itself while you stay logged in.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="it">
+      <h2>Quali dati usa</h2>
+      <ul>
+        <li><strong>Dal tuo account MyAnimeList</strong>: nome utente, immagine del profilo e la tua
+          lista anime (stato ed episodi visti di ogni anime).</li>
+        <li><strong>Dal catalogo pubblico di MyAnimeList</strong>: titoli, immagini, generi, voti,
+          episodi e stagioni degli anime, e i suggerimenti che MyAnimeList calcola per te.</li>
+        <li><strong>Creati da te nell'app</strong>: gli anime ignorati, le modifiche non ancora
+          inviate e le impostazioni (tema, lingua di titolo e sottotitolo, contenuti per adulti, accettazione di
+          termini e informativa, scelte su statistiche, report dei crash, novità e promemoria, giorno
+          dell'ultimo controllo degli aggiornamenti, ultima versione e ultima stagione annunciate e
+          versione di cui hai già visto le novità).</li>
+        <li><strong>File degli ignorati</strong>: se li esporti (Profilo → Dati), un file JSON con gli ID
+          degli anime ignorati, salvato dove scegli tu; Mitayo non lo manda a nessuno.</li>
+        <li><strong>Liste di altri utenti</strong>: quando confronti due liste o apri il mazzo di un
+          amico, l'app scarica da MyAnimeList la lista <em>pubblica</em> degli utenti di cui scrivi il
+          nome. Il confronto resta solo in memoria finché la pagina è aperta; per il mazzo restano
+          sul telefono gli ID degli anime della sua lista, cancellati quando apri il mazzo di un
+          altro, quando esci e comunque entro un giorno. Mitayo non salva altro di loro e non lo
+          manda a nessuno. Gli ultimi nomi utente che hai scritto (al massimo 6) restano per
+          comodità: li cancelli dalla stessa pagina o con Esci.</li>
+      </ul>
+    </div>
+    <div class="en">
+      <h2>What data it uses</h2>
+      <ul>
+        <li><strong>From your MyAnimeList account</strong>: username, profile picture and your anime
+          list (status and episodes watched for each anime).</li>
+        <li><strong>From MyAnimeList's public catalog</strong>: titles, pictures, genres, scores,
+          episodes and seasons of the anime, and the suggestions MyAnimeList makes for you.</li>
+        <li><strong>Created by you in the app</strong>: the skipped anime, the changes not sent yet
+          and the settings (theme, title and subtitle language, adult content, acceptance of the terms and of
+          this policy, choices about statistics, crash reports, news and reminders, day of the last
+          update check, last version and season announced and version whose news you've already
+          seen).</li>
+        <li><strong>Skipped anime file</strong>: if you export them (Profile → Data), a JSON file with
+          the ids of the skipped anime, saved where you choose; Mitayo doesn't send it anywhere.</li>
+        <li><strong>Other users' lists</strong>: when you compare two lists or open a friend's deck,
+          the app downloads from MyAnimeList the <em>public</em> list of the users whose name you type.
+          The comparison stays only in memory while the page is open; for the deck, the ids of the
+          anime of their list stay on the phone and are deleted when you open someone else's deck,
+          when you log out and anyway within a day. Mitayo keeps nothing else about them and sends it
+          nowhere. The last user names you typed (6 at most) are kept for convenience: delete them
+          from the same page or with Log out.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="it">
+      <h2>Dove restano</h2>
+      <p>Solo sul telefono, nella memoria riservata all'app. Non c'è un server di Mitayo e il backup
+        di Android è disattivato, quindi questi dati non finiscono nel cloud né su un altro
+        telefono. Le immagini degli anime restano in una cache sul telefono per non riscaricarle.</p>
+    </div>
+    <div class="en">
+      <h2>Where they stay</h2>
+      <p>On the phone only, in the app's private storage. There's no Mitayo server and Android
+        backup is off, so these data don't end up in the cloud or on another phone. Anime pictures
+        stay in a cache on the phone so they aren't downloaded again.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="it">
+      <h2>Con chi comunica</h2>
+      <p><strong>MyAnimeList</strong>: <code>myanimelist.net</code> per il login,
+        <code>api.myanimelist.net</code> per leggere il catalogo e la tua lista e per modificarla (stato,
+        episodi visti e, se lo dai, il voto), per la ricerca quando tocchi "Cerca su MyAnimeList", per
+        le liste pubbliche degli utenti che confronti o di cui apri il mazzo,
+        <code>cdn.myanimelist.net</code> per le immagini. <strong>YouTube</strong>: nella scheda di un
+        anime con trailer, le anteprime dei video arrivano da <code>i.ytimg.com</code>, e un video
+        toccato si apre nell'app YouTube o nel browser, con le regole di Google. La tua lista cambia solo quando lo decidi
+        tu: swipe a destra, swipe in alto con gli episodi visti o annullamento di uno swipe. Quello che
+        MyAnimeList fa con i tuoi dati è regolato dalla
+        <a href="https://myanimelist.net/about/privacy_policy">privacy policy di MyAnimeList</a>.</p>
+      <p><strong>GitHub</strong>, per gli aggiornamenti: al massimo una volta al giorno l'app chiede a
+        <code>api.github.com</code> qual è l'ultima versione di Mitayo, mandando solo la versione
+        installata (nell'intestazione User-Agent) e, come ogni richiesta, il tuo indirizzo IP. Se
+        tocchi Aggiorna, l'APK si scarica da <code>github.com</code>. A GitHub non arriva nulla del
+        tuo account MyAnimeList né della tua lista. Quello che GitHub fa con questi dati è regolato
+        dalla <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">privacy
+        di GitHub</a>.</p>
+      <p><strong>Promemoria</strong>: sono notifiche create sul telefono, tutte spente finché non le
+        attivi in Profilo → Notifiche. "Nuova versione" chiede a GitHub l'ultima versione una volta
+        al giorno; "Inizio stagione" scarica da MyAnimeList l'elenco della nuova stagione;
+        "Promemoria settimanale" conta gli anime che ti restano, senza internet.</p>
+      <p><strong>Google Firebase</strong> (Google Ireland Limited), solo nelle versioni pubblicate da
+        GitHub:</p>
+      <ul>
+        <li><strong>Novità</strong> (Firebase Cloud Messaging): se le lasci attive, dopo la domanda
+          sulle statistiche il telefono si registra per ricevere le notifiche e si iscrive
+          all'argomento <code>news</code> e a quello della lingua (<code>news-it</code> o
+          <code>news-en</code>). Google riceve un codice di registrazione casuale e gli argomenti,
+          nient'altro. Spegnendole in Profilo → Notifiche il codice viene cancellato.</li>
+        <li><strong>Statistiche d'uso</strong> (Google Analytics for Firebase), solo se acconsenti:
+          le schermate aperte, gli swipe per tipo di lista (più popolari, stagione, genere senza dire
+          quale…) e il loro esito (completato, watching, ignorato, passato al prossimo o un altro stato), i voti dati (senza il voto),
+          annullamenti, azioni sugli anime ignorati, stati impostati dalla ricerca e dagli anime
+          correlati e dal confronto, confronti fatti, ricerche fatte su MyAnimeList (mai il testo
+          cercato né i nomi utente), le impostazioni generali (tema, lingua di titolo e sottotitolo, numero di
+          promemoria attivi, novità sì o no, lingua dell'app) e i dati tecnici che Firebase raccoglie
+          da solo (modello del telefono, versioni di Android e di Mitayo, area approssimativa
+          ricavata dall'indirizzo IP).</li>
+        <li><strong>Report dei crash</strong> (Firebase Crashlytics), solo se acconsenti: il punto del
+          codice in cui l'app si è fermata, modello del telefono, versioni e stato della memoria.</li>
+      </ul>
+      <p>Tutto è legato a un codice casuale dell'installazione, mai al tuo account. Non vengono mai
+        inviati il tuo nome MyAnimeList, la tua lista, i titoli, gli ID degli anime o dei generi, né
+        il token di accesso. L'ID pubblicitario non viene raccolto e i dati non sono usati per la
+        pubblicità. Google tratta questi dati per conto di Mitayo e può trasferirli fuori dall'Unione
+        europea con le garanzie previste dal GDPR: vedi
+        <a href="https://firebase.google.com/support/privacy">Privacy e sicurezza in Firebase</a>.</p>
+      <p>Mitayo non usa pubblicità né tracciamento pubblicitario, e non vende i tuoi dati.</p>
+      <p class="muted">Questo sito non usa cookie. La pagina di download legge l'elenco delle versioni
+        dalle API di GitHub direttamente dal tuo browser, quindi GitHub riceve l'indirizzo IP di
+        chi la apre.</p>
+    </div>
+    <div class="en">
+      <h2>Who it talks to</h2>
+      <p><strong>MyAnimeList</strong>: <code>myanimelist.net</code> for the login,
+        <code>api.myanimelist.net</code> to read the catalog and your list and to change it (status,
+        episodes watched and, if you give one, the score), for the search when you tap "Search on
+        MyAnimeList", for the public lists of the users you compare or whose deck you open,
+        <code>cdn.myanimelist.net</code> for the pictures. <strong>YouTube</strong>: in the details of an
+        anime with trailers, the video previews come from <code>i.ytimg.com</code>, and a video you tap
+        opens in the YouTube app or in the browser, under Google's terms. Your list changes only when you decide
+        so: a right swipe, a swipe up with the episodes watched or undoing a swipe. What MyAnimeList does
+        with your data is governed by
+        <a href="https://myanimelist.net/about/privacy_policy">MyAnimeList's privacy policy</a>.</p>
+      <p><strong>GitHub</strong>, for updates: at most once a day the app asks
+        <code>api.github.com</code> for the latest version of Mitayo, sending only the installed
+        version (in the User-Agent header) and, like any request, your IP address. If you tap
+        Update, the APK is downloaded from <code>github.com</code>. Nothing about your MyAnimeList
+        account or your list reaches GitHub. What GitHub does with these data is governed by the
+        <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">GitHub
+        privacy statement</a>.</p>
+      <p><strong>Reminders</strong>: they're notifications made on the phone, all off until you turn
+        them on in Profile → Notifications. "New version" asks GitHub for the latest version once a
+        day; "Season start" downloads the new season's list from MyAnimeList; "Weekly reminder"
+        counts the anime you have left, without internet.</p>
+      <p><strong>Google Firebase</strong> (Google Ireland Limited), only in the versions published on
+        GitHub:</p>
+      <ul>
+        <li><strong>News</strong> (Firebase Cloud Messaging): if you leave them on, after the question
+          about statistics the phone registers to receive notifications and follows the topic
+          <code>news</code> and the one of its language (<code>news-it</code> or
+          <code>news-en</code>). Google gets a random registration code and the topics, nothing else.
+          Turning them off in Profile → Notifications deletes the code.</li>
+        <li><strong>Usage statistics</strong> (Google Analytics for Firebase), only if you agree: the
+          screens opened, the swipes by kind of list (most popular, season, genre without saying
+          which…) and their outcome (completed, watching, skipped, passed to the next or another status), scores given (without the score),
+          undos, actions on the skipped anime, statuses set from the search and from the related
+          anime and from a comparison, comparisons made, searches made on MyAnimeList (never the text
+          searched or the user names), the general settings (theme, title and subtitle language, number of reminders on,
+          news yes or no, app language) and the technical data Firebase collects by itself (phone
+          model, Android and Mitayo versions, approximate area derived from the IP address).</li>
+        <li><strong>Crash reports</strong> (Firebase Crashlytics), only if you agree: where in the code
+          the app stopped, phone model, versions and memory state.</li>
+      </ul>
+      <p>Everything is tied to a random code of the install, never to your account. Your MyAnimeList
+        name, your list, the titles, anime or genre ids and the access token are never sent. The
+        advertising id isn't collected and the data aren't used for ads. Google processes these data
+        on Mitayo's behalf and may transfer them outside the European Union with the safeguards of
+        the GDPR: see <a href="https://firebase.google.com/support/privacy">Privacy and Security in
+        Firebase</a>.</p>
+      <p>Mitayo uses no ads or ad tracking, and doesn't sell your data.</p>
+      <p class="muted">This site uses no cookies. The download page reads the list of versions from
+        the GitHub API straight from your browser, so GitHub gets the IP address of whoever opens
+        it.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="it">
+      <h2>Per quanto tempo</h2>
+      <ul>
+        <li>Finché resti collegato. Con <strong>Esci</strong> (Profilo) si cancellano dal telefono
+          il token, la lista, gli ignorati e le modifiche non ancora inviate;
+          resta solo il catalogo pubblico degli anime.</li>
+        <li>Disinstallando l'app si cancella tutto quello che è sul telefono.</li>
+        <li>Statistiche d'uso: i dati legati all'installazione restano su Firebase al massimo 2 mesi
+          dall'ultimo utilizzo, poi solo in forma aggregata. Report dei crash: 90 giorni.</li>
+        <li>Il codice per le novità scade dopo un lungo periodo senza usare l'app, o subito se le
+          spegni.</li>
+        <li>Quello che MyAnimeList rimuove o modifica viene tolto o aggiornato anche sul telefono
+          entro un giorno: l'app ricontrolla il catalogo una volta al giorno quando la apri, e la
+          tua lista a ogni avvio.</li>
+      </ul>
+    </div>
+    <div class="en">
+      <h2>How long</h2>
+      <ul>
+        <li>As long as you stay logged in. <strong>Log out</strong> (Profile) deletes from the phone
+          the token, the list, the skipped anime and the changes not sent yet; only
+          the public anime catalog stays.</li>
+        <li>Uninstalling the app deletes everything that is on the phone.</li>
+        <li>Usage statistics: the data tied to the install stay on Firebase at most 2 months after the
+          last use, then only in aggregate form. Crash reports: 90 days.</li>
+        <li>The news code expires after a long time without using the app, or right away if you turn
+          them off.</li>
+        <li>What MyAnimeList removes or changes is removed or updated on the phone too within a day:
+          the app checks the catalog again once a day when you open it, and your list at every
+          start.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="it">
+      <h2>I tuoi diritti</h2>
+      <p>I dati di Mitayo sono sul tuo telefono: li vedi nell'app e li cancelli con Esci o
+        disinstallando l'app. Per i dati salvati su MyAnimeList (account e lista) rivolgiti a
+        MyAnimeList. Per usare Mitayo serve un account MyAnimeList, quindi valgono anche i loro
+        requisiti di età. I contenuti per adulti sono nascosti finché non li attivi.</p>
+      <p>Il consenso alle statistiche e ai report dei crash si può dare da soli dai 14 anni (in Italia;
+        altrove dall'età prevista nel tuo paese). Se sei più piccolo serve l'autorizzazione di un
+        genitore: senza, rispondi "No, grazie".</p>
+      <p>Statistiche e report dei crash si basano sul tuo consenso: dopo il primo accesso l'app te lo
+        chiede, e finché non rispondi (o se rifiuti) restano spenti. Puoi cambiare idea quando vuoi
+        in Profilo → Privacy: spegnendoli l'invio si ferma, il codice casuale si azzera e i report
+        non ancora inviati si cancellano. Titolare del trattamento è Emanuele Melini: per accedere ai
+        dati raccolti da Firebase, farli cancellare o esercitare gli altri diritti del GDPR scrivi a
+        <a href="mailto:mitayo@emanuelemelini.dev">mitayo@emanuelemelini.dev</a>. Puoi anche presentare reclamo al Garante per la protezione dei dati personali.</p>
+    </div>
+    <div class="en">
+      <h2>Your rights</h2>
+      <p>Mitayo's data are on your phone: you see them in the app and delete them with Log out or by
+        uninstalling the app. For the data stored on MyAnimeList (account and list) contact
+        MyAnimeList. Mitayo needs a MyAnimeList account, so their age requirements apply too. Adult
+        content is hidden until you turn it on.</p>
+      <p>You can consent to statistics and crash reports on your own from 14 (in Italy; elsewhere
+        from the age set by your country). If you're younger you need a parent's permission: without
+        it, answer "No thanks".</p>
+      <p>Statistics and crash reports rely on your consent: after the first login the app asks you,
+        and until you answer (or if you say no) they stay off. You can change your mind any time in
+        Profile → Privacy: turning them off stops the sending, resets the random code and deletes
+        the reports not sent yet. The data controller is Emanuele Melini: to access the data collected
+        by Firebase, have them deleted or exercise your other GDPR rights, write to
+        <a href="mailto:mitayo@emanuelemelini.dev">mitayo@emanuelemelini.dev</a>. You can also lodge a complaint with your data protection authority.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="it">
+      <h2>Modifiche e contatti</h2>
+      <p>Se questa informativa cambia, la data in alto si aggiorna; se cambia in modo sostanziale,
+        l'app ti chiede di accettarla di nuovo. Per i tuoi dati scrivi a <a href="mailto:mitayo@emanuelemelini.dev">mitayo@emanuelemelini.dev</a>; per
+        domande, segnalazioni o abusi anche una segnalazione su
+        <a href="https://github.com/EmanueleMelini/mitayo/issues">GitHub</a>, che però è pubblica.</p>
+    </div>
+    <div class="en">
+      <h2>Changes and contact</h2>
+      <p>If this policy changes, the date at the top is updated; if it changes in substance, the
+        app asks you to accept it again. About your data write to <a href="mailto:mitayo@emanuelemelini.dev">mitayo@emanuelemelini.dev</a>; for
+        questions, reports or abuse also an issue on
+        <a href="https://github.com/EmanueleMelini/mitayo/issues">GitHub</a>, which is public though.</p>
+    </div>
+  </section>
+
+  <p class="muted"><a href="/"><span class="it">Come funziona Mitayo</span><span class="en">How Mitayo works</span></a> ·
+    <a href="/terms"><span class="it">Termini d'uso</span><span class="en">Terms of use</span></a></p>
+</main>
+</body>
+</html>

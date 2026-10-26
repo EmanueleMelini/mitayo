@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Window theme before Compose draws: dark like the default app theme, so no white flash.
+         AppCompat parent because MainActivity is an AppCompatActivity (in-app language). -->
+    <style name="Theme.Mitayo" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+    </style>
+</resources>

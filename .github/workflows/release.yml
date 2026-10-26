@@ -1,0 +1,123 @@
+# Builds the signed release APK for every version tag (v0.1.0, v1.0.0, ...) and publishes it as a
+# downloadable asset of a GitHub Release for that tag. The site's download page reads these releases.
+# Then it announces the version with a push notification, unless the tag message says [no-push].
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  # Workload Identity Federation: a short-lived Google token to send the push, no key stored here
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Same JDK as local builds (see CLAUDE.md)
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Check that the tag matches the app version
+        run: |
+          version=$(sed -n 's/^ *versionName = "\(.*\)"/\1/p' app/build.gradle.kts)
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match versionName $version in app/build.gradle.kts"
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      # English bullets shown on GitHub, Italian in a hidden "mitayo-notes:it" block. The same file is in
+      # the APK (assets) for the in-app "What's new" and is read by site/download.js
+      - name: Check the release notes
+        run: |
+          notes="app/src/main/assets/release-notes/$VERSION.md"
+          if ! grep -q '^- ' "$notes" 2>/dev/null; then
+            echo "::error::$notes is missing or has no '- ' bullet"
+            exit 1
+          fi
+
+      # Firebase configuration, kept out of the public repository; a signed build without it fails on purpose
+      - name: Restore the Firebase configuration
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.MITAYO_GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -z "$GOOGLE_SERVICES_JSON" ]; then
+            echo "::error::The MITAYO_GOOGLE_SERVICES_JSON secret is empty"
+            exit 1
+          fi
+          printf '%s' "$GOOGLE_SERVICES_JSON" > app/google-services.json
+
+      - name: Restore the signing keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.MITAYO_KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/mitayo-release.jks"
+
+      # app/build.gradle.kts reads these instead of local.properties; a signed build without the
+      # MAL client ID fails on purpose
+      - name: Build the signed APK
+        env:
+          MITAYO_KEYSTORE_PATH: ${{ runner.temp }}/mitayo-release.jks
+          MITAYO_KEYSTORE_PASSWORD: ${{ secrets.MITAYO_KEYSTORE_PASSWORD }}
+          MITAYO_KEY_ALIAS: ${{ secrets.MITAYO_KEY_ALIAS }}
+          MITAYO_KEY_PASSWORD: ${{ secrets.MITAYO_KEY_PASSWORD }}
+          MITAYO_MAL_CLIENT_ID: ${{ secrets.MITAYO_MAL_CLIENT_ID }}
+        run: ./gradlew testDebugUnitTest assembleRelease
+
+      # The certificate fingerprint goes in the run summary: it must stay the same in every release,
+      # or Android refuses the update
+      - name: Check the APK signature
+        run: |
+          apksigner=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner
+          "$apksigner" verify --print-certs app/build/outputs/apk/release/app-release.apk | tee "$RUNNER_TEMP/certs.txt"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          grep 'SHA-256' "$RUNNER_TEMP/certs.txt" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          apk="Mitayo-$VERSION.apk"
+          cp app/build/outputs/apk/release/app-release.apk "$apk"
+          gh release create "$GITHUB_REF_NAME" "$apk" --title "Mitayo $VERSION" --notes-file "app/src/main/assets/release-notes/$VERSION.md"
+
+      # actions/checkout keeps only the commit: the annotated tag is fetched to read its message.
+      # A tag created with "git tag -a vX.Y.Z -m '... [no-push]'" publishes the release in silence
+      - name: Check whether to announce the release
+        id: announce
+        run: |
+          git fetch --depth=1 origin "+refs/tags/$GITHUB_REF_NAME:refs/tags/$GITHUB_REF_NAME"
+          if git tag -l --format='%(contents)' "$GITHUB_REF_NAME" | grep -qF '[no-push]'; then
+            echo "send=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "send=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Repository variables (not secrets: they're ids, not credentials). The provider accepts only
+      # this repository, on v* tags and main
+      - name: Authenticate to Google Cloud
+        if: steps.announce.outputs.send == 'true'
+        id: google
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.MITAYO_WIF_PROVIDER }}
+          service_account: ${{ vars.MITAYO_FCM_SERVICE_ACCOUNT }}
+          token_format: access_token
+          create_credentials_file: false
+
+      - name: Announce the new version
+        if: steps.announce.outputs.send == 'true'
+        env:
+          FIREBASE_PROJECT_ID: ${{ vars.MITAYO_FIREBASE_PROJECT_ID }}
+          FCM_ACCESS_TOKEN: ${{ steps.google.outputs.access_token }}
+        run: python3 .github/scripts/notify_update.py "$VERSION"

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="window_background">#FF0E0C15</color>
+    <!-- Murasaki, the brand color: small icon and accents of the notifications -->
+    <color name="notification_accent">#FF7C5CFF</color>
+</resources>

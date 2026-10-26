@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Mitayo</string>
+    <string name="app_name_japanese" translatable="false">見たよ</string>
+
+    <!-- Navigation -->
+    <string name="nav_categories">Categorie</string>
+    <string name="nav_profile">Profilo</string>
+
+    <!-- Common actions -->
+    <string name="action_back">Indietro</string>
+    <string name="action_cancel">Annulla</string>
+    <string name="action_retry">Riprova</string>
+    <string name="action_undo">Annulla l\'ultimo swipe</string>
+    <string name="action_skip">Ignora</string>
+    <string name="action_next">Avanti</string>
+    <string name="action_watching">Sto guardando</string>
+    <string name="action_completed">Visto</string>
+    <string name="action_details">Dettagli</string>
+
+    <!-- Errors -->
+    <string name="error_network">Nessuna connessione. Controlla la rete e riprova.</string>
+    <string name="error_session_expired">La sessione MyAnimeList è scaduta: accedi di nuovo.</string>
+    <string name="error_rate_limited">MyAnimeList sta rifiutando le richieste (troppe in poco tempo). Riprova tra qualche minuto.</string>
+    <string name="error_mal_down">MyAnimeList non risponde. Riprova più tardi.</string>
+    <string name="error_mal_code">MyAnimeList ha risposto con un errore (%1$d).</string>
+    <string name="error_anime_removed">Questo anime non è più su MyAnimeList: l\'ho tolto anche da qui.</string>
+    <string name="error_generic">Qualcosa è andato storto. Riprova.</string>
+
+    <!-- Login -->
+    <string name="login_tagline">Swipa gli anime e aggiorna la tua lista MyAnimeList in un attimo.</string>
+    <string name="login_button">Accedi con MyAnimeList</string>
+    <string name="login_working">Accesso in corso…</string>
+    <string name="login_cancelled">Accesso annullato.</string>
+    <string name="login_failed">Accesso non riuscito. Riprova.</string>
+    <string name="login_no_browser">Serve un browser per accedere a MyAnimeList.</string>
+    <string name="login_missing_client_id">Manca il Client ID di MAL: aggiungi mal.client.id in local.properties e ricompila.</string>
+    <string name="login_privacy">Mitayo usa l\'API ufficiale di MyAnimeList. La tua password resta su myanimelist.net e i dati restano su questo telefono.</string>
+
+    <!-- Sync -->
+    <string name="sync_list">Scarico la tua lista MyAnimeList…</string>
+    <string name="sync_catalog">Scarico il catalogo degli anime (%1$d/%2$d)</string>
+
+    <!-- Categories -->
+    <string name="categories_hello">Ciao, %1$s</string>
+    <plurals name="categories_completed_count">
+        <item quantity="one">%1$d anime completato su MAL</item>
+        <item quantity="other">%1$d anime completati su MAL</item>
+    </plurals>
+    <string name="categories_specials">Liste speciali</string>
+    <string name="categories_genres">Generi</string>
+    <string name="categories_decades">Per decennio</string>
+    <string name="categories_my_list">La tua lista</string>
+    <plurals name="categories_in_list">
+        <item quantity="one">%1$d anime</item>
+        <item quantity="other">%1$d anime</item>
+    </plurals>
+    <string name="category_decade">Anni %1$d</string>
+    <string name="category_user">Da %1$s</string>
+    <string name="category_before">Prima del %1$d</string>
+    <string name="categories_themes">Temi</string>
+    <string name="categories_demographics">Target</string>
+    <plurals name="categories_remaining">
+        <item quantity="one">%1$d da swipare</item>
+        <item quantity="other">%1$d da swipare</item>
+    </plurals>
+    <string name="categories_all_done">Tutto fatto</string>
+    <string name="categories_empty">Il catalogo non è ancora pronto. Tira giù per sincronizzare.</string>
+    <string name="category_popular">Più popolari</string>
+    <string name="category_top_rated">Migliori voti</string>
+    <string name="category_airing">In onda</string>
+    <string name="category_season">%1$s %2$d</string>
+    <string name="category_movies">Film</string>
+    <string name="category_suggested">Consigliati per te</string>
+
+    <!-- Deck -->
+    <plurals name="deck_remaining">
+        <item quantity="one">%1$d anime rimasto</item>
+        <item quantity="other">%1$d anime rimasti</item>
+    </plurals>
+    <string name="deck_loading">Carico gli anime…</string>
+    <string name="deck_done_title">Categoria finita!</string>
+    <string name="deck_done_body">Hai già visto o ignorato tutto quello che c\'è qui.</string>
+    <string name="deck_done_back">Torna alle categorie</string>
+    <string name="deck_passed_title">Hai scorso tutto il mazzo</string>
+    <string name="deck_passed_body">Gli anime che hai passato restano nella tua lista e tornano quando riapri il mazzo.</string>
+    <string name="deck_start_over">Ricomincia</string>
+    <string name="deck_in_your_list">Nella tua lista: %1$s</string>
+    <string name="deck_popularity">Popolarità #%1$d</string>
+    <string name="stamp_completed">VISTO</string>
+    <string name="stamp_skip">SALTA</string>
+    <string name="stamp_next">AVANTI</string>
+    <string name="stamp_watching">IN CORSO</string>
+
+    <!-- Anime details -->
+    <string name="details_studios">Studio</string>
+    <string name="details_source">Fonte</string>
+    <string name="details_duration">Durata episodio</string>
+    <string name="details_minutes">%1$d min</string>
+    <string name="details_rating">Rating</string>
+    <string name="details_open_mal">Apri su MyAnimeList</string>
+
+    <!-- Anime labels -->
+    <string name="media_movie">Film</string>
+    <string name="media_special">Speciale</string>
+    <string name="media_music">Musica</string>
+    <plurals name="episodes">
+        <item quantity="one">%1$d episodio</item>
+        <item quantity="other">%1$d episodi</item>
+    </plurals>
+    <string name="airing_now">In corso</string>
+    <string name="not_yet_aired">Non ancora uscito</string>
+    <string name="season_winter">Inverno</string>
+    <string name="season_spring">Primavera</string>
+    <string name="season_summer">Estate</string>
+    <string name="season_fall">Autunno</string>
+    <string name="season_format">%1$s %2$d</string>
+    <!-- MAL list statuses: the names MAL uses -->
+    <string name="status_watching">Watching</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_on_hold">On-Hold</string>
+    <string name="status_dropped">Dropped</string>
+    <string name="status_plan_to_watch">Plan to Watch</string>
+
+
+    <!-- Episodes watched, asked by a swipe up (or right while airing) -->
+    <string name="episodes_title">Episodi visti</string>
+    <string name="episodes_label">Episodi</string>
+    <string name="episodes_of">di %1$d</string>
+    <string name="episodes_airing">È ancora in onda, quindi non si può completare: su MAL diventa watching.</string>
+    <string name="episodes_confirm">Imposta watching</string>
+    <string name="episodes_minus">Un episodio in meno</string>
+    <string name="episodes_plus">Un episodio in più</string>
+    <string name="episodes_invalid">Inserisci un numero</string>
+    <plurals name="episodes_too_many">
+        <item quantity="one">Al massimo %1$d episodio</item>
+        <item quantity="other">Al massimo %1$d episodi</item>
+    </plurals>
+
+    <!-- Profile -->
+    <string name="profile_account">Account MyAnimeList</string>
+    <string name="profile_stat_completed">Completati</string>
+    <string name="profile_stat_skipped">Ignorati</string>
+    <plurals name="profile_unsent">
+        <item quantity="one">%1$d modifica da inviare a MAL</item>
+        <item quantity="other">%1$d modifiche da inviare a MAL</item>
+    </plurals>
+    <string name="profile_unsent_body">Partono da sole appena c\'è connessione.</string>
+    <string name="profile_summary_appearance">Tema: %1$s · Titolo: %2$s · Sottotitolo: %3$s</string>
+    <string name="profile_summary_nsfw_on">Contenuti per adulti visibili</string>
+    <string name="profile_summary_nsfw_off">Contenuti per adulti nascosti</string>
+    <string name="profile_summary_update">Versione %1$s · aggiornamento disponibile</string>
+    <string name="profile_section_appearance">Aspetto</string>
+    <string name="profile_theme">Tema</string>
+    <!-- Each language is written in itself, as is customary -->
+    <string name="language_italian" translatable="false">Italiano</string>
+    <string name="language_english" translatable="false">English</string>
+    <string name="profile_language">Lingua</string>
+    <string name="language_system">Sistema</string>
+    <string name="profile_theme_system">Sistema</string>
+    <string name="profile_theme_dark">Scuro</string>
+    <string name="profile_theme_light">Chiaro</string>
+    <string name="profile_title_language">Titolo</string>
+    <string name="profile_title_language_body">Se MAL non ha il titolo in quella lingua, si usa il romaji.</string>
+    <string name="profile_subtitle_language">Sottotitolo</string>
+    <string name="profile_subtitle_language_body">Piccolo e in corsivo sotto il titolo; non compare se MAL non lo ha.</string>
+    <string name="title_romaji">Romaji</string>
+    <string name="title_english">Inglese</string>
+    <string name="title_japanese" translatable="false">日本語</string>
+    <string name="subtitle_none">Nessuno</string>
+    <string name="profile_section_content">Contenuti</string>
+    <string name="profile_nsfw">Contenuti per adulti</string>
+    <string name="profile_nsfw_body">Mostra anche gli anime che MAL classifica come solo per adulti.</string>
+    <string name="profile_section_data">Dati</string>
+    <string name="profile_sync_now">Sincronizza ora</string>
+    <string name="profile_last_sync">Ultima sincronizzazione: %1$s</string>
+    <string name="profile_never_synced">Mai sincronizzato</string>
+    <string name="profile_catalog">Catalogo</string>
+    <plurals name="profile_catalog_size">
+        <item quantity="one">%1$s anime più popolare scaricato</item>
+        <item quantity="other">%1$s anime più popolari scaricati</item>
+    </plurals>
+    <string name="skipped_title">Anime ignorati</string>
+    <string name="skipped_restore_all">Ripristina tutti</string>
+    <string name="skipped_search">Cerca tra gli ignorati</string>
+    <string name="skipped_search_clear">Cancella la ricerca</string>
+    <plurals name="skipped_results">
+        <item quantity="one">%1$d risultato su %2$d</item>
+        <item quantity="other">%1$d risultati su %2$d</item>
+    </plurals>
+    <string name="skipped_no_results">Nessun anime ignorato corrisponde a “%1$s”</string>
+    <string name="skipped_empty_title">Nessun anime ignorato</string>
+    <string name="skipped_empty_body">Gli anime che scorri a sinistra finiscono qui: puoi rimetterli nelle categorie o dargli uno stato su MAL.</string>
+    <string name="skipped_restore">Ripristina</string>
+    <string name="skipped_set_status">Imposta stato</string>
+    <string name="skipped_restored">%1$s torna nelle categorie</string>
+    <string name="skipped_status_set">%1$s: %2$s su MAL</string>
+    <string name="snackbar_undo">Annulla</string>
+    <plurals name="profile_skipped_count">
+        <item quantity="one">%1$d anime ignorato</item>
+        <item quantity="other">%1$d anime ignorati</item>
+    </plurals>
+    <string name="profile_restore_title">Ripristinare gli ignorati?</string>
+    <plurals name="profile_restore_body">
+        <item quantity="one">%1$d anime ignorato torna nelle categorie.</item>
+        <item quantity="other">%1$d anime ignorati tornano nelle categorie.</item>
+    </plurals>
+    <string name="profile_restore_confirm">Ripristina</string>
+    <string name="profile_logout">Esci</string>
+    <string name="profile_logout_title">Uscire da MyAnimeList?</string>
+    <string name="profile_logout_body">Su questo telefono si cancellano la lista e gli ignorati. La tua lista su MAL non cambia.</string>
+    <plurals name="profile_logout_body_unsent">
+        <item quantity="one">%1$d modifica non è ancora arrivata su MAL e andrà persa. Su questo telefono si cancellano anche la lista e gli ignorati.</item>
+        <item quantity="other">%1$d modifiche non sono ancora arrivate su MAL e andranno perse. Su questo telefono si cancellano anche la lista e gli ignorati.</item>
+    </plurals>
+    <string name="profile_footer">Mitayo %1$s · usa l\'API ufficiale di MyAnimeList, non è affiliata a MyAnimeList</string>
+    <!-- Privacy -->
+    <!-- Consent sentence, the two middle parts are links: keep the spaces inside the quotes -->
+    <string name="login_consent_prefix">"Ho letto e accetto i "</string>
+    <string name="login_consent_terms">termini d\'uso</string>
+    <string name="login_consent_middle">" e l'"</string>
+    <string name="login_consent_privacy">informativa privacy</string>
+    <string name="policies_open_first">Prima apri i termini d\'uso e l\'informativa privacy, poi accetta.</string>
+    <string name="login_privacy_missing">Per accedere accetta i termini d\'uso e l\'informativa privacy.</string>
+    <string name="policies_update_title">Termini e privacy aggiornati</string>
+    <string name="policies_update_body">I termini d\'uso o l\'informativa privacy di Mitayo sono cambiati. Leggili e accettali per continuare; se non li accetti esci dall\'account e i dati di Mitayo si cancellano da questo telefono.</string>
+    <string name="policies_update_accept">Accetto</string>
+    <string name="policies_update_decline">Esci dall\'account</string>
+    <string name="profile_section_about">Informazioni</string>
+    <string name="profile_terms">Termini d\'uso</string>
+    <string name="profile_privacy">Informativa privacy</string>
+    <string name="profile_report">Segnala un problema</string>
+    <string name="profile_report_body">Errori, abusi o richieste, su GitHub</string>
+    <string name="profile_site">Sito e download</string>
+    <string name="profile_source">Codice sorgente</string>
+    <string name="profile_license">Licenza</string>
+    <string name="profile_license_body">GPL-3.0: software libero, chi lo modifica lo lascia aperto</string>
+    <!-- Updates and changelog -->
+    <string name="action_ok">OK</string>
+    <string name="action_close">Chiudi</string>
+    <string name="update_available_title">Aggiornamento disponibile</string>
+    <string name="update_available_text">È disponibile Mitayo %1$s (hai la %2$s).</string>
+    <string name="update_available_whats_new">Novità:</string>
+    <string name="update_action_install">Aggiorna</string>
+    <string name="update_action_later">Più tardi</string>
+    <string name="update_action_allow">Consenti</string>
+    <string name="update_action_browser">Scarica dal browser</string>
+    <string name="update_permission_title">Permesso di installazione</string>
+    <string name="update_permission_text">Per installare l\'aggiornamento, Mitayo deve poter installare app. Nella prossima schermata attiva \"Consenti da questa fonte\" e torna indietro. Se preferisci, puoi scaricarlo dal browser.</string>
+    <string name="update_permission_denied">Senza il permesso Mitayo non può installare l\'aggiornamento. Puoi scaricarlo dal browser e aprirlo dai download.</string>
+    <string name="update_downloading_title">Download di Mitayo %1$s</string>
+    <string name="update_downloading_progress" translatable="false">%1$d%%</string>
+    <string name="update_failed_title">Aggiornamento non riuscito</string>
+    <string name="update_error_download">Il download non è riuscito. Riprova più tardi oppure scaricalo dal browser.</string>
+    <string name="update_error_signature">L\'aggiornamento ha una firma diversa dall\'app installata (per esempio una versione di sviluppo), quindi Android non lo installa sopra.</string>
+    <string name="update_error_storage">Non c\'è abbastanza spazio per installare l\'aggiornamento.</string>
+    <string name="update_error_install">Android non ha installato l\'aggiornamento. Puoi scaricarlo dal browser.</string>
+    <string name="changelog_title">Novità</string>
+    <string name="changelog_title_version">Novità di Mitayo %1$s</string>
+    <string name="changelog_version">Versione %1$s</string>
+    <string name="profile_check_updates">Controlla aggiornamenti</string>
+    <string name="profile_version">Versione %1$s</string>
+    <string name="profile_checking_updates">Controllo in corso…</string>
+    <string name="profile_up_to_date">Hai l\'ultima versione (%1$s)</string>
+    <string name="profile_check_failed">Non riesco a controllare gli aggiornamenti adesso. Riprova più tardi.</string>
+
+    <!-- Language of the resources: news topic and statistics (values = Italian, values-en = English) -->
+    <string name="content_language">it</string>
+    <!-- Notification channels -->
+    <string name="channel_updates">Aggiornamenti</string>
+    <string name="channel_season">Nuova stagione</string>
+    <string name="channel_reminders">Promemoria</string>
+    <string name="channel_news">Novità di Mitayo</string>
+    <!-- Local reminders -->
+    <string name="reminder_update">Nuova versione</string>
+    <string name="reminder_update_hint">Ogni giorno controlla se è uscito un aggiornamento</string>
+    <string name="reminder_update_title">Mitayo %1$s è disponibile</string>
+    <string name="reminder_update_text">Tocca per vedere le novità e aggiornare.</string>
+    <string name="reminder_season">Inizio stagione</string>
+    <string name="reminder_season_hint">Nei primi giorni di gennaio, aprile, luglio e ottobre, con gli anime nuovi</string>
+    <string name="reminder_season_title">È iniziata la stagione %1$s</string>
+    <plurals name="reminder_season_text">
+        <item quantity="one">%1$s anime della stagione da scorrere: segna quelli che segui.</item>
+        <item quantity="other">%1$s anime della stagione da scorrere: segna quelli che segui.</item>
+    </plurals>
+    <string name="reminder_weekly">Promemoria settimanale</string>
+    <string name="reminder_weekly_hint">La domenica, se ti restano anime da scorrere</string>
+    <string name="reminder_weekly_title">Qualche swipe?</string>
+    <plurals name="reminder_weekly_text">
+        <item quantity="one">Ti resta %1$s anime popolare da scorrere: bastano pochi swipe per aggiornare la tua lista MAL.</item>
+        <item quantity="other">Ti restano %1$s anime popolari da scorrere: bastano pochi swipe per aggiornare la tua lista MAL.</item>
+    </plurals>
+    <!-- Notifications page -->
+    <string name="profile_section_notifications">Notifiche</string>
+    <string name="notifications_off">Le notifiche di Mitayo sono spente nelle impostazioni di Android.</string>
+    <string name="notifications_enable">Attiva</string>
+    <string name="notifications_news">Novità di Mitayo</string>
+    <string name="notifications_news_hint">Nuove versioni e annunci, con Firebase Cloud Messaging. Nessun account: solo l\'argomento a cui sei iscritto.</string>
+    <string name="notifications_time">Orario</string>
+    <string name="profile_summary_news_on">Novità attive</string>
+    <string name="profile_summary_news_off">Novità spente</string>
+    <string name="profile_summary_no_reminders">nessun promemoria</string>
+    <plurals name="profile_summary_reminders">
+        <item quantity="one">%1$d promemoria attivo</item>
+        <item quantity="other">%1$d promemoria attivi</item>
+    </plurals>
+    <!-- Statistics and crash reports (Firebase) -->
+    <string name="profile_section_privacy">Privacy</string>
+    <string name="privacy_consent_title">Statistiche e report dei crash</string>
+    <string name="privacy_consent_text">Per migliorare Mitayo puoi inviare statistiche d\'uso anonime (schermate aperte, swipe per tipo di lista, impostazioni generali) e i report dei crash. Passano da Google Firebase, legati a un codice casuale dell\'installazione e mai alla tua identità.</string>
+    <string name="privacy_never_sent">Non vengono mai inviati il tuo nome MAL, la tua lista, i titoli o gli ID degli anime: niente di quello che arriva da MyAnimeList.</string>
+    <string name="privacy_consent_change">Puoi cambiare idea quando vuoi in Profilo → Privacy.</string>
+    <string name="privacy_consent_notifications">Dopo la risposta Android ti chiede il permesso per le notifiche delle novità di Mitayo.</string>
+    <string name="privacy_consent_allow">Consenti</string>
+    <string name="privacy_consent_deny">No, grazie</string>
+    <string name="privacy_usage_stats">Statistiche d\'uso</string>
+    <string name="privacy_usage_stats_hint">Schermate, swipe per tipo di lista e impostazioni generali, con Google Analytics for Firebase</string>
+    <string name="privacy_crash_reports">Report dei crash</string>
+    <string name="privacy_crash_reports_hint">Dove si è fermata l\'app, modello del telefono e versioni, con Firebase Crashlytics</string>
+    <string name="firebase_unavailable">Questa build di Mitayo non ha Firebase: statistiche, report dei crash e novità sono spenti.</string>
+    <string name="firebase_unavailable_short">Non disponibili in questa build</string>
+    <string name="profile_summary_privacy">Statistiche: %1$s · Crash: %2$s</string>
+    <string name="answer_yes">sì</string>
+    <string name="answer_no">no</string>
+
+    <!-- Search from the categories -->
+    <string name="search_title">Cerca</string>
+    <string name="search_hint">Cerca un anime</string>
+    <string name="search_empty_title">Cerca un anime</string>
+    <string name="search_empty_body">Tra gli anime scaricati, per titolo romaji, inglese o giapponese: poi gli dai uno stato su MyAnimeList senza scorrere i mazzi.</string>
+    <string name="search_no_results">Nessun anime corrisponde a “%1$s”</string>
+    <string name="search_no_results_body">La ricerca guarda solo gli anime già scaricati: i più popolari e le liste speciali.</string>
+    <string name="search_skipped">Ignorato</string>
+    <string name="search_mal">Cerca su MyAnimeList</string>
+    <plurals name="search_mal_min">
+        <item quantity="one">Serve almeno %1$d carattere</item>
+        <item quantity="other">Servono almeno %1$d caratteri</item>
+    </plurals>
+    <string name="search_mal_none">MyAnimeList non ha trovato nulla</string>
+    <plurals name="search_mal_found">
+        <item quantity="one">%1$d anime trovato su MyAnimeList e aggiunto ai risultati</item>
+        <item quantity="other">%1$d anime trovati su MyAnimeList e aggiunti ai risultati</item>
+    </plurals>
+    <plurals name="search_limited">
+        <item quantity="one">Solo il primo risultato: scrivi qualcosa in più.</item>
+        <item quantity="other">Solo i primi %1$d risultati: scrivi qualcosa in più.</item>
+    </plurals>
+
+    <!-- Score (the ★ button of the deck), MAL's score names -->
+    <string name="action_score">Completato con un voto</string>
+    <string name="action_other_statuses">Altri stati</string>
+    <string name="score_title">Voto</string>
+    <string name="score_hint">Scegli un voto da 1 a 10: l\'anime diventa completed su MAL con quel voto.</string>
+    <string name="score_selected">%1$d · %2$s</string>
+    <string name="score_confirm">Completato</string>
+    <string name="score_10">Capolavoro</string>
+    <string name="score_9">Ottimo</string>
+    <string name="score_8">Molto buono</string>
+    <string name="score_7">Buono</string>
+    <string name="score_6">Discreto</string>
+    <string name="score_5">Nella media</string>
+    <string name="score_4">Scarso</string>
+    <string name="score_3">Molto scarso</string>
+    <string name="score_2">Orribile</string>
+    <string name="score_1">Pessimo</string>
+
+    <!-- Related anime in the details (MAL relation types) -->
+    <string name="details_related">Correlati</string>
+    <string name="details_videos">Trailer e video</string>
+    <string name="details_play_video">Guarda il video</string>
+    <string name="relation_prequel">Prequel</string>
+    <string name="relation_sequel">Sequel</string>
+    <string name="relation_parent_story">Storia principale</string>
+    <string name="relation_full_story">Storia completa</string>
+    <string name="relation_side_story">Storia secondaria</string>
+    <string name="relation_alternative_version">Versione alternativa</string>
+    <string name="relation_alternative_setting">Ambientazione alternativa</string>
+    <string name="relation_spin_off">Spin-off</string>
+    <string name="relation_summary">Riassunto</string>
+    <string name="relation_character">Stessi personaggi</string>
+    <string name="relation_other">Altro</string>
+
+    <!-- Export and import of the skipped anime (Profile → Data) -->
+    <string name="backup_export">Esporta gli ignorati</string>
+    <string name="backup_export_body">In un file JSON: solo gli ID degli anime, da conservare dove vuoi.</string>
+    <string name="backup_import">Importa gli ignorati</string>
+    <string name="backup_import_body">Da un file esportato da Mitayo: si aggiungono a quelli che hai già.</string>
+    <string name="backup_file_name">mitayo-ignorati-%1$s.json</string>
+    <string name="backup_invalid">Questo file non contiene anime ignorati di Mitayo.</string>
+    <string name="backup_file_error">Non riesco a leggere o scrivere il file.</string>
+    <plurals name="backup_exported">
+        <item quantity="one">%1$d anime ignorato esportato</item>
+        <item quantity="other">%1$d anime ignorati esportati</item>
+    </plurals>
+    <plurals name="backup_imported">
+        <item quantity="one">%1$d anime ignorato aggiunto</item>
+        <item quantity="other">%1$d anime ignorati aggiunti</item>
+    </plurals>
+
+    <!-- Launcher shortcuts -->
+    <string name="shortcut_search">Cerca</string>
+    <string name="shortcut_search_long">Cerca un anime</string>
+    <string name="shortcut_season">Stagione</string>
+    <string name="shortcut_season_long">Anime di questa stagione</string>
+
+    <!-- Compare two MAL lists -->
+    <string name="compare_title">Confronta liste</string>
+    <string name="compare_first">Primo</string>
+    <string name="compare_second">Secondo</string>
+    <string name="compare_me">Tu</string>
+    <string name="compare_other_user">Un altro utente</string>
+    <string name="compare_name_hint">Nome utente MyAnimeList</string>
+    <string name="compare_clear_recent">Cancella i recenti</string>
+    <string name="compare_action">Confronta</string>
+    <string name="compare_public_only">Solo liste pubbliche. Le liste degli altri restano sul telefono solo mentre guardi il confronto.</string>
+    <string name="compare_invalid_name">“%1$s” non è un nome utente MyAnimeList valido</string>
+    <string name="compare_versus">%1$s vs %2$s</string>
+    <string name="compare_affinity">affinità: quanto si somigliano i voti degli anime in comune</string>
+    <string name="compare_affinity_unknown">affinità non calcolabile: servono almeno due anime in comune con voti diversi tra loro</string>
+    <plurals name="compare_shared_count">
+        <item quantity="one">%1$d anime in comune</item>
+        <item quantity="other">%1$d anime in comune</item>
+    </plurals>
+    <string name="compare_tab_numbers">Numeri</string>
+    <string name="compare_tab_shared">In comune (%1$d)</string>
+    <string name="compare_tab_only">Solo %1$s (%2$d)</string>
+    <string name="compare_entries">Anime in lista</string>
+    <string name="compare_episodes">Episodi visti</string>
+    <string name="compare_days">Giorni (circa)</string>
+    <string name="compare_mean">Voto medio</string>
+    <string name="compare_scored">Con voto</string>
+    <string name="compare_distribution">Distribuzione dei voti</string>
+    <string name="compare_shared_means">Voto medio sugli anime in comune: %1$s %2$s, %3$s %4$s. Differenza media: %5$s.</string>
+    <string name="compare_sort_title">Per titolo</string>
+    <string name="compare_sort_difference">Per differenza</string>
+    <string name="compare_only_empty">Nessun anime.</string>
+    <string name="error_user_not_found">Non esiste un utente MyAnimeList “%1$s”.</string>
+    <string name="error_user_list_private">La lista di “%1$s” è privata, oppure MyAnimeList chiede di rallentare: riprova tra poco.</string>
+
+    <!-- With other users: comparison and a friend's deck -->
+    <string name="categories_others">Con altri utenti</string>
+    <string name="categories_compare_body">Due liste MyAnimeList a confronto</string>
+    <string name="categories_user_deck_body">Gli anime di un amico che tu non hai</string>
+    <string name="user_deck_title">Mazzo di un amico</string>
+    <string name="user_deck_body">Scrivi il nome MyAnimeList di qualcuno: il mazzo ha gli anime della sua lista che non sono per niente nella tua, prima quelli che ha visto e votato di più.</string>
+    <string name="user_deck_open">Apri il mazzo</string>
+    <string name="user_deck_public_only">Solo liste pubbliche. La sua lista resta sul telefono solo mentre usi il mazzo, e al massimo un giorno.</string>
+</resources>

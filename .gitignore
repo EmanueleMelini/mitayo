@@ -1,0 +1,30 @@
+# Gradle / build
+.gradle/
+.kotlin/
+build/
+/app/build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Local configuration (sdk.dir, MAL client ID, keystore passwords)
+local.properties
+
+# Keystore
+*.jks
+*.keystore
+
+# Firebase configuration: in CI it comes from the MITAYO_GOOGLE_SERVICES_JSON secret
+app/google-services.json
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Generated APK/AAB
+*.apk
+*.aab
+
+# Local instructions for Claude Code (not part of the project)
+CLAUDE.md

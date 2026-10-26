@@ -1,0 +1,96 @@
+/* Shared by every page of the site. Same colors as the app (ui/theme/Theme.kt), dark first. */
+@font-face {
+  /* M PLUS Rounded 1c ExtraBold, Latin and kana only (SIL OFL, licenses/ in the repository) */
+  font-family: "Mitayo Rounded";
+  src: url("/fonts/mplus-rounded-extrabold.ttf") format("truetype");
+  font-weight: 800;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark light;
+  --bg: #0e0c15;
+  --fg: #f3f0fa;
+  --muted: #a39db5;
+  --accent: #9d85ff;
+  --on-accent: #1e0e5c;
+  --card: #18151f;
+  --line: #2f2a3d;
+  --matcha: #34d399;
+  --aka: #ff5a5f;
+  --kin: #ffc24b;
+  --sakura: #ff7ac6;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f5fb;
+    --fg: #17141f;
+    --muted: #5a5468;
+    --accent: #6a45f5;
+    --on-accent: #ffffff;
+    --card: #ede9f5;
+    --line: #cfc8dc;
+    --matcha: #0f8a5f;
+    --aka: #d7263d;
+    --kin: #8a6100;
+    --sakura: #c2307e;
+  }
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 system-ui, sans-serif; }
+main { max-width: 40rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+a { color: var(--accent); }
+h1, h2, h3 { line-height: 1.25; font-family: "Mitayo Rounded", system-ui, sans-serif; font-weight: 800; }
+h1 { font-size: 1.9rem; margin: .5rem 0; }
+h2 { font-size: 1.25rem; margin: 0 0 .5rem; }
+h3 { font-size: 1.05rem; margin: 0 0 .25rem; }
+p { margin: .5rem 0; }
+ul, ol { margin: .5rem 0; padding-left: 1.4rem; }
+li { margin: .25rem 0; }
+.muted { color: var(--muted); font-size: .9rem; }
+
+/* Only the chosen language is shown; Italian until the script runs (or without it) */
+html[data-lang="it"] .en, html[data-lang="en"] .it { display: none !important; }
+
+.top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.top a.home { display: flex; align-items: center; gap: .5rem; font-family: "Mitayo Rounded", system-ui, sans-serif; font-weight: 800; text-decoration: none; color: var(--fg); }
+.top a.home img { width: 2rem; height: 2rem; }
+.lang { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.lang button {
+  font: inherit; font-size: .85rem; padding: .25rem .75rem; border: 0; cursor: pointer;
+  background: transparent; color: var(--fg);
+}
+.lang button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+
+.hero { text-align: center; padding: 1.5rem 0 .5rem; }
+.hero img { width: 7rem; height: 7rem; }
+.hero .kana { color: var(--sakura); font-family: "Mitayo Rounded", system-ui, sans-serif; font-weight: 800; margin: .75rem 0 0; }
+
+.card { background: var(--card); border-radius: 20px; padding: 1.25rem; margin: 1rem 0; }
+
+.button {
+  display: inline-block; margin: .75rem 0 .25rem; padding: .75rem 1.5rem; border-radius: 999px;
+  background: var(--accent); color: var(--on-accent); font-weight: 700; text-decoration: none;
+}
+.button.small { margin: .5rem 0 0; padding: .4rem 1rem; font-size: .9rem; }
+
+/* The three swipe directions, in the app's colors */
+.swipes { list-style: none; padding: 0; }
+.swipes li { display: flex; gap: .75rem; align-items: baseline; margin: .6rem 0; }
+.swipes .dir {
+  flex: none; min-width: 6.5rem; text-align: center; padding: .1rem .6rem; border-radius: 999px;
+  border: 2px solid currentColor; font-weight: 700; font-size: .85rem;
+}
+.dir.right { color: var(--matcha); }
+.dir.left { color: var(--aka); }
+.dir.up { color: var(--kin); }
+.dir.undo { color: var(--muted); }
+
+details { border-top: 1px solid var(--line); padding: .5rem 0; }
+details:first-of-type { border-top: 0; }
+summary { cursor: pointer; font-weight: 600; padding: .25rem 0; }
+details.older > summary { color: var(--accent); }
+.version-date { font-weight: 400; color: var(--muted); font-size: .9rem; }
+
+footer { margin-top: 2rem; text-align: center; }

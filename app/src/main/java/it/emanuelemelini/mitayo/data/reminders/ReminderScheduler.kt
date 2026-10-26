@@ -1,0 +1,50 @@
+package it.emanuelemelini.mitayo.data.reminders
+
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import it.emanuelemelini.mitayo.data.prefs.SettingsRepository
+import java.time.ZonedDateTime
+import java.util.concurrent.TimeUnit
+
+/**
+ * Schedules each enabled reminder with a 10-minute window alarm: no "exact alarm" permission
+ * needed. If the phone is in Doze the reminder shows up as soon as it's picked up. When it fires,
+ * [ReminderAlarmReceiver] hands the work to [ReminderWorker] and schedules the next occurrence.
+ */
+class ReminderScheduler(
+    private val context: Context,
+    private val settingsRepository: SettingsRepository,
+) {
+    private val alarmManager = context.getSystemService(AlarmManager::class.java)
+
+    suspend fun rescheduleAll() {
+        val reminders = settingsRepository.currentSettings().reminders
+        ReminderType.entries.forEach { apply(reminders.getValue(it)) }
+    }
+
+    suspend fun reschedule(type: ReminderType) {
+        apply(settingsRepository.currentSettings().reminders.getValue(type))
+    }
+
+    private fun apply(config: ReminderConfig) {
+        val intent = pendingIntent(config.type)
+        alarmManager.cancel(intent)
+        if (!config.enabled) return
+        val trigger = ReminderSchedule.nextTrigger(config.type, config.time, ZonedDateTime.now())
+        alarmManager.setWindow(AlarmManager.RTC_WAKEUP, trigger.toInstant().toEpochMilli(), WINDOW_MILLIS, intent)
+    }
+
+    private fun pendingIntent(type: ReminderType): PendingIntent = PendingIntent.getBroadcast(
+        context,
+        type.ordinal,
+        Intent(context, ReminderAlarmReceiver::class.java).putExtra(ReminderAlarmReceiver.EXTRA_TYPE, type.name),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+    )
+
+    private companion object {
+        /** Smallest window Android allows for non-exact alarms. */
+        val WINDOW_MILLIS = TimeUnit.MINUTES.toMillis(10)
+    }
+}
