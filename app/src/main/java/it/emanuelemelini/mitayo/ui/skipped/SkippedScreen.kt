@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +24,8 @@ import androidx.compose.material.icons.rounded.SearchOff
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +59,8 @@ import it.emanuelemelini.mitayo.ui.appContainer
 import it.emanuelemelini.mitayo.ui.components.AnimeRow
 import it.emanuelemelini.mitayo.ui.components.EmptyMessage
 import it.emanuelemelini.mitayo.ui.components.UndoMessagesEffect
+import it.emanuelemelini.mitayo.ui.components.listStatusIcon
+import it.emanuelemelini.mitayo.ui.components.listStatusLabel
 import it.emanuelemelini.mitayo.ui.components.staggeredEntrance
 import it.emanuelemelini.mitayo.ui.deck.AnimeDetailsHost
 import it.emanuelemelini.mitayo.ui.deck.EpisodesDialog
@@ -153,9 +160,17 @@ fun SkippedScreen(onBack: () -> Unit) {
                     .padding(horizontal = 16.dp, vertical = 4.dp)
                     .entrance(0),
             )
+            if (state.filters.isNotEmpty()) {
+                StatusFilters(
+                    filters = state.filters,
+                    selected = state.filter,
+                    onSelect = viewModel::setFilter,
+                    modifier = Modifier.entrance(1),
+                )
+            }
             if (state.loaded) {
                 Text(
-                    text = if (state.query.isBlank()) {
+                    text = if (state.query.isBlank() && state.filter == StatusFilter.All) {
                         pluralStringResource(R.plurals.profile_skipped_count, state.total, state.total)
                     } else {
                         pluralStringResource(R.plurals.skipped_results, state.cards.size, state.cards.size, state.total)
@@ -223,5 +238,36 @@ fun SkippedScreen(onBack: () -> Unit) {
             },
             dismissButton = { TextButton(onClick = { confirmRestoreAll = false }) { Text(stringResource(R.string.action_cancel)) } },
         )
+    }
+}
+
+/** All, not in the list, then one chip per status the skipped anime have, with how many. */
+@Composable
+private fun StatusFilters(
+    filters: List<Pair<StatusFilter, Int>>,
+    selected: StatusFilter,
+    onSelect: (StatusFilter) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        items(filters, key = { (filter, _) -> filter.toString() }) { (filter, count) ->
+            val label = when (filter) {
+                StatusFilter.All -> stringResource(R.string.skipped_filter_all)
+                StatusFilter.NotInList -> stringResource(R.string.skipped_filter_not_in_list)
+                is StatusFilter.Of -> listStatusLabel(filter.status)
+            }
+            FilterChip(
+                selected = filter == selected,
+                onClick = { onSelect(filter) },
+                label = { Text(stringResource(R.string.skipped_filter_count, label, count)) },
+                leadingIcon = (filter as? StatusFilter.Of)?.let { status ->
+                    { Icon(listStatusIcon(status.status), contentDescription = null, modifier = Modifier.size(FilterChipDefaults.IconSize)) }
+                },
+            )
+        }
     }
 }

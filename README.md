@@ -5,8 +5,8 @@ pick a category and swipe through the anime one at a time. Website and downloads
 <https://mitayo.emanuelemelini.dev>.
 
 - **right**: completed on MAL, with every episode watched;
-- **left**: skip, it never shows up again (search the skipped ones in Profile → Data, then restore one or
-  give it a status on MAL);
+- **left**: skip, it never shows up again (search the skipped ones in Profile → Data, also by their
+  status in your list, then restore one or give it a status on MAL);
 - **up** (or ▶): watching. You enter the episodes watched right away and it goes to MAL as *watching*;
 - **undo**: goes back on the last swipes, on MAL too;
 - **★**: completed with a MAL score (only when you tap it: swiping right never stops for a score);
@@ -226,7 +226,7 @@ Static HTML in Italian and English (language from the browser, IT/EN switch in `
 | `ui/categories` | categories: special lists, genres, themes, demographics |
 | `ui/deck` | the deck to swipe: gestures, card, episodes watched, details |
 | `ui/profile` | profile, stats, settings pages (appearance, content, notifications, data, privacy, about), logout |
-| `ui/skipped` | the skipped anime: search, restore one, set its status |
+| `ui/skipped` | the skipped anime: search, filter by list status, restore one, set its status |
 | `ui/search` | search of the local catalog from the categories, to set a status without swiping |
 | `ui/compare`, `data/ListComparison.kt`, `data/OtherUsers.kt` | comparison of two lists and the deck of another user's list |
 | `data/reminders` | local reminders: types, schedule, alarms, worker, notifications |

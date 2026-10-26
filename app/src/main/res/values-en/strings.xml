@@ -176,6 +176,9 @@
     <string name="skipped_restore_all">Restore all</string>
     <string name="skipped_search">Search skipped anime</string>
     <string name="skipped_search_clear">Clear the search</string>
+    <string name="skipped_filter_all">All</string>
+    <string name="skipped_filter_not_in_list">Not in your list</string>
+    <string name="skipped_filter_count">%1$s · %2$d</string>
     <plurals name="skipped_results">
         <item quantity="one">%1$d result of %2$d</item>
         <item quantity="other">%1$d results of %2$d</item>

@@ -30,13 +30,26 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+/** Which skipped anime to show, by their status in the user's list. */
+sealed interface StatusFilter {
+    data object All : StatusFilter
+
+    /** Not in the list at all: skipped from the normal decks. */
+    data object NotInList : StatusFilter
+
+    data class Of(val status: ListStatus) : StatusFilter
+}
+
 data class SkippedUiState(
     val loaded: Boolean = false,
-    /** The skipped anime that match [query], the last skipped first. */
+    /** The skipped anime that match [query] and [filter], the last skipped first. */
     val cards: List<DeckCard> = emptyList(),
     /** Every skipped anime, whatever the search. */
     val total: Int = 0,
     val query: String = "",
+    val filter: StatusFilter = StatusFilter.All,
+    /** The filters with at least one anime, and how many; empty when none of them is in the list. */
+    val filters: List<Pair<StatusFilter, Int>> = emptyList(),
     val titles: TitleChoice = TitleChoice(),
 )
 
@@ -53,20 +66,34 @@ class SkippedViewModel(
     val details = AnimeDetailsController(viewModelScope, catalogRepository, listRepository, statusEditor, telemetry)
 
     private val query = MutableStateFlow("")
+    private val filter = MutableStateFlow<StatusFilter>(StatusFilter.All)
 
     val uiState: StateFlow<SkippedUiState> = combine(
         deckRepository.skipped,
         query,
+        filter,
         settingsRepository.settings.map { it.titles to it.showNsfw }.distinctUntilChanged(),
-    ) { skipped, query, (titles, showNsfw) ->
+    ) { skipped, query, filter, (titles, showNsfw) ->
         // 18+ anime stay out of sight here too while the setting is off
         val cards = if (showNsfw) skipped else skipped.filterNot { it.anime.nsfw }
+        val filters = filtersOf(cards)
+        // The last anime with that status went away: back to all of them
+        val shownFilter = filter.takeIf { chosen -> filters.any { it.first == chosen } } ?: StatusFilter.All
         val needle = query.trim()
-        // Any of the titles MAL has: romaji, English or Japanese
-        val shown = if (needle.isEmpty()) cards else cards.filter { card ->
-            TitleLanguage.entries.any { card.anime.titleIn(it)?.contains(needle, ignoreCase = true) == true }
+        val shown = cards.filter { card ->
+            shownFilter.matches(card) &&
+                // Any of the titles MAL has: romaji, English or Japanese
+                (needle.isEmpty() || TitleLanguage.entries.any { card.anime.titleIn(it)?.contains(needle, ignoreCase = true) == true })
         }
-        SkippedUiState(loaded = true, cards = shown, total = cards.size, query = query, titles = titles)
+        SkippedUiState(
+            loaded = true,
+            cards = shown,
+            total = cards.size,
+            query = query,
+            filter = shownFilter,
+            filters = filters,
+            titles = titles,
+        )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SkippedUiState())
 
     private val _messages = Channel<UndoMessage>(Channel.BUFFERED)
@@ -74,6 +101,10 @@ class SkippedViewModel(
 
     fun setQuery(text: String) {
         query.value = text
+    }
+
+    fun setFilter(value: StatusFilter) {
+        filter.value = value
     }
 
     /** Back in the decks, nothing changes on MAL. */
@@ -109,4 +140,17 @@ class SkippedViewModel(
     }
 
     private fun titleOf(card: DeckCard): String = card.anime.displayTitle(uiState.value.titles)
+}
+
+internal fun StatusFilter.matches(card: DeckCard): Boolean = when (this) {
+    StatusFilter.All -> true
+    StatusFilter.NotInList -> card.listStatus == null
+    is StatusFilter.Of -> card.listStatus == status
+}
+
+/** No filters when none of the skipped anime is in the list: there would be nothing to choose. */
+internal fun filtersOf(cards: List<DeckCard>): List<Pair<StatusFilter, Int>> {
+    if (cards.none { it.listStatus != null }) return emptyList()
+    val groups = listOf(StatusFilter.All, StatusFilter.NotInList) + ListStatus.entries.map { StatusFilter.Of(it) }
+    return groups.map { group -> group to cards.count { group.matches(it) } }.filter { it.second > 0 }
 }
