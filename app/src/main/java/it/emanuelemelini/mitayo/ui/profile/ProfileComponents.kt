@@ -82,8 +82,8 @@ internal fun StatCard(label: String, value: Int, color: Color, modifier: Modifie
 
 /** A group of rows on a page, on a card. */
 @Composable
-internal fun PageCard(content: @Composable () -> Unit) {
-    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)) {
+internal fun PageCard(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer), modifier = modifier) {
         content()
     }
 }

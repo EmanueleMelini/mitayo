@@ -26,6 +26,9 @@ enum class ReminderType(
 
     /** An invitation to a few swipes, with the anime still to see. */
     WEEKLY(R.string.reminder_weekly, R.string.reminder_weekly_hint, LocalTime.of(18, 0), weekly = true),
+
+    /** Every day: the anime being watched that aired a new episode since the day before (local data only). */
+    EPISODES(R.string.reminder_episodes, R.string.reminder_episodes_hint, LocalTime.of(20, 0)),
 }
 
 /** Every reminder starts off: the user turns on the ones they want. */

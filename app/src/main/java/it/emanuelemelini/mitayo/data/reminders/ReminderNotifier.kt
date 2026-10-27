@@ -16,6 +16,7 @@ import it.emanuelemelini.mitayo.R
 import it.emanuelemelini.mitayo.data.CatalogRepository
 import it.emanuelemelini.mitayo.data.Category
 import it.emanuelemelini.mitayo.data.DeckRepository
+import it.emanuelemelini.mitayo.data.db.ListStatus
 import it.emanuelemelini.mitayo.data.prefs.Settings
 import it.emanuelemelini.mitayo.data.prefs.SettingsRepository
 import it.emanuelemelini.mitayo.data.push.NewsMessagingService
@@ -26,6 +27,7 @@ import it.emanuelemelini.mitayo.ui.LaunchRequest
 import it.emanuelemelini.mitayo.ui.components.seasonNameRes
 import java.text.NumberFormat
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
@@ -48,6 +50,7 @@ class ReminderNotifier(
                 NotificationChannel(CHANNEL_UPDATES, res.getString(R.string.channel_updates), NotificationManager.IMPORTANCE_DEFAULT),
                 NotificationChannel(CHANNEL_SEASON, res.getString(R.string.channel_season), NotificationManager.IMPORTANCE_DEFAULT),
                 NotificationChannel(CHANNEL_REMINDERS, res.getString(R.string.channel_reminders), NotificationManager.IMPORTANCE_DEFAULT),
+                NotificationChannel(CHANNEL_EPISODES, res.getString(R.string.channel_episodes), NotificationManager.IMPORTANCE_DEFAULT),
                 NotificationChannel(NewsMessagingService.CHANNEL, res.getString(R.string.channel_news), NotificationManager.IMPORTANCE_DEFAULT),
             )
         )
@@ -61,6 +64,7 @@ class ReminderNotifier(
             ReminderType.UPDATE -> updateNotification()
             ReminderType.SEASON -> seasonNotification(settings)
             ReminderType.WEEKLY -> weeklyNotification(settings)
+            ReminderType.EPISODES -> episodesNotification(settings)
         } ?: return
         notify(type, builder)
     }
@@ -106,6 +110,28 @@ class ReminderNotifier(
         ).setContentIntent(activity(ReminderType.WEEKLY, LaunchRequest.OpenDeck(Category.Popular.key)))
     }
 
+    /**
+     * The anime being watched that aired an episode in the last day (the time between two of these
+     * reminders), from their weekly slot on MAL: nothing is asked to MAL here.
+     */
+    private suspend fun episodesNotification(settings: Settings): NotificationCompat.Builder? {
+        if (!isLoggedIn.first()) return null
+        val now = ZonedDateTime.now()
+        val aired = deckRepository.watchingOnAir().filter { anime ->
+            ReminderSchedule.airedBetween(anime.broadcastDay ?: return@filter false, anime.broadcastTime ?: return@filter false, now.minusDays(1), now)
+        }
+        if (aired.isEmpty()) return null
+        val titles = aired.map { it.displayTitle(settings.titles) }
+        val text = if (titles.size <= SHOWN_TITLES) {
+            res.getQuantityString(R.plurals.reminder_episodes_text, titles.size, titles.joinToString(", "))
+        } else {
+            val others = titles.size - SHOWN_TITLES
+            res.getQuantityString(R.plurals.reminder_episodes_more, others, titles.take(SHOWN_TITLES).joinToString(", "), others)
+        }
+        return base(CHANNEL_EPISODES, res.getString(R.string.reminder_episodes_title), text)
+            .setContentIntent(activity(ReminderType.EPISODES, LaunchRequest.OpenDeck(Category.OfStatus(ListStatus.WATCHING).key)))
+    }
+
     private fun notify(type: ReminderType, builder: NotificationCompat.Builder) {
         // Checked again right before: lint wants the check next to notify()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -135,6 +161,9 @@ class ReminderNotifier(
         const val CHANNEL_UPDATES = "updates"
         const val CHANNEL_SEASON = "season"
         const val CHANNEL_REMINDERS = "reminders"
+        const val CHANNEL_EPISODES = "episodes"
+        /** Titles named in the new episode notification; the others are counted. */
+        private const val SHOWN_TITLES = 3
         private const val NOTIFICATION_ID_BASE = 1000
     }
 }

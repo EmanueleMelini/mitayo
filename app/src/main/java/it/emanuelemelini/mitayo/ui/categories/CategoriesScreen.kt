@@ -30,6 +30,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.CompareArrows
+import androidx.compose.material.icons.rounded.Casino
+import androidx.compose.material.icons.rounded.EditCalendar
 import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Card
@@ -48,6 +50,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -81,9 +84,17 @@ fun CategoriesScreen(
 ) {
     val container = appContainer()
     val viewModel: CategoriesViewModel = viewModel {
-        CategoriesViewModel(container.settingsRepository, container.deckRepository, container.listRepository, container.syncManager)
+        CategoriesViewModel(
+            container.settingsRepository,
+            container.deckRepository,
+            container.listRepository,
+            container.syncManager,
+            container.statusEditor,
+            container.telemetry,
+        )
     }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    var pickingSeason by rememberSaveable { mutableStateOf(false) }
 
     // Only on the way in: coming back from a deck the screen is already there
     val firstVisit = rememberSaveable { mutableStateOf(true) }
@@ -112,9 +123,17 @@ fun CategoriesScreen(
                     itemsIndexed(Category.specials, key = { _, category -> category.key }) { index, category ->
                         SpecialCard(category, onClick = { onOpenCategory(category) }, modifier = Modifier.entrance(3 + index))
                     }
+                    item(key = "other_seasons") {
+                        SpecialCard(
+                            icon = Icons.Rounded.EditCalendar,
+                            title = stringResource(R.string.category_other_seasons),
+                            onClick = { pickingSeason = true },
+                            modifier = Modifier.entrance(3 + Category.specials.size),
+                        )
+                    }
                 }
             }
-            statusSection(state.statuses, onOpenCategory, entrance)
+            statusSection(state.statuses, onOpenCategory, onTonight = viewModel::pickTonight, entrance)
             fullWidth("others_title") { SectionTitle(stringResource(R.string.categories_others)) }
             fullWidth("others") {
                 OthersRow(
@@ -139,6 +158,25 @@ fun CategoriesScreen(
             }
         }
     }
+
+    if (pickingSeason) {
+        SeasonPickerDialog(
+            onOpen = { category ->
+                pickingSeason = false
+                onOpenCategory(category)
+            },
+            onDismiss = { pickingSeason = false },
+        )
+    }
+    state.tonight?.let { tonight ->
+        TonightDialog(
+            state = tonight,
+            titles = state.titles,
+            onAnother = viewModel::pickTonight,
+            onStart = viewModel::startTonight,
+            onDismiss = viewModel::closeTonight,
+        )
+    }
 }
 
 private fun LazyGridScope.fullWidth(key: String, content: @Composable () -> Unit) {
@@ -149,10 +187,22 @@ private fun LazyGridScope.fullWidth(key: String, content: @Composable () -> Unit
 private fun LazyGridScope.statusSection(
     statuses: Map<ListStatus, Int>,
     onOpenCategory: (Category) -> Unit,
+    onTonight: () -> Unit,
     entrance: Modifier.(Int) -> Modifier,
 ) {
     if (statuses.isEmpty()) return
-    fullWidth("statuses_title") { SectionTitle(stringResource(R.string.categories_my_list)) }
+    fullWidth("statuses_title") {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SectionTitle(stringResource(R.string.categories_my_list), Modifier.weight(1f))
+            if ((statuses[ListStatus.PLAN_TO_WATCH] ?: 0) > 0) {
+                TextButton(onClick = onTonight, modifier = Modifier.padding(top = 10.dp)) {
+                    Icon(Icons.Rounded.Casino, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.tonight_button))
+                }
+            }
+        }
+    }
     itemsIndexed(ListStatus.entries, key = { _, status -> "status_${status.apiValue}" }) { index, status ->
         val category = Category.OfStatus(status)
         CountTile(
@@ -365,6 +415,11 @@ private fun SectionTitle(text: String, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SpecialCard(category: Category, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    SpecialCard(category.icon(), category.title(), onClick, modifier)
+}
+
+@Composable
+private fun SpecialCard(icon: ImageVector, title: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(20.dp),
@@ -372,9 +427,9 @@ private fun SpecialCard(category: Category, onClick: () -> Unit, modifier: Modif
         modifier = modifier.width(132.dp).height(104.dp),
     ) {
         Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
-            Icon(category.icon(), contentDescription = null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(26.dp))
+            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(26.dp))
             Text(
-                text = category.title(),
+                text = title,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 maxLines = 2,

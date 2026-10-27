@@ -1,6 +1,7 @@
 package it.emanuelemelini.mitayo.data
 
 import androidx.room.withTransaction
+import it.emanuelemelini.mitayo.data.db.Anime
 import it.emanuelemelini.mitayo.data.db.AppDatabase
 import it.emanuelemelini.mitayo.data.db.CatalogMatch
 import it.emanuelemelini.mitayo.data.db.DecadeCount
@@ -19,12 +20,17 @@ class DeckRepository(private val database: AppDatabase) {
 
     val skipped: Flow<List<DeckCard>> = skippedDao.observeCards()
 
-    /** The first [limit] cards; the flow updates after every swipe. */
-    fun observeCards(category: Category, showNsfw: Boolean, limit: Int): Flow<List<DeckCard>> =
-        animeDao.observeCards(DeckQuery.cards(category, showNsfw, limit))
+    /** The first [limit] cards; the flow updates after every swipe. [shuffleSeed]: see [DeckQuery.cards]. */
+    fun observeCards(
+        category: Category,
+        showNsfw: Boolean,
+        limit: Int,
+        filters: DeckFilters = DeckFilters(),
+        shuffleSeed: Long? = null,
+    ): Flow<List<DeckCard>> = animeDao.observeCards(DeckQuery.cards(category, showNsfw, limit, filters, shuffleSeed))
 
-    fun observeRemaining(category: Category, showNsfw: Boolean): Flow<Int> =
-        animeDao.observeCount(DeckQuery.count(category, showNsfw))
+    fun observeRemaining(category: Category, showNsfw: Boolean, filters: DeckFilters = DeckFilters()): Flow<Int> =
+        animeDao.observeCount(DeckQuery.count(category, showNsfw, filters))
 
     fun observeGenreCounts(showNsfw: Boolean): Flow<List<GenreCount>> = animeDao.observeGenreCounts(showNsfw)
 
@@ -33,6 +39,12 @@ class DeckRepository(private val database: AppDatabase) {
     fun observeStatusCounts(showNsfw: Boolean): Flow<List<StatusCount>> = animeDao.observeStatusCounts(showNsfw)
 
     suspend fun genreName(genreId: Int): String? = animeDao.genreName(genreId)
+
+    /** Being watched and still airing every week. */
+    suspend fun watchingOnAir(): List<Anime> = animeDao.watchingOnAir()
+
+    /** "What do I watch tonight?": a random plan to watch not in [exclude]; null when there's none. */
+    suspend fun randomToStart(showNsfw: Boolean, exclude: List<Int>): DeckCard? = animeDao.randomToStart(showNsfw, exclude)
 
     /** Catalog anime with [text] in any of their titles, case-insensitive (for Latin letters). */
     fun search(text: String, showNsfw: Boolean): Flow<List<CatalogMatch>> {

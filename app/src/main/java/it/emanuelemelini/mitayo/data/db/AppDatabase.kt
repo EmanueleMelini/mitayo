@@ -19,8 +19,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         SkippedAnime::class,
         OutboxOp::class,
         RemoteListItem::class,
+        SwipeRecord::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -34,10 +35,12 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun outboxDao(): OutboxDao
 
+    abstract fun historyDao(): HistoryDao
+
     companion object {
         fun build(context: Context): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, "mitayo.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .build()
 
         /** v2 (the first builds after 0.1.0): no pending list any more, a swipe up asks the episodes at once. */
@@ -64,6 +67,24 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE `outbox` ADD COLUMN `score` INTEGER")
             }
         }
+
+        /**
+         * v5 (1.2.0): when an anime airs each week, for the new episode reminder (it comes with
+         * the next list sync), and the swipe history.
+         */
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `anime` ADD COLUMN `broadcastDay` TEXT")
+                db.execSQL("ALTER TABLE `anime` ADD COLUMN `broadcastTime` TEXT")
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `swipe_history` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`animeId` INTEGER NOT NULL, `action` TEXT NOT NULL, `episodes` INTEGER NOT NULL, " +
+                        "`score` INTEGER NOT NULL, `previousStatus` TEXT, `previousEpisodes` INTEGER NOT NULL, " +
+                        "`previousScore` INTEGER NOT NULL, `at` INTEGER NOT NULL)"
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_swipe_history_animeId` ON `swipe_history` (`animeId`)")
+            }
+        }
     }
 }
 
@@ -74,4 +95,10 @@ class Converters {
 
     @TypeConverter
     fun stringToStatus(value: String): ListStatus = ListStatus.fromApi(value) ?: ListStatus.PLAN_TO_WATCH
+
+    @TypeConverter
+    fun actionToString(action: SwipeAction): String = action.name
+
+    @TypeConverter
+    fun stringToAction(value: String): SwipeAction = SwipeAction.entries.firstOrNull { it.name == value } ?: SwipeAction.SKIPPED
 }

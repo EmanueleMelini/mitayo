@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -27,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.PlayCircle
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,6 +57,8 @@ import it.emanuelemelini.mitayo.data.TitleChoice
 import it.emanuelemelini.mitayo.data.TitleLanguage
 import it.emanuelemelini.mitayo.data.db.ListStatus
 import it.emanuelemelini.mitayo.data.mal.MalVideo
+import it.emanuelemelini.mitayo.data.telemetry.ShareKind
+import it.emanuelemelini.mitayo.ui.appContainer
 import it.emanuelemelini.mitayo.ui.components.StatusMenu
 import it.emanuelemelini.mitayo.ui.components.listStatusLine
 import it.emanuelemelini.mitayo.ui.components.metaLine
@@ -63,6 +67,7 @@ import it.emanuelemelini.mitayo.ui.components.shimmer
 import it.emanuelemelini.mitayo.ui.malAnimeUri
 import it.emanuelemelini.mitayo.ui.openInBrowser
 import it.emanuelemelini.mitayo.ui.openVideo
+import it.emanuelemelini.mitayo.ui.shareText
 import it.emanuelemelini.mitayo.ui.theme.MitayoColors
 import it.emanuelemelini.mitayo.ui.youTubeUri
 
@@ -192,10 +197,23 @@ fun AnimeDetailsSheet(
                     }
                 }
             }
-            OutlinedButton(onClick = { openInBrowser(context, malAnimeUri(anime.id)) }) {
-                Icon(Icons.AutoMirrored.Rounded.OpenInNew, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.details_open_mal))
+            val telemetry = appContainer().telemetry
+            val shareTitle = stringResource(R.string.share_title)
+            val shareText = stringResource(R.string.share_anime_text, anime.displayTitle(titles), malAnimeUri(anime.id).toString())
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = { openInBrowser(context, malAnimeUri(anime.id)) }) {
+                    Icon(Icons.AutoMirrored.Rounded.OpenInNew, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.details_open_mal))
+                }
+                OutlinedButton(onClick = {
+                    telemetry.logShare(ShareKind.ANIME)
+                    shareText(context, shareText, shareTitle)
+                }) {
+                    Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.action_share))
+                }
             }
         }
     }

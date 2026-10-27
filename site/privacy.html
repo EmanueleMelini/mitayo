@@ -21,7 +21,7 @@
   </div>
 
   <h1><span class="it">Informativa sulla privacy</span><span class="en">Privacy policy</span></h1>
-  <p class="muted"><span class="it">Aggiornata il 26 ottobre 2026 (Mitayo 1.1.0).</span><span class="en">Updated on 26 October 2026 (Mitayo 1.1.0).</span></p>
+  <p class="muted"><span class="it">Aggiornata il 27 ottobre 2026 (Mitayo 1.2.0).</span><span class="en">Updated on 27 October 2026 (Mitayo 1.2.0).</span></p>
 
   <section class="card">
     <div class="it">
@@ -81,9 +81,11 @@
         <li><strong>Dal tuo account MyAnimeList</strong>: nome utente, immagine del profilo e la tua
           lista anime (stato ed episodi visti di ogni anime).</li>
         <li><strong>Dal catalogo pubblico di MyAnimeList</strong>: titoli, immagini, generi, voti,
-          episodi e stagioni degli anime, e i suggerimenti che MyAnimeList calcola per te.</li>
-        <li><strong>Creati da te nell'app</strong>: gli anime ignorati, le modifiche non ancora
-          inviate e le impostazioni (tema, lingua di titolo e sottotitolo, contenuti per adulti, accettazione di
+          episodi, stagioni e orario di uscita settimanale degli anime, gli anime in arrivo, e i
+          suggerimenti che MyAnimeList calcola per te.</li>
+        <li><strong>Creati da te nell'app</strong>: gli anime ignorati, gli ultimi 100 swipe (per
+          annullarli da Profilo → Dati → Ultimi swipe), le modifiche non ancora
+          inviate e le impostazioni (tema, lingua di titolo e sottotitolo, contenuti per adulti, mazzi mescolati, guida già vista, accettazione di
           termini e informativa, scelte su statistiche, report dei crash, novità e promemoria, giorno
           dell'ultimo controllo degli aggiornamenti, ultima versione e ultima stagione annunciate e
           versione di cui hai già visto le novità).</li>
@@ -104,9 +106,11 @@
         <li><strong>From your MyAnimeList account</strong>: username, profile picture and your anime
           list (status and episodes watched for each anime).</li>
         <li><strong>From MyAnimeList's public catalog</strong>: titles, pictures, genres, scores,
-          episodes and seasons of the anime, and the suggestions MyAnimeList makes for you.</li>
-        <li><strong>Created by you in the app</strong>: the skipped anime, the changes not sent yet
-          and the settings (theme, title and subtitle language, adult content, acceptance of the terms and of
+          episodes, seasons and weekly airing time of the anime, the upcoming anime, and the
+          suggestions MyAnimeList makes for you.</li>
+        <li><strong>Created by you in the app</strong>: the skipped anime, the last 100 swipes (to
+          undo them from Profile → Data → Last swipes), the changes not sent yet
+          and the settings (theme, title and subtitle language, adult content, shuffled decks, guide already seen, acceptance of the terms and of
           this policy, choices about statistics, crash reports, news and reminders, day of the last
           update check, last version and season announced and version whose news you've already
           seen).</li>
@@ -144,13 +148,17 @@
       <p><strong>MyAnimeList</strong>: <code>myanimelist.net</code> per il login,
         <code>api.myanimelist.net</code> per leggere il catalogo e la tua lista e per modificarla (stato,
         episodi visti e, se lo dai, il voto), per la ricerca quando tocchi "Cerca su MyAnimeList", per
-        le liste pubbliche degli utenti che confronti o di cui apri il mazzo,
+        le liste pubbliche degli utenti che confronti o di cui apri il mazzo, per la tua lista
+        completa quando apri Le tue statistiche (i numeri restano solo in memoria),
         <code>cdn.myanimelist.net</code> per le immagini. <strong>YouTube</strong>: nella scheda di un
         anime con trailer, le anteprime dei video arrivano da <code>i.ytimg.com</code>, e un video
         toccato si apre nell'app YouTube o nel browser, con le regole di Google. La tua lista cambia solo quando lo decidi
-        tu: swipe a destra, swipe in alto con gli episodi visti o annullamento di uno swipe. Quello che
+        tu: swipe a destra, swipe in alto con gli episodi visti, +1 nel mazzo Watching, "Lo inizio" in
+        Cosa guardo?, uno stato scelto o l'annullamento di uno swipe. Quello che
         MyAnimeList fa con i tuoi dati è regolato dalla
         <a href="https://myanimelist.net/about/privacy_policy">privacy policy di MyAnimeList</a>.</p>
+      <p><strong>Condividi</strong>: il link MyAnimeList di un anime o il risultato di un confronto
+        passano all'app che scegli tu dal menu di Android; Mitayo non manda nulla da sé.</p>
       <p><strong>GitHub</strong>, per gli aggiornamenti: al massimo una volta al giorno l'app chiede a
         <code>api.github.com</code> qual è l'ultima versione di Mitayo, mandando solo la versione
         installata (nell'intestazione User-Agent) e, come ogni richiesta, il tuo indirizzo IP. Se
@@ -161,7 +169,9 @@
       <p><strong>Promemoria</strong>: sono notifiche create sul telefono, tutte spente finché non le
         attivi in Profilo → Notifiche. "Nuova versione" chiede a GitHub l'ultima versione una volta
         al giorno; "Inizio stagione" scarica da MyAnimeList l'elenco della nuova stagione;
-        "Promemoria settimanale" conta gli anime che ti restano, senza internet.</p>
+        "Promemoria settimanale" conta gli anime che ti restano, senza internet; "Nuovi episodi"
+        guarda, senza internet, quali anime che stai guardando sono usciti con un episodio nell'ultimo
+        giorno, dall'orario settimanale che MyAnimeList ne dà.</p>
       <p><strong>Google Firebase</strong> (Google Ireland Limited), solo nelle versioni pubblicate da
         GitHub:</p>
       <ul>
@@ -172,10 +182,13 @@
           nient'altro. Spegnendole in Profilo → Notifiche il codice viene cancellato.</li>
         <li><strong>Statistiche d'uso</strong> (Google Analytics for Firebase), solo se acconsenti:
           le schermate aperte, gli swipe per tipo di lista (più popolari, stagione, genere senza dire
-          quale…) e il loro esito (completato, watching, ignorato, passato al prossimo o un altro stato), i voti dati (senza il voto),
-          annullamenti, azioni sugli anime ignorati, stati impostati dalla ricerca e dagli anime
+          quale…) e il loro esito (completato, watching, ignorato, passato al prossimo, un episodio in
+          più o un altro stato), i voti dati (senza il voto),
+          annullamenti (anche dagli ultimi swipe), azioni sugli anime ignorati, stati impostati dalla ricerca e dagli anime
           correlati e dal confronto, confronti fatti, ricerche fatte su MyAnimeList (mai il testo
-          cercato né i nomi utente), le impostazioni generali (tema, lingua di titolo e sottotitolo, numero di
+          cercato né i nomi utente), mazzi mescolati o no, filtri usati (in che tipo di mazzo, non
+          quali), Cosa guardo? (un altro anime proposto o iniziato), condivisioni (di un anime o di
+          un confronto, mai quale), le impostazioni generali (tema, lingua di titolo e sottotitolo, numero di
           promemoria attivi, novità sì o no, lingua dell'app) e i dati tecnici che Firebase raccoglie
           da solo (modello del telefono, versioni di Android e di Mitayo, area approssimativa
           ricavata dall'indirizzo IP).</li>
@@ -198,13 +211,17 @@
       <p><strong>MyAnimeList</strong>: <code>myanimelist.net</code> for the login,
         <code>api.myanimelist.net</code> to read the catalog and your list and to change it (status,
         episodes watched and, if you give one, the score), for the search when you tap "Search on
-        MyAnimeList", for the public lists of the users you compare or whose deck you open,
+        MyAnimeList", for the public lists of the users you compare or whose deck you open, for your
+        whole list when you open Your statistics (the numbers stay only in memory),
         <code>cdn.myanimelist.net</code> for the pictures. <strong>YouTube</strong>: in the details of an
         anime with trailers, the video previews come from <code>i.ytimg.com</code>, and a video you tap
         opens in the YouTube app or in the browser, under Google's terms. Your list changes only when you decide
-        so: a right swipe, a swipe up with the episodes watched or undoing a swipe. What MyAnimeList does
+        so: a right swipe, a swipe up with the episodes watched, +1 in the Watching deck, "Start it" in
+        What to watch?, a status you pick or undoing a swipe. What MyAnimeList does
         with your data is governed by
         <a href="https://myanimelist.net/about/privacy_policy">MyAnimeList's privacy policy</a>.</p>
+      <p><strong>Share</strong>: an anime's MyAnimeList link or a comparison result go to the app you
+        pick from Android's menu; Mitayo sends nothing by itself.</p>
       <p><strong>GitHub</strong>, for updates: at most once a day the app asks
         <code>api.github.com</code> for the latest version of Mitayo, sending only the installed
         version (in the User-Agent header) and, like any request, your IP address. If you tap
@@ -215,7 +232,9 @@
       <p><strong>Reminders</strong>: they're notifications made on the phone, all off until you turn
         them on in Profile → Notifications. "New version" asks GitHub for the latest version once a
         day; "Season start" downloads the new season's list from MyAnimeList; "Weekly reminder"
-        counts the anime you have left, without internet.</p>
+        counts the anime you have left, without internet; "New episodes" checks, without internet,
+        which anime you're watching aired an episode in the last day, from the weekly time
+        MyAnimeList gives for them.</p>
       <p><strong>Google Firebase</strong> (Google Ireland Limited), only in the versions published on
         GitHub:</p>
       <ul>
@@ -226,10 +245,13 @@
           Turning them off in Profile → Notifications deletes the code.</li>
         <li><strong>Usage statistics</strong> (Google Analytics for Firebase), only if you agree: the
           screens opened, the swipes by kind of list (most popular, season, genre without saying
-          which…) and their outcome (completed, watching, skipped, passed to the next or another status), scores given (without the score),
-          undos, actions on the skipped anime, statuses set from the search and from the related
+          which…) and their outcome (completed, watching, skipped, passed to the next, one more
+          episode or another status), scores given (without the score),
+          undos (from the last swipes too), actions on the skipped anime, statuses set from the search and from the related
           anime and from a comparison, comparisons made, searches made on MyAnimeList (never the text
-          searched or the user names), the general settings (theme, title and subtitle language, number of reminders on,
+          searched or the user names), decks shuffled or not, filters used (in which kind of deck, not
+          which ones), What to watch? (another anime proposed or one started), shares (of an anime or
+          of a comparison, never which), the general settings (theme, title and subtitle language, number of reminders on,
           news yes or no, app language) and the technical data Firebase collects by itself (phone
           model, Android and Mitayo versions, approximate area derived from the IP address).</li>
         <li><strong>Crash reports</strong> (Firebase Crashlytics), only if you agree: where in the code
@@ -253,7 +275,7 @@
       <h2>Per quanto tempo</h2>
       <ul>
         <li>Finché resti collegato. Con <strong>Esci</strong> (Profilo) si cancellano dal telefono
-          il token, la lista, gli ignorati e le modifiche non ancora inviate;
+          il token, la lista, gli ignorati, gli ultimi swipe e le modifiche non ancora inviate;
           resta solo il catalogo pubblico degli anime.</li>
         <li>Disinstallando l'app si cancella tutto quello che è sul telefono.</li>
         <li>Statistiche d'uso: i dati legati all'installazione restano su Firebase al massimo 2 mesi
@@ -269,7 +291,7 @@
       <h2>How long</h2>
       <ul>
         <li>As long as you stay logged in. <strong>Log out</strong> (Profile) deletes from the phone
-          the token, the list, the skipped anime and the changes not sent yet; only
+          the token, the list, the skipped anime, the last swipes and the changes not sent yet; only
           the public anime catalog stays.</li>
         <li>Uninstalling the app deletes everything that is on the phone.</li>
         <li>Usage statistics: the data tied to the install stay on Firebase at most 2 months after the

@@ -51,9 +51,16 @@ data class Anime(
      * anime it doesn't see any more: deleted from MAL, or out of the downloaded range.
      */
     val lastSeenAt: Long,
+    /** Weekly broadcast in Japan, as MAL gives it: monday... sunday (null when unknown). */
+    val broadcastDay: String? = null,
+    /** Broadcast time in Japan (JST), "HH:mm"; null when unknown. */
+    val broadcastTime: String? = null,
 ) {
     /** Can't be completed yet: a right swipe asks the episodes watched and sets it as watching. */
     val isAiring: Boolean get() = airingStatus == "currently_airing" || airingStatus == "not_yet_aired"
+
+    /** Announced only: MAL takes nothing but plan to watch, so a right or up swipe sets that. */
+    val notYetAired: Boolean get() = airingStatus == "not_yet_aired"
 
     /** null when MAL hasn't the title in that language. */
     fun titleIn(language: TitleLanguage): String? = when (language) {
@@ -110,6 +117,45 @@ data class OutboxOp(
     val createdAt: Long,
     /** null: the score on MAL stays as it is; 0 clears it. */
     val score: Int? = null,
+)
+
+/** What a swipe did, in the swipe history. */
+enum class SwipeAction {
+    COMPLETED,
+    WATCHING,
+    SKIPPED,
+    /** One episode more, in the watching deck. */
+    EPISODE,
+    ON_HOLD,
+    DROPPED,
+    PLAN_TO_WATCH,
+}
+
+/**
+ * A swipe of a deck, kept (the last [SwipeHistory.MAX_RECORDS]) to undo it later from the
+ * history, also after leaving the deck. The entry it replaced is kept in its fields.
+ */
+@Entity(tableName = "swipe_history", indices = [Index("animeId")])
+data class SwipeRecord(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val animeId: Int,
+    val action: SwipeAction,
+    /** Episodes watched after the swipe, and the score given (0: none). */
+    val episodes: Int,
+    val score: Int,
+    /** The entry before the swipe; null status: the anime wasn't in the list. */
+    val previousStatus: ListStatus?,
+    val previousEpisodes: Int,
+    val previousScore: Int,
+    val at: Long,
+) {
+    val previous: ListEntry? get() = previousStatus?.let { ListEntry(animeId, it, previousEpisodes, previousScore) }
+}
+
+/** A record of the history with its anime, for the history page. */
+data class SwipeRecordCard(
+    @Embedded val record: SwipeRecord,
+    @Embedded(prefix = "anime_") val anime: Anime,
 )
 
 /** Order of an anime in a list that comes from MAL as is (current season, suggestions). */

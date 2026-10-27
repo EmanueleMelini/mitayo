@@ -14,6 +14,7 @@ import androidx.compose.material.icons.rounded.ChildCare
 import androidx.compose.material.icons.rounded.Computer
 import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.DoorFront
+import androidx.compose.material.icons.rounded.EditCalendar
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Explicit
 import androidx.compose.material.icons.rounded.Explore
@@ -64,6 +65,7 @@ import androidx.compose.material.icons.rounded.Style
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.TheaterComedy
 import androidx.compose.material.icons.rounded.TwoWheeler
+import androidx.compose.material.icons.rounded.Upcoming
 import androidx.compose.material.icons.rounded.Whatshot
 import androidx.compose.material.icons.rounded.Work
 import androidx.compose.runtime.Composable
@@ -81,6 +83,8 @@ fun Category.icon(): ImageVector = when (this) {
     Category.TopRated -> Icons.Rounded.Star
     Category.Airing -> Icons.Rounded.LiveTv
     Category.Season -> Icons.Rounded.CalendarMonth
+    Category.Upcoming -> Icons.Rounded.Upcoming
+    is Category.OfSeason -> Icons.Rounded.EditCalendar
     Category.Movies -> Icons.Rounded.Movie
     Category.Suggested -> Icons.Rounded.Recommend
     is Category.OfGenre -> genreIcon(genreId)
@@ -99,6 +103,8 @@ fun Category.title(genreName: String? = null): String = when (this) {
         val season = AnimeSeason.current()
         stringResource(R.string.category_season, seasonName(season.season).orEmpty(), season.year)
     }
+    is Category.OfSeason -> stringResource(R.string.category_season, seasonName(season).orEmpty(), year)
+    Category.Upcoming -> stringResource(R.string.category_upcoming)
     Category.Movies -> stringResource(R.string.category_movies)
     Category.Suggested -> stringResource(R.string.category_suggested)
     is Category.OfGenre -> genreName.orEmpty()

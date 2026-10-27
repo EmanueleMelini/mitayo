@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.CompareArrows
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -57,6 +58,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -77,7 +79,9 @@ import it.emanuelemelini.mitayo.data.db.DeckCard
 import it.emanuelemelini.mitayo.data.db.ListStatus
 import it.emanuelemelini.mitayo.data.mal.MalAnime
 import it.emanuelemelini.mitayo.data.mal.MalUserAnime
+import it.emanuelemelini.mitayo.data.telemetry.ShareKind
 import it.emanuelemelini.mitayo.data.toAnime
+import it.emanuelemelini.mitayo.ui.AppLinks
 import it.emanuelemelini.mitayo.ui.appContainer
 import it.emanuelemelini.mitayo.ui.components.StatusMenu
 import it.emanuelemelini.mitayo.ui.components.listStatusLabel
@@ -87,6 +91,7 @@ import it.emanuelemelini.mitayo.ui.deck.AnimeDetailsSheet
 import it.emanuelemelini.mitayo.ui.deck.EpisodesDialog
 import it.emanuelemelini.mitayo.ui.deck.EpisodesPrompt
 import it.emanuelemelini.mitayo.ui.deck.SwipeDirection
+import it.emanuelemelini.mitayo.ui.shareText
 import it.emanuelemelini.mitayo.ui.theme.MitayoColors
 import java.text.NumberFormat
 import kotlin.math.abs
@@ -116,6 +121,13 @@ fun CompareScreen(onBack: () -> Unit) {
     var episodesFor by remember { mutableStateOf<MalUserAnime?>(null) }
     val me = state.myName ?: stringResource(R.string.compare_me)
     fun label(side: CompareSide) = side.name ?: me
+
+    val context = LocalContext.current
+    val shareTitle = stringResource(R.string.share_title)
+    fun shareComparison(text: String) {
+        container.telemetry.logShare(ShareKind.COMPARISON)
+        shareText(context, text, shareTitle)
+    }
 
     /** Watching asks the episodes first, as a swipe up does. */
     fun setStatus(entry: MalUserAnime, status: ListStatus) {
@@ -154,7 +166,7 @@ fun CompareScreen(onBack: () -> Unit) {
             if (state.loading) return@LazyColumn
             val labelA = label(result.a)
             val labelB = label(result.b)
-            item(key = "header") { ResultHeader(labelA, labelB, result) }
+            item(key = "header") { ResultHeader(labelA, labelB, result, onShare = { text -> shareComparison(text) }) }
             item(key = "tabs") {
                 PrimaryScrollableTabRow(selectedTabIndex = tab.ordinal, edgePadding = 0.dp, containerColor = Color.Transparent) {
                     CompareTab.entries.forEach { entry ->
@@ -287,8 +299,17 @@ private fun NameField(value: String, onChange: (String) -> Unit, imeAction: ImeA
 }
 
 @Composable
-private fun ResultHeader(labelA: String, labelB: String, result: CompareResult) {
+private fun ResultHeader(labelA: String, labelB: String, result: CompareResult, onShare: (String) -> Unit) {
     val locale = LocalConfiguration.current.locales[0]
+    val affinityText = result.comparison.affinity?.let { String.format(locale, "%.1f%%", it) } ?: "–"
+    val shareText = stringResource(
+        R.string.share_comparison_text,
+        labelA,
+        labelB,
+        affinityText,
+        result.comparison.shared.size,
+        AppLinks.site.toString(),
+    )
     Card(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
@@ -303,7 +324,7 @@ private fun ResultHeader(labelA: String, labelB: String, result: CompareResult) 
             Spacer(Modifier.height(8.dp))
             val affinity = result.comparison.affinity
             Text(
-                text = affinity?.let { String.format(locale, "%.1f%%", it) } ?: "–",
+                text = affinityText,
                 style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
@@ -319,6 +340,11 @@ private fun ResultHeader(labelA: String, labelB: String, result: CompareResult) 
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
+            TextButton(onClick = { onShare(shareText) }) {
+                Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(6.dp))
+                Text(stringResource(R.string.action_share))
+            }
         }
     }
 }

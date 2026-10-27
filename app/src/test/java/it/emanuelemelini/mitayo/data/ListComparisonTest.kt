@@ -2,6 +2,7 @@ package it.emanuelemelini.mitayo.data
 
 import it.emanuelemelini.mitayo.data.db.ListStatus
 import it.emanuelemelini.mitayo.data.mal.MalAnime
+import it.emanuelemelini.mitayo.data.mal.MalGenre
 import it.emanuelemelini.mitayo.data.mal.MalListStatus
 import it.emanuelemelini.mitayo.data.mal.MalUserAnime
 import org.junit.Assert.assertEquals
@@ -26,6 +27,22 @@ class ListComparisonTest {
         entry(2, "dropped", 3, 4),
         entry(5, "completed", 1, 10, duration = 7200),
     )
+
+    @Test
+    fun topGenresSkipThePlanToWatch() {
+        fun withGenres(id: Int, status: String, vararg names: String) = MalUserAnime(
+            node = MalAnime(id = id, title = "Anime $id", genres = names.mapIndexed { index, name -> MalGenre(index, name) }),
+            listStatus = MalListStatus(status = status, episodesWatched = 0, score = 0),
+        )
+        val list = listOf(
+            withGenres(1, "completed", "Action", "Comedy"),
+            withGenres(2, "watching", "Action"),
+            withGenres(3, "dropped", "Romance"),
+            withGenres(4, "plan_to_watch", "Romance", "Romance"),
+        )
+        assertEquals(listOf("Action" to 2, "Comedy" to 1, "Romance" to 1), ListComparison.topGenres(list))
+        assertEquals(listOf("Action" to 2), ListComparison.topGenres(list, limit = 1))
+    }
 
     @Test
     fun statsCountStatusesEpisodesAndScores() {

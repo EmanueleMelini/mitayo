@@ -15,6 +15,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material.icons.rounded.Celebration
+import androidx.compose.material.icons.rounded.ShuffleOn
+import androidx.compose.material.icons.rounded.Shuffle
+import androidx.compose.material.icons.rounded.PlusOne
+import androidx.compose.material.icons.rounded.FilterListOff
+import androidx.compose.material.icons.rounded.FilterList
+import androidx.compose.material.icons.rounded.BookmarkAdd
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Info
@@ -42,11 +49,16 @@ import androidx.compose.material.icons.rounded.Replay
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -91,6 +103,7 @@ import coil3.imageLoader
 import coil3.request.ImageRequest
 import it.emanuelemelini.mitayo.R
 import it.emanuelemelini.mitayo.data.Category
+import it.emanuelemelini.mitayo.data.DeckFilters
 import it.emanuelemelini.mitayo.data.TitleChoice
 import it.emanuelemelini.mitayo.data.db.DeckCard
 import it.emanuelemelini.mitayo.data.db.ListStatus
@@ -133,11 +146,15 @@ fun DeckScreen(categoryKey: String, onBack: () -> Unit) {
             container.telemetry,
             container.statusEditor,
             container.otherLists,
+            container.swipeHistory,
         )
     }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     // Your own list: left doesn't skip, it only moves on
     val leftPasses = category is Category.OfStatus
+    // The watching deck: ▶ adds the episode just seen
+    val addsEpisodes = category == Category.OfStatus(ListStatus.WATCHING)
+    var showFilters by rememberSaveable { mutableStateOf(false) }
     val details by viewModel.details.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -180,7 +197,19 @@ fun DeckScreen(categoryKey: String, onBack: () -> Unit) {
                 },
                 actions = {
                     if (state.loadingMore) {
-                        CircularProgressIndicator(Modifier.padding(end = 16.dp).size(20.dp), strokeWidth = 2.dp)
+                        CircularProgressIndicator(Modifier.padding(end = 8.dp).size(20.dp), strokeWidth = 2.dp)
+                    }
+                    IconButton(onClick = viewModel::toggleShuffle) {
+                        Icon(
+                            imageVector = if (state.shuffled) Icons.Rounded.ShuffleOn else Icons.Rounded.Shuffle,
+                            contentDescription = stringResource(if (state.shuffled) R.string.action_shuffle_off else R.string.action_shuffle_on),
+                            tint = if (state.shuffled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    IconButton(onClick = { showFilters = true }) {
+                        BadgedBox(badge = { if (state.filters.active) Badge() }) {
+                            Icon(Icons.Rounded.FilterList, contentDescription = stringResource(R.string.action_filters))
+                        }
                     }
                 },
             )
@@ -251,8 +280,17 @@ fun DeckScreen(categoryKey: String, onBack: () -> Unit) {
                                 action = stringResource(R.string.action_retry),
                                 onAction = viewModel::retry,
                             )
+                            // Nothing with these filters: they can go at once
+                            DeckBody.DONE -> if (state.filters.active) {
+                                Message(
+                                    icon = Icons.Rounded.FilterListOff,
+                                    title = stringResource(R.string.deck_filtered_title),
+                                    body = stringResource(R.string.deck_filtered_body),
+                                    action = stringResource(R.string.filters_reset),
+                                    onAction = { viewModel.setFilters(DeckFilters()) },
+                                )
                             // A deck by status passed through: the passed cards can come back
-                            DeckBody.DONE -> if (state.passed > 0) {
+                            } else if (state.passed > 0) {
                                 Message(
                                     icon = Icons.Rounded.Replay,
                                     title = stringResource(R.string.deck_passed_title),
@@ -280,6 +318,9 @@ fun DeckScreen(categoryKey: String, onBack: () -> Unit) {
                                 scope = scope,
                                 onSwiped = { card, direction -> viewModel.swipe(card, direction) },
                                 onTap = viewModel::openDetails,
+                                onOtherStatus = { card, status ->
+                                    scope.launch { if (topState.fling(SwipeDirection.UP)) viewModel.setStatus(card, status) }
+                                },
                             )
                         }
                     }
@@ -288,18 +329,15 @@ fun DeckScreen(categoryKey: String, onBack: () -> Unit) {
                     topState = topState.takeIf { top != null },
                     hasCard = top != null,
                     leftPasses = leftPasses,
+                    addsEpisodes = addsEpisodes,
+                    planToWatch = top?.anime?.notYetAired == true,
                     canUndo = state.canUndo,
                     // An anime still airing can't be completed, with or without a score
                     canScore = top != null && !top.anime.isAiring,
                     onSwipe = { swipeTop(it) },
+                    onAddEpisode = { top?.let(viewModel::addEpisode) },
                     onUndo = viewModel::undo,
                     onScore = { scoringId = top?.anime?.id },
-                    otherStatuses = OTHER_STATUSES.filter { it != top?.listStatus },
-                    onOtherStatus = { status ->
-                        val card = top
-                        if (card != null) scope.launch { if (topState.fling(SwipeDirection.UP)) viewModel.setStatus(card, status) }
-                    },
-                    onInfo = { top?.let(viewModel::openDetails) },
                 )
                 top?.takeIf { it.anime.id == scoringId }?.let { card ->
                     ScoreDialog(
@@ -313,7 +351,35 @@ fun DeckScreen(categoryKey: String, onBack: () -> Unit) {
                     )
                 }
             }
+            state.finishPrompt?.let { card ->
+                AlertDialog(
+                    onDismissRequest = viewModel::closeFinishPrompt,
+                    title = { Text(stringResource(R.string.finish_title)) },
+                    text = { Text(stringResource(R.string.finish_text, card.anime.displayTitle(state.titles))) },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.closeFinishPrompt()
+                            swipeTop(SwipeDirection.RIGHT)
+                        }) { Text(stringResource(R.string.finish_completed)) }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = viewModel::keepWatching) { Text(stringResource(R.string.finish_keep_watching)) }
+                    },
+                )
+            }
+            if (state.showGuide && top != null) SwipeGuide(leftPasses, onDismiss = viewModel::onGuideSeen)
         }
+    }
+
+    if (showFilters) {
+        DeckFiltersSheet(
+            filters = state.filters,
+            onChange = viewModel::setFilters,
+            onDismiss = {
+                showFilters = false
+                viewModel.onFiltersClosed()
+            },
+        )
     }
 
     details?.let {
@@ -356,6 +422,8 @@ private fun CardStack(
     scope: CoroutineScope,
     onSwiped: (DeckCard, SwipeDirection) -> Unit,
     onTap: (DeckCard) -> Unit,
+    /** The ⋯ button on the top card. */
+    onOtherStatus: (DeckCard, ListStatus) -> Unit,
 ) {
     val density = LocalDensity.current
     val stepPx = with(density) { 14.dp.toPx() }
@@ -394,7 +462,17 @@ private fun CardStack(
                                 translationY = depth * stepPx
                             }
                         },
-                        overlay = { if (isTop) SwipeStamps(topState, leftPasses) },
+                        overlay = {
+                            if (isTop) {
+                                SwipeStamps(topState, leftPasses, planToWatch = card.anime.notYetAired)
+                                CardButtons(
+                                    state = topState,
+                                    otherStatuses = OTHER_STATUSES.filter { it != card.listStatus },
+                                    onOtherStatus = { onOtherStatus(card, it) },
+                                    onInfo = { onTap(card) },
+                                )
+                            }
+                        },
                     )
                 }
             }
@@ -447,29 +525,38 @@ private fun ArmedHaptics(state: SwipeState) {
     }
 }
 
+/**
+ * Small, big, medium, big, small around the centre: undo, left, up, right, score. ⋯ and ⓘ are on
+ * the card ([CardButtons]).
+ */
 @Composable
 private fun ActionBar(
     topState: SwipeState?,
     hasCard: Boolean,
     /** A deck by status: the left button moves on instead of skipping. */
     leftPasses: Boolean,
+    /** The watching deck: ▶ is +1, without the card leaving. */
+    addsEpisodes: Boolean,
+    /** The top card is only announced: right sets plan to watch, ▶ isn't possible. */
+    planToWatch: Boolean,
     canUndo: Boolean,
     canScore: Boolean,
     onSwipe: (SwipeDirection) -> Unit,
+    onAddEpisode: () -> Unit,
     onUndo: () -> Unit,
     onScore: () -> Unit,
-    otherStatuses: List<ListStatus>,
-    onOtherStatus: (ListStatus) -> Unit,
-    onInfo: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().height(ActionBarHeight).navigationBarsPadding(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        FilledTonalIconButton(onClick = onUndo, enabled = canUndo) {
-            Icon(Icons.AutoMirrored.Rounded.Undo, contentDescription = stringResource(R.string.action_undo))
-        }
+        SideButton(
+            icon = Icons.AutoMirrored.Rounded.Undo,
+            description = stringResource(R.string.action_undo),
+            enabled = canUndo,
+            onClick = onUndo,
+        )
         // Finished deck: only undo is left
         if (!hasCard) return@Row
         ActionButton(
@@ -480,42 +567,95 @@ private fun ActionBar(
             description = stringResource(if (leftPasses) R.string.action_next else R.string.action_skip),
             onClick = { onSwipe(SwipeDirection.LEFT) },
         )
+        if (addsEpisodes) {
+            // The swipe up still asks the episodes: this button doesn't fill with it
+            ActionButton(
+                icon = Icons.Rounded.PlusOne,
+                color = MitayoColors.Kin,
+                size = 52.dp,
+                progress = 0f,
+                description = stringResource(R.string.action_add_episode),
+                onClick = onAddEpisode,
+            )
+        } else {
+            ActionButton(
+                icon = Icons.Rounded.PlayArrow,
+                color = MitayoColors.Kin,
+                size = 52.dp,
+                progress = if (planToWatch) 0f else topState?.progress(SwipeDirection.UP) ?: 0f,
+                description = stringResource(R.string.action_watching),
+                enabled = !planToWatch,
+                onClick = { onSwipe(SwipeDirection.UP) },
+            )
+        }
         ActionButton(
-            icon = Icons.Rounded.PlayArrow,
-            color = MitayoColors.Kin,
-            size = 52.dp,
-            progress = topState?.progress(SwipeDirection.UP) ?: 0f,
-            description = stringResource(R.string.action_watching),
-            onClick = { onSwipe(SwipeDirection.UP) },
-        )
-        ActionButton(
-            icon = Icons.Rounded.Check,
-            color = MitayoColors.Matcha,
+            icon = if (planToWatch) Icons.Rounded.BookmarkAdd else Icons.Rounded.Check,
+            color = if (planToWatch) MitayoColors.Sakura else MitayoColors.Matcha,
             size = 64.dp,
             progress = topState?.progress(SwipeDirection.RIGHT) ?: 0f,
-            description = stringResource(R.string.action_completed),
+            description = stringResource(if (planToWatch) R.string.action_plan_to_watch else R.string.action_completed),
             onClick = { onSwipe(SwipeDirection.RIGHT) },
         )
-        FilledTonalIconButton(onClick = onScore, enabled = canScore) {
-            Icon(Icons.Rounded.Star, contentDescription = stringResource(R.string.action_score))
-        }
-        OtherStatusesButton(otherStatuses, enabled = topState != null, onSelect = onOtherStatus)
-        FilledTonalIconButton(onClick = onInfo, enabled = topState != null) {
-            Icon(Icons.Rounded.Info, contentDescription = stringResource(R.string.action_details))
-        }
+        SideButton(
+            icon = Icons.Rounded.Star,
+            description = stringResource(R.string.action_score),
+            enabled = canScore,
+            tint = MitayoColors.Kin,
+            onClick = onScore,
+        )
+    }
+}
+
+/** The two small buttons at the ends of the bar, on a neutral background. */
+@Composable
+private fun SideButton(
+    icon: ImageVector,
+    description: String,
+    enabled: Boolean,
+    onClick: () -> Unit,
+    tint: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+) {
+    FilledTonalIconButton(
+        onClick = onClick,
+        enabled = enabled,
+        colors = IconButtonDefaults.filledTonalIconButtonColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = tint,
+        ),
+        modifier = Modifier.size(44.dp),
+    ) {
+        Icon(icon, contentDescription = description, modifier = Modifier.size(22.dp))
     }
 }
 
 /** The statuses no swipe gives: on hold, dropped, plan to watch (without the card's own). */
 private val OTHER_STATUSES = listOf(ListStatus.ON_HOLD, ListStatus.DROPPED, ListStatus.PLAN_TO_WATCH)
 
+/** ⋯ and ⓘ in the corner of the top card: they fade while it's dragged, as the stamps come in. */
 @Composable
-private fun OtherStatusesButton(statuses: List<ListStatus>, enabled: Boolean, onSelect: (ListStatus) -> Unit) {
+private fun BoxScope.CardButtons(
+    state: SwipeState,
+    otherStatuses: List<ListStatus>,
+    onOtherStatus: (ListStatus) -> Unit,
+    onInfo: () -> Unit,
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .padding(12.dp)
+            .graphicsLayer { alpha = 1f - state.maxProgress.coerceIn(0f, 1f) },
+    ) {
+        OtherStatusesButton(otherStatuses, onSelect = onOtherStatus)
+        GlassButton(Icons.Rounded.Info, stringResource(R.string.action_details), onClick = onInfo)
+    }
+}
+
+@Composable
+private fun OtherStatusesButton(statuses: List<ListStatus>, onSelect: (ListStatus) -> Unit) {
     var open by remember { mutableStateOf(false) }
     Box {
-        FilledTonalIconButton(onClick = { open = true }, enabled = enabled && statuses.isNotEmpty()) {
-            Icon(Icons.Rounded.MoreHoriz, contentDescription = stringResource(R.string.action_other_statuses))
-        }
+        GlassButton(Icons.Rounded.MoreHoriz, stringResource(R.string.action_other_statuses), onClick = { open = true })
         DropdownMenu(expanded = open, onDismissRequest = { open = false }, shape = RoundedCornerShape(16.dp)) {
             statuses.forEach { status ->
                 DropdownMenuItem(
@@ -527,6 +667,23 @@ private fun OtherStatusesButton(statuses: List<ListStatus>, enabled: Boolean, on
                     },
                 )
             }
+        }
+    }
+}
+
+/** Dark and see-through, readable on any poster: the card's own text is light on dark too. */
+@Composable
+private fun GlassButton(icon: ImageVector, description: String, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        shape = CircleShape,
+        color = MitayoColors.Sumi.copy(alpha = 0.55f),
+        contentColor = Color.White,
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.22f)),
+        modifier = Modifier.size(40.dp),
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Icon(icon, contentDescription = description, modifier = Modifier.size(20.dp))
         }
     }
 }
@@ -543,6 +700,7 @@ private fun ActionButton(
     progress: Float,
     description: String,
     onClick: () -> Unit,
+    enabled: Boolean = true,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
@@ -553,6 +711,7 @@ private fun ActionButton(
     )
     Surface(
         onClick = onClick,
+        enabled = enabled,
         shape = CircleShape,
         color = color.copy(alpha = 0.10f + 0.55f * progress),
         border = BorderStroke(2.dp, color),
@@ -560,6 +719,7 @@ private fun ActionButton(
         modifier = Modifier
             .size(size)
             .graphicsLayer {
+                alpha = if (enabled) 1f else DISABLED_ALPHA
                 val scale = pressScale * (1f + 0.12f * progress)
                 scaleX = scale
                 scaleY = scale
@@ -624,3 +784,6 @@ private fun Message(icon: ImageVector?, title: String, body: String?, action: St
 private enum class DeckBody { LOADING, LOADING_MORE, ERROR, DONE, CARDS }
 
 private const val BODY_FADE_MS = 220
+
+/** A round button that can't be used now, as Material dims them. */
+private const val DISABLED_ALPHA = 0.38f

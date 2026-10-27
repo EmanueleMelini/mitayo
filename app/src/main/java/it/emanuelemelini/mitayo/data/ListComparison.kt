@@ -77,6 +77,20 @@ object ListComparison {
         )
     }
 
+    /**
+     * The genres (themes and demographics too) of the anime seen or being seen, the most frequent
+     * first: plan to watch doesn't count. At most [limit].
+     */
+    fun topGenres(list: List<MalUserAnime>, limit: Int = TOP_GENRES): List<Pair<String, Int>> =
+        list.filter { it.listStatus.status != ListStatus.PLAN_TO_WATCH.apiValue }
+            .flatMap { entry -> entry.node.genres.map { it.name } }
+            .groupingBy { it }
+            .eachCount()
+            .entries
+            .sortedWith(compareByDescending<Map.Entry<String, Int>> { it.value }.thenBy { it.key })
+            .take(limit)
+            .map { it.key to it.value }
+
     /** Pearson correlation as a percentage, like MAL's old "affinity". */
     internal fun affinity(pairs: List<Pair<Double, Double>>): Double? {
         if (pairs.size < 2) return null
@@ -97,4 +111,5 @@ object ListComparison {
     private fun List<Double>.averageOrNull(): Double? = if (isEmpty()) null else average()
 
     private const val SECONDS_PER_DAY = 86_400.0
+    private const val TOP_GENRES = 10
 }

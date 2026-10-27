@@ -8,7 +8,7 @@ sealed interface Category {
     val key: String
 
     /** The list comes from MAL as is (and is cached), instead of from the local catalog. */
-    val isRemote: Boolean get() = this == Season || this == Suggested || this is OfUser
+    val isRemote: Boolean get() = this == Season || this == Upcoming || this == Suggested || this is OfSeason || this is OfUser
 
     data object Popular : Category {
         override val key = "popular"
@@ -26,12 +26,29 @@ sealed interface Category {
         override val key = "season"
     }
 
+    /** Announced anime, the most awaited first (MAL ranking "upcoming"). */
+    data object Upcoming : Category {
+        override val key = "upcoming"
+    }
+
     data object Movies : Category {
         override val key = "movies"
     }
 
     data object Suggested : Category {
         override val key = "suggested"
+    }
+
+    /** Another season (past or next) from MAL's seasonal list; one at a time stays on the phone. */
+    data class OfSeason(val year: Int, val season: String) : Category {
+        override val key: String get() = "$SEASON_PREFIX$year:$season"
+
+        companion object {
+            val SEASONS = listOf("winter", "spring", "summer", "fall")
+            const val FIRST_YEAR = 1970
+
+            fun isValid(year: Int, season: String): Boolean = year >= FIRST_YEAR && season in SEASONS
+        }
     }
 
     /** A MAL genre, theme or demographic. */
@@ -71,11 +88,17 @@ sealed interface Category {
         private const val GENRE_PREFIX = "genre:"
         private const val STATUS_PREFIX = "status:"
         private const val DECADE_PREFIX = "decade:"
+        /** Also the remote_lists keys of the other seasons. */
+        const val SEASON_PREFIX = "season:"
         /** Also the remote_lists keys of the other users' decks. */
         const val USER_PREFIX = "user:"
 
-        /** Lists at the top of the categories screen, in this order. */
-        val specials: List<Category> = listOf(Popular, TopRated, Airing, Season, Movies, Suggested)
+        /**
+         * Lists at the top of the categories screen, in this order. Lazy: when a data object is the
+         * first thing used, the companion starts in the middle of that object's start, and a list
+         * built right then would hold null in its place.
+         */
+        val specials: List<Category> by lazy { listOf(Popular, TopRated, Airing, Season, Upcoming, Movies, Suggested) }
 
         fun fromKey(key: String): Category? =
             specials.firstOrNull { it.key == key }
@@ -86,6 +109,9 @@ sealed interface Category {
                     ?.takeIf(MalUserNames::isValid)?.let(::OfUser)
                 ?: key.takeIf { it.startsWith(STATUS_PREFIX) }?.removePrefix(STATUS_PREFIX)
                     ?.let(ListStatus::fromApi)?.let(::OfStatus)
+                ?: key.takeIf { it.startsWith(SEASON_PREFIX) }?.removePrefix(SEASON_PREFIX)?.split(':')
+                    ?.takeIf { it.size == 2 }?.let { (year, season) -> year.toIntOrNull()?.let { OfSeason(it, season) } }
+                    ?.takeIf { OfSeason.isValid(it.year, it.season) }
     }
 }
 

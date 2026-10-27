@@ -102,18 +102,21 @@ class CatalogRepository(
         return age > REMOTE_MAX_AGE_MS || animeDao.remoteListSize(category.key) == 0
     }
 
-    /** Downloads a list that comes from MAL as is (current season, suggestions) and keeps its order. */
+    /** Downloads a list that comes from MAL as is (seasons, upcoming, suggestions) and keeps its order. */
     suspend fun refreshRemoteList(category: Category) {
         val anime = when (category) {
             Category.Season -> {
                 val season = AnimeSeason.current()
                 pages(REMOTE_MAX_PAGES) { offset -> api.season(season.year, season.season, offset) }
             }
+            is Category.OfSeason -> pages(REMOTE_MAX_PAGES) { offset -> api.season(category.year, category.season, offset) }
+            Category.Upcoming -> pages(REMOTE_MAX_PAGES) { offset -> api.upcoming(offset) }
             Category.Suggested -> pages(REMOTE_MAX_PAGES) { offset -> api.suggestions(offset) }
             else -> return
         }.distinctBy { it.id }
         save(anime)
         database.withTransaction {
+            if (category is Category.OfSeason) animeDao.clearOtherSeasons(except = category.key)
             animeDao.clearRemoteList(category.key)
             animeDao.insertRemoteList(anime.mapIndexed { index, item -> RemoteListItem(category.key, item.id, index) })
         }
@@ -222,4 +225,6 @@ fun MalAnime.toAnime(seenAt: Long = System.currentTimeMillis()) = Anime(
     nsfw = nsfw == "black",
     genreNames = genres.joinToString(", ") { it.name },
     lastSeenAt = seenAt,
+    broadcastDay = broadcast?.dayOfTheWeek?.takeIf { it.isNotBlank() },
+    broadcastTime = broadcast?.startTime?.takeIf { it.isNotBlank() },
 )

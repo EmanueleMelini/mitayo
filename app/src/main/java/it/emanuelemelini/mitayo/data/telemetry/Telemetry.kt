@@ -13,7 +13,13 @@ import it.emanuelemelini.mitayo.data.Category
 import it.emanuelemelini.mitayo.data.prefs.Settings
 
 /** What a swipe (or the episodes dialog after it, or the ⋯ menu) did: on MAL, or skipped or passed in the app. */
-enum class SwipeOutcome { COMPLETED, WATCHING, SKIPPED, PASSED, ON_HOLD, DROPPED, PLAN_TO_WATCH }
+enum class SwipeOutcome { COMPLETED, WATCHING, SKIPPED, PASSED, ON_HOLD, DROPPED, PLAN_TO_WATCH, EPISODE }
+
+/** "What do I watch tonight?" on the categories screen. */
+enum class TonightAction { PICK, START }
+
+/** What was shared. */
+enum class ShareKind { ANIME, COMPARISON }
 
 /** What the user did on the skipped anime page. */
 enum class SkippedAction { RESTORE, SET_STATUS, RESTORE_ALL }
@@ -116,6 +122,31 @@ class Telemetry(private val context: Context) {
         analytics?.logEvent(EVENT_UNDO, Bundle().apply { putString(PARAM_DECK, deckName(category)) })
     }
 
+    /** The decks shuffled or back in their order. */
+    fun logShuffle(on: Boolean) {
+        analytics?.logEvent(EVENT_SHUFFLE, Bundle().apply { putString(PARAM_ON, on.toString()) })
+    }
+
+    /** Filters used in a deck; never which ones or their values. */
+    fun logDeckFilters(category: Category) {
+        analytics?.logEvent(EVENT_FILTERS, Bundle().apply { putString(PARAM_DECK, deckName(category)) })
+    }
+
+    /** "What do I watch tonight?": another anime proposed, or the proposed one started. */
+    fun logTonight(action: TonightAction) {
+        analytics?.logEvent(EVENT_TONIGHT, Bundle().apply { putString(PARAM_ACTION, action.name.lowercase()) })
+    }
+
+    /** A swipe undone from the history page. */
+    fun logHistoryUndo() {
+        analytics?.logEvent(EVENT_HISTORY_UNDO, null)
+    }
+
+    /** Something shared from the app: an anime's MAL link or a comparison; never which. */
+    fun logShare(what: ShareKind) {
+        analytics?.logEvent(EVENT_SHARE, Bundle().apply { putString(PARAM_WHAT, what.name.lowercase()) })
+    }
+
     fun logSkippedAction(action: SkippedAction) {
         analytics?.logEvent(EVENT_SKIPPED_ACTION, Bundle().apply { putString(PARAM_ACTION, action.name.lowercase()) })
     }
@@ -155,6 +186,7 @@ class Telemetry(private val context: Context) {
         is Category.OfDecade -> "decade"
         is Category.OfUser -> "user"
         is Category.OfStatus -> "status_${category.status.apiValue}"
+        is Category.OfSeason -> "season_other"
         else -> category.key
     }
 
@@ -168,6 +200,13 @@ class Telemetry(private val context: Context) {
         const val EVENT_RELATED_SET_STATUS = "related_set_status"
         const val EVENT_COMPARE = "compare"
         const val EVENT_COMPARE_SET_STATUS = "compare_set_status"
+        const val EVENT_SHUFFLE = "deck_shuffle"
+        const val EVENT_TONIGHT = "tonight"
+        const val EVENT_HISTORY_UNDO = "history_undo"
+        const val EVENT_SHARE = "share"
+        const val PARAM_WHAT = "what"
+        const val EVENT_FILTERS = "deck_filters"
+        const val PARAM_ON = "on"
         const val PARAM_WITH_ME = "with_me"
         const val PARAM_DECK = "deck"
         const val PARAM_OUTCOME = "outcome"

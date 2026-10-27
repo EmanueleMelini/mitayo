@@ -39,10 +39,15 @@ class MalApi(private val http: OkHttpClient, private val auth: MalAuth) {
     )
 
     /** Most popular first: the order of the catalog. */
-    suspend fun popularity(offset: Int): MalPage<MalNode> = get(
+    suspend fun popularity(offset: Int): MalPage<MalNode> = ranking("bypopularity", offset)
+
+    /** The most awaited of the announced anime first. */
+    suspend fun upcoming(offset: Int): MalPage<MalNode> = ranking("upcoming", offset)
+
+    private suspend fun ranking(type: String, offset: Int): MalPage<MalNode> = get(
         "anime/ranking",
         mapOf(
-            "ranking_type" to "bypopularity",
+            "ranking_type" to type,
             "limit" to "$RANKING_PAGE_SIZE",
             "offset" to "$offset",
             "fields" to CARD_FIELDS,
@@ -141,6 +146,6 @@ class MalApi(private val http: OkHttpClient, private val auth: MalAuth) {
         /** What a swipe card shows. */
         private const val CARD_FIELDS =
             "id,title,main_picture,alternative_titles,mean,popularity,num_list_users,media_type,status," +
-                "genres,num_episodes,start_season,nsfw"
+                "genres,num_episodes,start_season,nsfw,broadcast"
     }
 }

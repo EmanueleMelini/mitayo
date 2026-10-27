@@ -15,7 +15,8 @@ class CategoryTest {
     @Test
     fun keysRoundTrip() {
         (Category.specials + Category.OfGenre(62) + Category.OfDecade(2010) + Category.OfDecade(Category.OfDecade.BEFORE) +
-            Category.OfUser("LeleMims") + ListStatus.entries.map { Category.OfStatus(it) }).forEach { category ->
+            Category.OfUser("LeleMims") + ListStatus.entries.map { Category.OfStatus(it) } +
+            Category.OfSeason(2019, "spring") + Category.OfSeason(Category.OfSeason.FIRST_YEAR, "fall")).forEach { category ->
             assertEquals(category, Category.fromKey(category.key))
         }
     }
@@ -26,6 +27,18 @@ class CategoryTest {
         assertNull(Category.fromKey("nope"))
         assertNull(Category.fromKey("decade:2015"))
         assertNull(Category.fromKey("decade:1970"))
+        assertNull(Category.fromKey("season:2019:monsoon"))
+        assertNull(Category.fromKey("season:1950:spring"))
+        assertNull(Category.fromKey("season:2019"))
+    }
+
+    @Test
+    fun upcomingAndOtherSeasonsAreRemote() {
+        assertEquals(Category.Upcoming, Category.fromKey("upcoming"))
+        assertEquals(true, Category.Upcoming.isRemote)
+        assertEquals(true, Category.OfSeason(2019, "spring").isRemote)
+        // The current season keeps its own key, the others don't clash with it
+        assertEquals(Category.Season, Category.fromKey("season"))
     }
 
     @Test

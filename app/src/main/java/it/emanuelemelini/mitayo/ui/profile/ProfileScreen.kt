@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.CloudUpload
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Insights
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Shield
@@ -95,7 +96,7 @@ internal fun profileViewModel(): ProfileViewModel {
  * enter one after the other the first time the menu is shown.
  */
 @Composable
-fun ProfileScreen(onOpenPage: (ProfilePage) -> Unit) {
+fun ProfileScreen(onOpenPage: (ProfilePage) -> Unit, onOpenStats: () -> Unit) {
     val container = appContainer()
     val viewModel = profileViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -133,6 +134,17 @@ fun ProfileScreen(onOpenPage: (ProfilePage) -> Unit) {
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.entrance(1)) {
             StatCard(stringResource(R.string.profile_stat_completed), state.stats.completed, MitayoColors.Matcha, Modifier.weight(1f))
             StatCard(stringResource(R.string.profile_stat_skipped), state.stats.skipped, MitayoColors.Aka, Modifier.weight(1f))
+        }
+
+        PageCard(Modifier.entrance(1)) {
+            ListItem(
+                leadingContent = { Icon(Icons.Rounded.Insights, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                headlineContent = { Text(stringResource(R.string.stats_title)) },
+                supportingContent = { Text(stringResource(R.string.stats_summary)) },
+                trailingContent = { Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = null) },
+                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                modifier = Modifier.clickableRow(onClick = dropUnlessResumed(block = onOpenStats)),
+            )
         }
 
         AnimatedVisibility(

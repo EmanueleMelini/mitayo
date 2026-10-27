@@ -49,6 +49,8 @@ data class MalAnime(
     @SerialName("start_season") val startSeason: MalSeason? = null,
     /** white, gray or black (adult). */
     val nsfw: String? = null,
+    /** When it airs each week in Japan, for the shows that have a weekly slot. */
+    val broadcast: MalBroadcast? = null,
     // Details only
     val synopsis: String? = null,
     val studios: List<MalStudio> = emptyList(),
@@ -93,6 +95,13 @@ data class MalGenre(val id: Int, val name: String)
 
 @Serializable
 data class MalSeason(val year: Int, val season: String)
+
+/** [dayOfTheWeek]: monday... sunday; [startTime]: "HH:mm" in Japan (JST). */
+@Serializable
+data class MalBroadcast(
+    @SerialName("day_of_the_week") val dayOfTheWeek: String? = null,
+    @SerialName("start_time") val startTime: String? = null,
+)
 
 @Serializable
 data class MalStudio(val id: Int, val name: String)

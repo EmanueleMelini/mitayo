@@ -76,6 +76,10 @@ interface AnimeDao {
     @Query("DELETE FROM remote_lists WHERE listKey LIKE '${Category.USER_PREFIX}%'")
     suspend fun clearUserLists()
 
+    /** The other seasons: only the one opened last stays. */
+    @Query("DELETE FROM remote_lists WHERE listKey LIKE '${Category.SEASON_PREFIX}%' AND listKey != :except")
+    suspend fun clearOtherSeasons(except: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRemoteList(items: List<RemoteListItem>)
 
@@ -121,6 +125,35 @@ interface AnimeDao {
         """
     )
     fun observeDecadeCounts(showNsfw: Boolean): Flow<List<DecadeCount>>
+
+    /**
+     * A random anime of the plan to watch to start, among those already airing or aired; [exclude]:
+     * the ones already proposed this time.
+     */
+    @Query(
+        """
+        SELECT a.*, l.status AS listStatus, l.episodesWatched AS listEpisodes, l.score AS listScore
+        FROM list_entries l
+        JOIN anime a ON a.id = l.animeId
+        WHERE l.status = 'plan_to_watch' AND (a.airingStatus IS NULL OR a.airingStatus != 'not_yet_aired')
+            AND a.id NOT IN (SELECT animeId FROM skipped) AND (:showNsfw OR a.nsfw = 0) AND a.id NOT IN (:exclude)
+        ORDER BY RANDOM()
+        LIMIT 1
+        """
+    )
+    suspend fun randomToStart(showNsfw: Boolean, exclude: List<Int>): DeckCard?
+
+    /** The anime being watched that are still airing with a weekly slot, for the new episode reminder. */
+    @Query(
+        """
+        SELECT a.* FROM list_entries l
+        JOIN anime a ON a.id = l.animeId
+        WHERE l.status = 'watching' AND a.airingStatus = 'currently_airing'
+            AND a.broadcastDay IS NOT NULL AND a.broadcastTime IS NOT NULL
+        ORDER BY a.popularity
+        """
+    )
+    suspend fun watchingOnAir(): List<Anime>
 
     /** The decks by status: how many anime of the list have each status (skipped ones aside). */
     @Query(
@@ -193,6 +226,41 @@ interface SkippedDao {
         """
     )
     fun observeCards(): Flow<List<DeckCard>>
+}
+
+@Dao
+interface HistoryDao {
+    @Insert
+    suspend fun insert(record: SwipeRecord): Long
+
+    @Query("DELETE FROM swipe_history WHERE id = :id")
+    suspend fun delete(id: Long)
+
+    /** Only the last [keep] records stay. */
+    @Query("DELETE FROM swipe_history WHERE id NOT IN (SELECT id FROM swipe_history ORDER BY id DESC LIMIT :keep)")
+    suspend fun trim(keep: Int)
+
+    @Query("DELETE FROM swipe_history")
+    suspend fun clear()
+
+    @Query("SELECT * FROM swipe_history WHERE id = :id")
+    suspend fun get(id: Long): SwipeRecord?
+
+    /** The last swipes first, with their anime (the ones still in the catalog). */
+    @Query(
+        """
+        SELECT h.*, a.id AS anime_id, a.title AS anime_title, a.titleEn AS anime_titleEn, a.titleJa AS anime_titleJa,
+            a.pictureUrl AS anime_pictureUrl, a.mediaType AS anime_mediaType, a.airingStatus AS anime_airingStatus,
+            a.episodes AS anime_episodes, a.mean AS anime_mean, a.popularity AS anime_popularity,
+            a.members AS anime_members, a.seasonYear AS anime_seasonYear, a.season AS anime_season,
+            a.nsfw AS anime_nsfw, a.genreNames AS anime_genreNames, a.lastSeenAt AS anime_lastSeenAt,
+            a.broadcastDay AS anime_broadcastDay, a.broadcastTime AS anime_broadcastTime
+        FROM swipe_history h
+        JOIN anime a ON a.id = h.animeId
+        ORDER BY h.id DESC
+        """
+    )
+    fun observe(): Flow<List<SwipeRecordCard>>
 }
 
 @Dao

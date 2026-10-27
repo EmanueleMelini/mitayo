@@ -53,8 +53,8 @@ android {
         applicationId = "it.emanuelemelini.mitayo"
         minSdk = 26
         targetSdk = 37
-        versionCode = 4
-        versionName = "1.1.0"
+        versionCode = 5
+        versionName = "1.2.0"
 
         buildConfigField("String", "MAL_CLIENT_ID", "\"$malClientId\"")
         buildConfigField("String", "SITE_URL", "\"https://$siteHost\"")

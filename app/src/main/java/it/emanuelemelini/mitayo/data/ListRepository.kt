@@ -19,6 +19,8 @@ class ListRepository(
 
     val completedCount: Flow<Int> = listDao.observeCompletedCount()
 
+    suspend fun entry(animeId: Int): ListEntry? = listDao.get(animeId)
+
     /** The entries of these anime that are in the list. */
     fun observeEntries(animeIds: List<Int>): Flow<List<ListEntry>> = listDao.observe(animeIds)
 

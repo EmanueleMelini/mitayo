@@ -8,7 +8,8 @@ pick a category and swipe through the anime one at a time. Website and downloads
 - **left**: skip, it never shows up again (search the skipped ones in Profile → Data, also by their
   status in your list, then restore one or give it a status on MAL);
 - **up** (or ▶): watching. You enter the episodes watched right away and it goes to MAL as *watching*;
-- **undo**: goes back on the last swipes, on MAL too;
+- **undo**: goes back on the last swipes, on MAL too; the last 100 stay in Profile → Data → Last swipes,
+  to undo one even after leaving the deck;
 - **★**: completed with a MAL score (only when you tap it: swiping right never stops for a score);
 - **search** (from the categories): any downloaded anime by title, to set its status without swiping,
   and a search on MyAnimeList (one request, on a tap) for the ones not downloaded;
@@ -16,12 +17,21 @@ pick a category and swipe through the anime one at a time. Website and downloads
   and import of the skipped anime, launcher shortcuts for search and season;
 - **with other users** (home): compare two public MAL lists (totals, score distribution, the anime in
   common with both scores, the ones only one has, affinity), and a **friend's deck** with the anime of
-  their list you don't have at all. Other users' lists are read on request and kept only while needed.
+  their list you don't have at all. Other users' lists are read on request and kept only while needed;
+- **in every deck**: shuffle (one setting for all the decks, a new order at every visit) and filters
+  by type, lowest MAL score and years, for as long as the deck is open;
+- **Coming soon** (MAL's upcoming ranking) and **other seasons** (any year and season) among the
+  special lists; an anime only announced can only be *plan to watch* on MAL, so right and up set that;
+- **What to watch?** (home, your list): a random anime of your plan to watch, to start or to change;
+- **your statistics** (Profile): days watched, episodes, statuses, scores and the genres you watch most,
+  read from MAL when the page opens; **share** an anime's MAL link or a comparison;
+- a short guide to the swipes the first time a deck opens.
 
 Decks show only the anime that aren't in your MAL list at all (and that you didn't skip). Your list has
 its own decks, one per status (watching, completed, on-hold, dropped, plan to watch), to go through it
-again, change status or give scores; there a left swipe only moves on, it doesn't skip. The **⋯** button sets the statuses no swipe gives (on-hold,
-dropped, plan to watch). An anime that is still airing can't be completed, so a right swipe asks the
+again, change status or give scores; there a left swipe only moves on, it doesn't skip, and in the
+Watching deck **+1** adds the episode just seen (at the last one it offers to complete it). The **⋯**
+button on the card sets the statuses no swipe gives (on-hold, dropped, plan to watch). An anime that is still airing can't be completed, so a right swipe asks the
 episodes watched and sets it as watching.
 
 The details of an anime (ⓘ, or the poster in search, skipped anime and comparisons) also list its
@@ -57,7 +67,8 @@ The app is in Italian and English, with dark and light themes.
     announces every version.
   - *local reminders*, all off at install: a new version on GitHub (daily, once per version), the start
     of a season (first two weeks of January, April, July and October, with the anime of the season still
-    to swipe) and a weekly one on Sundays. Window alarms (no exact-alarm permission), handed to
+    to swipe), a weekly one on Sundays and, every evening, the anime you're watching that aired a new
+    episode in the last day (from MAL's weekly broadcast time, in Japan time). Window alarms (no exact-alarm permission), handed to
     WorkManager when they need the network, scheduled again after a reboot.
 - **Statistics and crash reports** (Firebase Analytics and Crashlytics) are off at install (manifest
   flags) and start only if the user agrees in the question after the first login; Profile → Privacy
@@ -221,13 +232,15 @@ Static HTML in Italian and English (language from the browser, IT/EN switch in `
 |---|---|
 | `data/auth` | MAL OAuth, PKCE, encrypted tokens, session (login/logout) |
 | `data/mal` | REST client of the MAL API v2 and JSON models |
-| `data/db` | Room: catalog, genres, local copy of the MAL list, skipped, outbox |
+| `data/db` | Room: catalog, genres, local copy of the MAL list, skipped, outbox, swipe history |
 | `data` | repositories, deck queries, sync, outbox and its worker |
-| `ui/categories` | categories: special lists, genres, themes, demographics |
-| `ui/deck` | the deck to swipe: gestures, card, episodes watched, details |
+| `ui/categories` | categories: special lists, other seasons, genres, themes, demographics, "What to watch?" |
+| `ui/deck` | the deck to swipe: gestures, card, episodes watched, filters, guide, details |
 | `ui/profile` | profile, stats, settings pages (appearance, content, notifications, data, privacy, about), logout |
 | `ui/skipped` | the skipped anime: search, filter by list status, restore one, set its status |
 | `ui/search` | search of the local catalog from the categories, to set a status without swiping |
+| `ui/history`, `data/SwipeHistory.kt` | the last swipes, to undo one later |
+| `ui/stats` | the user's own list in numbers |
 | `ui/compare`, `data/ListComparison.kt`, `data/OtherUsers.kt` | comparison of two lists and the deck of another user's list |
 | `data/reminders` | local reminders: types, schedule, alarms, worker, notifications |
 | `data/push`, `data/telemetry` | Firebase: news topics and messaging service, statistics and crash reports |

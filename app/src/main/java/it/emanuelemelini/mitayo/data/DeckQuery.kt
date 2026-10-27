@@ -9,13 +9,33 @@ import androidx.sqlite.db.SupportSQLiteQuery
  */
 internal object DeckQuery {
 
-    fun cards(category: Category, showNsfw: Boolean, limit: Int): SupportSQLiteQuery =
-        build(category, showNsfw, "a.*, l.status AS listStatus, l.episodesWatched AS listEpisodes, l.score AS listScore", limit)
+    /** [shuffleSeed]: a random order, the same for the whole visit (null: the deck's own order). */
+    fun cards(
+        category: Category,
+        showNsfw: Boolean,
+        limit: Int,
+        filters: DeckFilters = DeckFilters(),
+        shuffleSeed: Long? = null,
+    ): SupportSQLiteQuery = build(
+        category,
+        showNsfw,
+        filters,
+        "a.*, l.status AS listStatus, l.episodesWatched AS listEpisodes, l.score AS listScore",
+        limit,
+        shuffleSeed,
+    )
 
-    fun count(category: Category, showNsfw: Boolean): SupportSQLiteQuery =
-        build(category, showNsfw, "COUNT(*)", limit = null)
+    fun count(category: Category, showNsfw: Boolean, filters: DeckFilters = DeckFilters()): SupportSQLiteQuery =
+        build(category, showNsfw, filters, "COUNT(*)", limit = null, shuffleSeed = null)
 
-    private fun build(category: Category, showNsfw: Boolean, columns: String, limit: Int?): SupportSQLiteQuery {
+    private fun build(
+        category: Category,
+        showNsfw: Boolean,
+        filters: DeckFilters,
+        columns: String,
+        limit: Int?,
+        shuffleSeed: Long?,
+    ): SupportSQLiteQuery {
         val args = mutableListOf<Any>()
         val sql = StringBuilder("SELECT $columns FROM anime a LEFT JOIN list_entries l ON l.animeId = a.id")
         if (category.isRemote) {
@@ -31,7 +51,8 @@ internal object DeckQuery {
         sql.append(" AND a.id NOT IN (SELECT animeId FROM skipped)")
         if (!showNsfw) sql.append(" AND a.nsfw = 0")
         when (category) {
-            Category.Popular, Category.Season, Category.Suggested, is Category.OfUser, is Category.OfStatus -> Unit
+            Category.Popular, Category.Season, Category.Upcoming, Category.Suggested,
+            is Category.OfSeason, is Category.OfUser, is Category.OfStatus -> Unit
             Category.TopRated -> sql.append(" AND a.mean IS NOT NULL")
             Category.Airing -> sql.append(" AND a.airingStatus = 'currently_airing'")
             Category.Movies -> sql.append(" AND a.mediaType = 'movie'")
@@ -45,10 +66,29 @@ internal object DeckQuery {
                 args += category.years.last
             }
         }
+        if (filters.kinds.isNotEmpty()) {
+            val types = filters.kinds.flatMap { it.malTypes }
+            sql.append(" AND a.mediaType IN (${types.joinToString { "?" }})")
+            args.addAll(types)
+        }
+        filters.minScore?.let {
+            sql.append(" AND a.mean >= ?")
+            args += it
+        }
+        filters.years?.let {
+            sql.append(" AND a.seasonYear BETWEEN ? AND ?")
+            args += it.first
+            args += it.last
+        }
         if (limit != null) {
-            val order = when (category) {
-                Category.TopRated -> "a.mean DESC"
-                Category.Season, Category.Suggested, is Category.OfUser -> "r.position"
+            val order = when {
+                // A hash of the id: random, but the same at every query of the visit
+                shuffleSeed != null -> {
+                    args += shuffleSeed
+                    "((a.id + ?) * 1103515245 + 12345) % 2147483647"
+                }
+                category == Category.TopRated -> "a.mean DESC"
+                category.isRemote -> "r.position"
                 // Most popular first: the ones the user most likely watched
                 else -> "a.popularity"
             }

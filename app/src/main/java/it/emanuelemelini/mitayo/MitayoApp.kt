@@ -11,6 +11,7 @@ import it.emanuelemelini.mitayo.data.OtherLists
 import it.emanuelemelini.mitayo.data.SkippedBackup
 import it.emanuelemelini.mitayo.data.StatusEditor
 import it.emanuelemelini.mitayo.data.Outbox
+import it.emanuelemelini.mitayo.data.SwipeHistory
 import it.emanuelemelini.mitayo.data.SyncManager
 import it.emanuelemelini.mitayo.data.auth.MalAuth
 import it.emanuelemelini.mitayo.data.auth.Session
@@ -89,6 +90,7 @@ class AppContainer(context: Context) {
     }
     val deckRepository = DeckRepository(database)
     val statusEditor = StatusEditor(deckRepository, listRepository)
+    val swipeHistory = SwipeHistory(database, listRepository, deckRepository)
     val skippedBackup = SkippedBackup(context, database.skippedDao())
     val otherLists = OtherLists(api)
     val syncManager = SyncManager(api, listRepository, catalogRepository, settingsRepository, applicationScope)

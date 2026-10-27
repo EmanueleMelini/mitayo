@@ -43,11 +43,13 @@ import it.emanuelemelini.mitayo.ui.categories.CategoriesScreen
 import it.emanuelemelini.mitayo.ui.compare.CompareScreen
 import it.emanuelemelini.mitayo.ui.compare.UserDeckScreen
 import it.emanuelemelini.mitayo.ui.deck.DeckScreen
+import it.emanuelemelini.mitayo.ui.history.HistoryScreen
 import it.emanuelemelini.mitayo.ui.profile.ProfilePage
 import it.emanuelemelini.mitayo.ui.profile.ProfilePageScreen
 import it.emanuelemelini.mitayo.ui.profile.ProfileScreen
 import it.emanuelemelini.mitayo.ui.search.SearchScreen
 import it.emanuelemelini.mitayo.ui.skipped.SkippedScreen
+import it.emanuelemelini.mitayo.ui.stats.StatsScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -75,6 +77,12 @@ object CompareRoute
 
 @Serializable
 object UserDeckRoute
+
+@Serializable
+object HistoryRoute
+
+@Serializable
+object StatsRoute
 
 private enum class TopLevel(val route: Any, @StringRes val labelRes: Int, val icon: ImageVector) {
     CATEGORIES(CategoriesRoute, R.string.nav_categories, Icons.Rounded.GridView),
@@ -150,14 +158,24 @@ fun MitayoNavHost(launchRequest: LaunchRequest?, onLaunchHandled: () -> Unit) {
                 )
             }
             composable<ProfileRoute> {
-                ProfileScreen(onOpenPage = { navController.navigate(ProfilePageRoute(it.name)) })
+                ProfileScreen(
+                    onOpenPage = { navController.navigate(ProfilePageRoute(it.name)) },
+                    onOpenStats = { navController.navigate(StatsRoute) },
+                )
             }
             composable<ProfilePageRoute> { entry ->
                 ProfilePageScreen(
                     page = ProfilePage.valueOf(entry.toRoute<ProfilePageRoute>().page),
                     onBack = { navController.popBackStack() },
                     onOpenSkipped = { navController.navigate(SkippedRoute) },
+                    onOpenHistory = { navController.navigate(HistoryRoute) },
                 )
+            }
+            composable<HistoryRoute> {
+                HistoryScreen(onBack = { navController.popBackStack() })
+            }
+            composable<StatsRoute> {
+                StatsScreen(onBack = { navController.popBackStack() })
             }
             composable<SkippedRoute> {
                 SkippedScreen(onBack = { navController.popBackStack() })
@@ -208,6 +226,8 @@ private fun screenName(destination: NavDestination): String = when {
     destination.hasRoute(SearchRoute::class) -> "search"
     destination.hasRoute(CompareRoute::class) -> "compare"
     destination.hasRoute(UserDeckRoute::class) -> "user_deck"
+    destination.hasRoute(HistoryRoute::class) -> "history"
+    destination.hasRoute(StatsRoute::class) -> "stats"
     destination.hasRoute(DeckRoute::class) -> "deck"
     else -> "other"
 }

@@ -35,6 +35,10 @@ data class Settings(
     /** Mitayo news (push): on unless turned off, but nothing is registered before the privacy question. */
     val newsNotifications: Boolean = true,
     val reminders: Map<ReminderType, ReminderConfig> = ReminderType.entries.associateWith { ReminderConfig(it) },
+    /** Every deck in a random order (a new one at every visit) instead of its own. */
+    val shuffleDecks: Boolean = false,
+    /** The swipe guide was shown, at the first deck opened. */
+    val deckGuideSeen: Boolean = false,
 ) {
     val privacyConsentPending: Boolean get() = usageStats == null || crashReports == null
 }
@@ -77,6 +81,8 @@ class SettingsRepository(context: Context) {
                     time = prefs[reminderTimeKey(type)]?.let { LocalTime.ofSecondOfDay(it * 60L) } ?: type.defaultTime,
                 )
             },
+            shuffleDecks = prefs[KEY_SHUFFLE_DECKS] ?: false,
+            deckGuideSeen = prefs[KEY_DECK_GUIDE_SEEN] ?: false,
         )
     }
 
@@ -115,6 +121,10 @@ class SettingsRepository(context: Context) {
     suspend fun setSubtitleLanguage(language: TitleLanguage?) = edit { it[KEY_SUBTITLE_LANGUAGE] = language?.name ?: NO_SUBTITLE }
 
     suspend fun setShowNsfw(enabled: Boolean) = edit { it[KEY_SHOW_NSFW] = enabled }
+
+    suspend fun setShuffleDecks(enabled: Boolean) = edit { it[KEY_SHUFFLE_DECKS] = enabled }
+
+    suspend fun setDeckGuideSeen() = edit { it[KEY_DECK_GUIDE_SEEN] = true }
 
     suspend fun setPoliciesAccepted(version: Int) = edit { it[KEY_POLICIES_ACCEPTED] = version }
 
@@ -209,6 +219,8 @@ class SettingsRepository(context: Context) {
         val KEY_SUBTITLE_LANGUAGE = stringPreferencesKey("subtitle_language")
         const val NO_SUBTITLE = "NONE"
         val KEY_SHOW_NSFW = booleanPreferencesKey("show_nsfw")
+        val KEY_SHUFFLE_DECKS = booleanPreferencesKey("shuffle_decks")
+        val KEY_DECK_GUIDE_SEEN = booleanPreferencesKey("deck_guide_seen")
         val KEY_USER_NAME = stringPreferencesKey("user_name")
         val KEY_USER_PICTURE = stringPreferencesKey("user_picture")
         val KEY_POLICIES_ACCEPTED = intPreferencesKey("policies_accepted_version")

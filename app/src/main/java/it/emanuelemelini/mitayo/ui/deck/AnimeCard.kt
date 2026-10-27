@@ -162,13 +162,14 @@ fun AnimeCard(
 
 /**
  * The "watched / skip / watching" stamps that appear while dragging, faded in with [state].
- * [leftPasses]: a deck by status, where left only moves on to the next card.
+ * [leftPasses]: a deck by status, where left only moves on to the next card. [planToWatch]: an
+ * anime only announced, which right and up set as plan to watch.
  */
 @Composable
-fun BoxScope.SwipeStamps(state: SwipeState, leftPasses: Boolean) {
+fun BoxScope.SwipeStamps(state: SwipeState, leftPasses: Boolean, planToWatch: Boolean) {
     Stamp(
-        text = stringResource(R.string.stamp_completed),
-        color = MitayoColors.Matcha,
+        text = stringResource(if (planToWatch) R.string.stamp_plan else R.string.stamp_completed),
+        color = if (planToWatch) MitayoColors.Sakura else MitayoColors.Matcha,
         rotation = -14f,
         alpha = state.progress(SwipeDirection.RIGHT),
         modifier = Modifier.align(Alignment.TopStart).padding(28.dp),
@@ -181,8 +182,8 @@ fun BoxScope.SwipeStamps(state: SwipeState, leftPasses: Boolean) {
         modifier = Modifier.align(Alignment.TopEnd).padding(28.dp),
     )
     Stamp(
-        text = stringResource(R.string.stamp_watching),
-        color = MitayoColors.Kin,
+        text = stringResource(if (planToWatch) R.string.stamp_plan else R.string.stamp_watching),
+        color = if (planToWatch) MitayoColors.Sakura else MitayoColors.Kin,
         rotation = -6f,
         alpha = state.progress(SwipeDirection.UP),
         modifier = Modifier.align(Alignment.Center),

@@ -69,7 +69,7 @@ class Session(
         }
     }
 
-    /** Everything of this user goes (list, skipped, unsent changes); the catalog stays. */
+    /** Everything of this user goes (list, skipped, swipe history, unsent changes); the catalog stays. */
     fun logout() {
         scope.launch {
             syncManager.cancel()
@@ -78,6 +78,7 @@ class Session(
             database.withTransaction {
                 database.listDao().clear()
                 database.skippedDao().clear()
+                database.historyDao().clear()
                 database.animeDao().clearRemoteList(Category.Suggested.key)
                 database.animeDao().clearUserLists()
             }

@@ -22,6 +22,12 @@ fun openInBrowser(context: Context, uri: Uri): Boolean = try {
 
 fun malAnimeUri(animeId: Int): Uri = "https://myanimelist.net/anime/$animeId".toUri()
 
+/** The system share sheet with [text]: the user picks the app, Mitayo sends nothing itself. */
+fun shareText(context: Context, text: String, chooserTitle: String) {
+    val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
+    context.startActivity(Intent.createChooser(send, chooserTitle).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+}
+
 /** A YouTube video: in the YouTube app when there is one, otherwise in the browser. */
 fun openVideo(context: Context, uri: Uri): Boolean = try {
     context.startActivity(Intent(Intent.ACTION_VIEW, uri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))

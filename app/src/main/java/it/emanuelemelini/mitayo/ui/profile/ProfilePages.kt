@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.FileDownload
 import androidx.compose.material.icons.rounded.FileUpload
 import androidx.compose.material.icons.rounded.Flag
 import androidx.compose.material.icons.rounded.Gavel
+import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.NewReleases
 import androidx.compose.material.icons.rounded.PrivacyTip
 import androidx.compose.material.icons.rounded.Public
@@ -75,7 +76,7 @@ import kotlinx.coroutines.launch
 /** One page of the Profile, opened from its menu. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfilePageScreen(page: ProfilePage, onBack: () -> Unit, onOpenSkipped: () -> Unit) {
+fun ProfilePageScreen(page: ProfilePage, onBack: () -> Unit, onOpenSkipped: () -> Unit, onOpenHistory: () -> Unit) {
     val viewModel = profileViewModel()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -107,7 +108,7 @@ fun ProfilePageScreen(page: ProfilePage, onBack: () -> Unit, onOpenSkipped: () -
                 ProfilePage.CONTENT -> ContentPage(viewModel)
                 ProfilePage.NOTIFICATIONS -> NotificationsPage(viewModel)
                 ProfilePage.PRIVACY -> PrivacyPage(viewModel)
-                ProfilePage.DATA -> DataPage(viewModel, onOpenSkipped)
+                ProfilePage.DATA -> DataPage(viewModel, onOpenSkipped, onOpenHistory)
                 ProfilePage.ABOUT -> AboutPage()
             }
         }
@@ -173,7 +174,7 @@ private fun ContentPage(viewModel: ProfileViewModel) {
 }
 
 @Composable
-private fun DataPage(viewModel: ProfileViewModel, onOpenSkipped: () -> Unit) {
+private fun DataPage(viewModel: ProfileViewModel, onOpenSkipped: () -> Unit, onOpenHistory: () -> Unit) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val syncing = state.sync is SyncState.UserList || state.sync is SyncState.Catalog
     PageCard {
@@ -219,6 +220,15 @@ private fun DataPage(viewModel: ProfileViewModel, onOpenSkipped: () -> Unit) {
             trailingContent = { Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = null) },
             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
             modifier = Modifier.clickableRow(onClick = onOpenSkipped),
+        )
+        HorizontalDivider()
+        ListItem(
+            leadingContent = { Icon(Icons.Rounded.History, contentDescription = null) },
+            headlineContent = { Text(stringResource(R.string.history_title)) },
+            supportingContent = { Text(stringResource(R.string.history_summary)) },
+            trailingContent = { Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = null) },
+            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+            modifier = Modifier.clickableRow(onClick = onOpenHistory),
         )
     }
     SkippedBackupCard(viewModel, skippedCount = state.stats.skipped)
