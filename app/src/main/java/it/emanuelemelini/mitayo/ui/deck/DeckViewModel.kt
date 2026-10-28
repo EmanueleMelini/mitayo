@@ -57,6 +57,9 @@ data class EpisodesPrompt(val card: DeckCard, val direction: SwipeDirection) {
     val airing: Boolean get() = direction == SwipeDirection.RIGHT
 }
 
+/** The deck to score: the card swiped right or up waits for its score. */
+data class ScorePrompt(val card: DeckCard, val direction: SwipeDirection)
+
 data class DeckUiState(
     val loaded: Boolean = false,
     /** Top card first. */
@@ -71,6 +74,7 @@ data class DeckUiState(
     val canUndo: Boolean = false,
     val returning: Returning? = null,
     val episodesPrompt: EpisodesPrompt? = null,
+    val scorePrompt: ScorePrompt? = null,
     /** The deck couldn't load and is empty. */
     val error: UiText? = null,
     /** Another user's deck: their status and score of each anime, shown on the card. */
@@ -127,6 +131,7 @@ private data class LocalState(
     val canUndo: Boolean = false,
     val returning: Returning? = null,
     val episodesPrompt: EpisodesPrompt? = null,
+    val scorePrompt: ScorePrompt? = null,
     val error: UiText? = null,
     val others: Map<Int, MalListStatus> = emptyMap(),
     /** A deck by status: swiped left in this visit, back when the deck is opened again. */
@@ -202,6 +207,7 @@ class DeckViewModel(
             canUndo = local.canUndo,
             returning = local.returning,
             episodesPrompt = local.episodesPrompt,
+            scorePrompt = local.scorePrompt,
             error = local.error,
             others = local.others,
             passed = local.passed.size,
@@ -222,11 +228,16 @@ class DeckViewModel(
     /** [score]: right with the ★ button, completed with that score. */
     fun swipe(card: DeckCard, direction: SwipeDirection, score: Int? = null) {
         val animeId = card.anime.id
-        // A deck by status: left only moves on, so the anime isn't lost to the next visits
-        if (direction == SwipeDirection.LEFT && category is Category.OfStatus) {
+        // The user's own list: left only moves on, so the anime isn't lost to the next visits
+        if (direction == SwipeDirection.LEFT && category.isOwnList) {
             local.update { it.copy(passed = it.passed + animeId, returning = null) }
             telemetry.logSwipe(category, SwipeOutcome.PASSED)
             pushUndo(UndoAction.Passed(card))
+            return
+        }
+        // The deck to score: right and up only ask for the score, status and episodes stay
+        if (category == Category.Unrated) {
+            local.update { it.copy(gone = it.gone + animeId, returning = null, scorePrompt = ScorePrompt(card, direction)) }
             return
         }
         // Only announced: MAL takes nothing but plan to watch
@@ -277,6 +288,26 @@ class DeckViewModel(
             // Undo brings it back from where it flew
             pushUndo(UndoAction.ListChanged(card, direction, previous, recordId))
         }
+    }
+
+    /** The card waiting for its score gets [score] on MAL. */
+    fun confirmScore(score: Int) {
+        val prompt = local.value.scorePrompt ?: return
+        local.update { it.copy(scorePrompt = null) }
+        viewModelScope.launch {
+            val animeId = prompt.card.anime.id
+            val previous = listRepository.markScore(animeId, score) ?: return@launch
+            telemetry.logScore(category)
+            val recordId = history.record(animeId, SwipeAction.SCORED, previous.episodesWatched, score, previous)
+            pushUndo(UndoAction.ListChanged(prompt.card, prompt.direction, previous, recordId))
+        }
+    }
+
+    /** No score given: the card comes back to the top. */
+    fun cancelScore() {
+        val prompt = local.value.scorePrompt ?: return
+        val animeId = prompt.card.anime.id
+        local.update { it.copy(gone = it.gone - animeId, returning = Returning(animeId, prompt.direction), scorePrompt = null) }
     }
 
     /** The anime waiting for its episodes goes to MAL as watching with [episodes]. */
@@ -408,7 +439,7 @@ class DeckViewModel(
     /** Called when few cards are left: more of the catalog, a few pages at most per call. */
     fun topUp() {
         // More of the catalog doesn't add anime to the user's list: a deck by status has them all
-        if (category.isRemote || category is Category.OfStatus || catalogExhausted || local.value.loadingMore) return
+        if (category.isRemote || category.isOwnList || catalogExhausted || local.value.loadingMore) return
         // The running download brings these pages anyway
         if (syncManager.state.value is SyncState.Catalog) return
         if (System.currentTimeMillis() - topUpFailedAt < TOP_UP_RETRY_MS) return

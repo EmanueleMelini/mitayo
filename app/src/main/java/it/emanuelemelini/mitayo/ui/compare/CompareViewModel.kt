@@ -3,6 +3,7 @@ package it.emanuelemelini.mitayo.ui.compare
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import it.emanuelemelini.mitayo.R
+import it.emanuelemelini.mitayo.data.AffinityMethod
 import it.emanuelemelini.mitayo.data.CatalogRepository
 import it.emanuelemelini.mitayo.data.Comparison
 import it.emanuelemelini.mitayo.data.ListComparison
@@ -62,6 +63,8 @@ data class CompareUiState(
     val recentUsers: List<String> = emptyList(),
     val myName: String? = null,
     val titles: TitleChoice = TitleChoice(),
+    /** The setting: which of the two affinities the result shows. */
+    val affinityMethod: AffinityMethod = AffinityMethod.SHARED_SCORES,
     val loading: Boolean = false,
     val error: UiText? = null,
     val result: CompareResult? = null,
@@ -100,9 +103,9 @@ class CompareViewModel(
     val uiState: StateFlow<CompareUiState> = combine(
         local,
         settingsRepository.recentUsers,
-        settingsRepository.settings.map { it.userName to it.titles },
-    ) { state, recent, (myName, titles) ->
-        state.copy(recentUsers = recent, myName = myName, titles = titles)
+        settingsRepository.settings.map { Triple(it.userName, it.titles, it.affinityMethod) },
+    ) { state, recent, (myName, titles, affinityMethod) ->
+        state.copy(recentUsers = recent, myName = myName, titles = titles, affinityMethod = affinityMethod)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CompareUiState())
 
     fun setMeFirst(meFirst: Boolean) = updateForm { it.copy(meFirst = meFirst) }

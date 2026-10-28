@@ -34,6 +34,16 @@ class DeckQueryTest {
     }
 
     @Test
+    fun theDeckToScoreTakesTheListWithoutScores() {
+        val query = DeckQuery.cards(Category.Unrated, showNsfw = true, limit = 30)
+        assertTrue(query.sql, query.sql.contains("WHERE l.score = 0 AND l.status IN (?, ?, ?, ?)"))
+        assertTrue(query.sql, !query.sql.contains("l.status IS NULL"))
+        // The four statuses, then the limit: plan to watch isn't among them
+        assertEquals(5, query.argCount)
+        assertTrue(Category.Unrated.isOwnList)
+    }
+
+    @Test
     fun countIgnoresTheShuffle() {
         val query = DeckQuery.count(Category.OfSeason(2019, "spring"), showNsfw = true, filters = DeckFilters(minScore = 8))
         assertTrue(query.sql, query.sql.startsWith("SELECT COUNT(*)"))

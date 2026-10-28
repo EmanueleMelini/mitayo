@@ -516,4 +516,19 @@
     <string name="share_title">Share with</string>
     <string name="share_anime_text">%1$s\n%2$s</string>
     <string name="share_comparison_text">Affinity between %1$s and %2$s on MyAnimeList: %3$s. Anime in common: %4$d. Worked out with Mitayo: %5$s</string>
+    <string name="profile_affinity">Affinity calculation</string>
+    <string name="profile_affinity_body">The number at the top of a comparison of two lists.</string>
+    <string name="affinity_shared_scores">Shared scores</string>
+    <string name="affinity_tastes">Tastes</string>
+    <string name="affinity_shared_scores_how" formatted="false">Takes the anime you both scored and measures whether the scores go up and down together (Pearson correlation): 100% when they move the same way on every anime, even if one of you always scores lower. It needs at least two shared anime with a score.</string>
+    <string name="affinity_tastes_how">No shared anime needed. For each of you it works out how much you like genres, themes, demographics, studios, source, age rating, type and decade, from how far above or below your own mean you scored the anime that have them; then it compares the two profiles. Only your own scores count, not MAL\'s, and it needs at least 10 scored anime each.</string>
+    <string name="profile_summary_content">%1$s · Affinity: %2$s</string>
+    <string name="compare_affinity_tastes">taste affinity: how alike the genres, themes, studios and more of the anime you like best are</string>
+    <string name="compare_affinity_tastes_unknown">taste affinity not available: it needs at least 10 scored anime each, with different scores</string>
+    <string name="category_unrated">To score</string>
+    <string name="stamp_score">SCORE</string>
+    <string name="guide_rate">Swipe right or up, or ★: give the score (status and episodes stay)</string>
+    <string name="history_scored">Score · ★ %1$d</string>
+    <string name="score_hint_only">Pick a score from 1 to 10: status and episodes stay as they are on MAL.</string>
+    <string name="score_confirm_only">Save the score</string>
 </resources>

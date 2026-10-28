@@ -64,6 +64,12 @@ class ListRepository(
         return setStatus(animeId, status, episodes)
     }
 
+    /** Only the score: status and episodes stay. null when the anime isn't in the list. */
+    suspend fun markScore(animeId: Int, score: Int): ListEntry? {
+        val current = listDao.get(animeId) ?: return null
+        return setStatus(animeId, current.status, current.episodesWatched, score)
+    }
+
     /**
      * Undo: puts back [previous] (null: the anime wasn't in the list, so it's removed), its score
      * too: a score given by the undone change goes away on MAL as well.

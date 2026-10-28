@@ -45,10 +45,10 @@ import it.emanuelemelini.mitayo.ui.theme.MitayoColors
 
 /**
  * What each swipe does, over the first deck ever opened; it goes away with "Got it".
- * [leftPasses]: a deck by status, where left only moves on.
+ * [leftPasses]: a deck by status, where left only moves on. [rates]: the deck to score.
  */
 @Composable
-fun SwipeGuide(leftPasses: Boolean, onDismiss: () -> Unit) {
+fun SwipeGuide(leftPasses: Boolean, rates: Boolean, onDismiss: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -67,14 +67,20 @@ fun SwipeGuide(leftPasses: Boolean, onDismiss: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(stringResource(R.string.guide_title), style = MaterialTheme.typography.titleLarge)
-                GuideRow(Icons.AutoMirrored.Rounded.ArrowForward, MitayoColors.Matcha, stringResource(R.string.guide_right))
+                if (rates) {
+                    GuideRow(Icons.Rounded.Star, MitayoColors.Kin, stringResource(R.string.guide_rate))
+                } else {
+                    GuideRow(Icons.AutoMirrored.Rounded.ArrowForward, MitayoColors.Matcha, stringResource(R.string.guide_right))
+                }
                 GuideRow(
                     Icons.AutoMirrored.Rounded.ArrowBack,
                     if (leftPasses) MitayoColors.Murasaki else MitayoColors.Aka,
                     stringResource(if (leftPasses) R.string.guide_left_pass else R.string.guide_left),
                 )
-                GuideRow(Icons.Rounded.ArrowUpward, MitayoColors.Kin, stringResource(R.string.guide_up))
-                GuideRow(Icons.Rounded.Star, MitayoColors.Kin, stringResource(R.string.guide_score))
+                if (!rates) {
+                    GuideRow(Icons.Rounded.ArrowUpward, MitayoColors.Kin, stringResource(R.string.guide_up))
+                    GuideRow(Icons.Rounded.Star, MitayoColors.Kin, stringResource(R.string.guide_score))
+                }
                 GuideRow(Icons.Rounded.MoreHoriz, MaterialTheme.colorScheme.onSurfaceVariant, stringResource(R.string.guide_more))
                 GuideRow(Icons.Rounded.TouchApp, MaterialTheme.colorScheme.onSurfaceVariant, stringResource(R.string.guide_tap))
                 GuideRow(Icons.AutoMirrored.Rounded.Undo, MaterialTheme.colorScheme.onSurfaceVariant, stringResource(R.string.guide_undo))

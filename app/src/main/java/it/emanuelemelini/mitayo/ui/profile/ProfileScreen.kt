@@ -173,7 +173,9 @@ fun ProfileScreen(onOpenPage: (ProfilePage) -> Unit, onOpenStats: () -> Unit) {
                     stringResource(settings.titles.subtitle?.let(::titleLabelRes) ?: R.string.subtitle_none),
                 ),
                 ProfilePage.CONTENT to stringResource(
-                    if (settings.showNsfw) R.string.profile_summary_nsfw_on else R.string.profile_summary_nsfw_off
+                    R.string.profile_summary_content,
+                    stringResource(if (settings.showNsfw) R.string.profile_summary_nsfw_on else R.string.profile_summary_nsfw_off),
+                    stringResource(affinityLabelRes(settings.affinityMethod)),
                 ),
                 ProfilePage.NOTIFICATIONS to notificationsSummary(settings),
                 ProfilePage.PRIVACY to privacySummary(settings),

@@ -16,7 +16,8 @@ class CategoryTest {
     fun keysRoundTrip() {
         (Category.specials + Category.OfGenre(62) + Category.OfDecade(2010) + Category.OfDecade(Category.OfDecade.BEFORE) +
             Category.OfUser("LeleMims") + ListStatus.entries.map { Category.OfStatus(it) } +
-            Category.OfSeason(2019, "spring") + Category.OfSeason(Category.OfSeason.FIRST_YEAR, "fall")).forEach { category ->
+            Category.OfSeason(2019, "spring") + Category.OfSeason(Category.OfSeason.FIRST_YEAR, "fall") +
+            Category.Unrated).forEach { category ->
             assertEquals(category, Category.fromKey(category.key))
         }
     }

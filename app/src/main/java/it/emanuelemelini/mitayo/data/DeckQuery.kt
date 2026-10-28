@@ -5,7 +5,8 @@ import androidx.sqlite.db.SupportSQLiteQuery
 
 /**
  * SQL of a deck. The decks show only the anime that aren't in the user's MAL list at all (and
- * weren't skipped); the decks by status show the anime of the list with that status.
+ * weren't skipped); the decks by status show the anime of the list with that status, the deck to
+ * score the ones seen or started without a score.
  */
 internal object DeckQuery {
 
@@ -45,6 +46,9 @@ internal object DeckQuery {
         if (category is Category.OfStatus) {
             sql.append(" WHERE l.status = ?")
             args += category.status.apiValue
+        } else if (category == Category.Unrated) {
+            sql.append(" WHERE l.score = 0 AND l.status IN (${Category.Unrated.statuses.joinToString { "?" }})")
+            args.addAll(Category.Unrated.statuses.map { it.apiValue })
         } else {
             sql.append(" WHERE l.status IS NULL")
         }
@@ -52,7 +56,7 @@ internal object DeckQuery {
         if (!showNsfw) sql.append(" AND a.nsfw = 0")
         when (category) {
             Category.Popular, Category.Season, Category.Upcoming, Category.Suggested,
-            is Category.OfSeason, is Category.OfUser, is Category.OfStatus -> Unit
+            is Category.OfSeason, is Category.OfUser, is Category.OfStatus, Category.Unrated -> Unit
             Category.TopRated -> sql.append(" AND a.mean IS NOT NULL")
             Category.Airing -> sql.append(" AND a.airingStatus = 'currently_airing'")
             Category.Movies -> sql.append(" AND a.mediaType = 'movie'")

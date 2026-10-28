@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import it.emanuelemelini.mitayo.data.AffinityMethod
 import it.emanuelemelini.mitayo.data.TitleChoice
 import it.emanuelemelini.mitayo.data.TitleLanguage
 import it.emanuelemelini.mitayo.data.reminders.ReminderConfig
@@ -39,6 +40,8 @@ data class Settings(
     val shuffleDecks: Boolean = false,
     /** The swipe guide was shown, at the first deck opened. */
     val deckGuideSeen: Boolean = false,
+    /** How a comparison works out the affinity: both stay available. */
+    val affinityMethod: AffinityMethod = AffinityMethod.SHARED_SCORES,
 ) {
     val privacyConsentPending: Boolean get() = usageStats == null || crashReports == null
 }
@@ -83,6 +86,8 @@ class SettingsRepository(context: Context) {
             },
             shuffleDecks = prefs[KEY_SHUFFLE_DECKS] ?: false,
             deckGuideSeen = prefs[KEY_DECK_GUIDE_SEEN] ?: false,
+            affinityMethod = prefs[KEY_AFFINITY_METHOD]?.let { name -> AffinityMethod.entries.firstOrNull { it.name == name } }
+                ?: AffinityMethod.SHARED_SCORES,
         )
     }
 
@@ -125,6 +130,8 @@ class SettingsRepository(context: Context) {
     suspend fun setShuffleDecks(enabled: Boolean) = edit { it[KEY_SHUFFLE_DECKS] = enabled }
 
     suspend fun setDeckGuideSeen() = edit { it[KEY_DECK_GUIDE_SEEN] = true }
+
+    suspend fun setAffinityMethod(method: AffinityMethod) = edit { it[KEY_AFFINITY_METHOD] = method.name }
 
     suspend fun setPoliciesAccepted(version: Int) = edit { it[KEY_POLICIES_ACCEPTED] = version }
 
@@ -221,6 +228,7 @@ class SettingsRepository(context: Context) {
         val KEY_SHOW_NSFW = booleanPreferencesKey("show_nsfw")
         val KEY_SHUFFLE_DECKS = booleanPreferencesKey("shuffle_decks")
         val KEY_DECK_GUIDE_SEEN = booleanPreferencesKey("deck_guide_seen")
+        val KEY_AFFINITY_METHOD = stringPreferencesKey("affinity_method")
         val KEY_USER_NAME = stringPreferencesKey("user_name")
         val KEY_USER_PICTURE = stringPreferencesKey("user_picture")
         val KEY_POLICIES_ACCEPTED = intPreferencesKey("policies_accepted_version")

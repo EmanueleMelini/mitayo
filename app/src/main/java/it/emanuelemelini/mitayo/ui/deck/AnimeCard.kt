@@ -163,13 +163,24 @@ fun AnimeCard(
 /**
  * The "watched / skip / watching" stamps that appear while dragging, faded in with [state].
  * [leftPasses]: a deck by status, where left only moves on to the next card. [planToWatch]: an
- * anime only announced, which right and up set as plan to watch.
+ * anime only announced, which right and up set as plan to watch. [rates]: the deck to score,
+ * where right and up ask for the score.
  */
 @Composable
-fun BoxScope.SwipeStamps(state: SwipeState, leftPasses: Boolean, planToWatch: Boolean) {
+fun BoxScope.SwipeStamps(state: SwipeState, leftPasses: Boolean, planToWatch: Boolean, rates: Boolean) {
     Stamp(
-        text = stringResource(if (planToWatch) R.string.stamp_plan else R.string.stamp_completed),
-        color = if (planToWatch) MitayoColors.Sakura else MitayoColors.Matcha,
+        text = stringResource(
+            when {
+                rates -> R.string.stamp_score
+                planToWatch -> R.string.stamp_plan
+                else -> R.string.stamp_completed
+            }
+        ),
+        color = when {
+            rates -> MitayoColors.Kin
+            planToWatch -> MitayoColors.Sakura
+            else -> MitayoColors.Matcha
+        },
         rotation = -14f,
         alpha = state.progress(SwipeDirection.RIGHT),
         modifier = Modifier.align(Alignment.TopStart).padding(28.dp),
@@ -182,7 +193,13 @@ fun BoxScope.SwipeStamps(state: SwipeState, leftPasses: Boolean, planToWatch: Bo
         modifier = Modifier.align(Alignment.TopEnd).padding(28.dp),
     )
     Stamp(
-        text = stringResource(if (planToWatch) R.string.stamp_plan else R.string.stamp_watching),
+        text = stringResource(
+            when {
+                rates -> R.string.stamp_score
+                planToWatch -> R.string.stamp_plan
+                else -> R.string.stamp_watching
+            }
+        ),
         color = if (planToWatch) MitayoColors.Sakura else MitayoColors.Kin,
         rotation = -6f,
         alpha = state.progress(SwipeDirection.UP),

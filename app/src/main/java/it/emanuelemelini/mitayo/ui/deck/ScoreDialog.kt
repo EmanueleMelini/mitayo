@@ -26,10 +26,16 @@ import it.emanuelemelini.mitayo.ui.components.scoreNameRes
 
 /**
  * The ★ button: completed with a MAL score. Only when asked, so swiping right never stops for
- * a score.
+ * a score. [onlyScore]: the deck to score, where status and episodes stay.
  */
 @Composable
-fun ScoreDialog(card: DeckCard, titles: TitleChoice, onConfirm: (Int) -> Unit, onDismiss: () -> Unit) {
+fun ScoreDialog(
+    card: DeckCard,
+    titles: TitleChoice,
+    onConfirm: (Int) -> Unit,
+    onDismiss: () -> Unit,
+    onlyScore: Boolean = false,
+) {
     var score by rememberSaveable(card.anime.id) { mutableStateOf(card.listScore?.takeIf { it > 0 }) }
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -53,7 +59,7 @@ fun ScoreDialog(card: DeckCard, titles: TitleChoice, onConfirm: (Int) -> Unit, o
                 }
                 Text(
                     text = score?.let { stringResource(R.string.score_selected, it, stringResource(scoreNameRes(it))) }
-                        ?: stringResource(R.string.score_hint),
+                        ?: stringResource(if (onlyScore) R.string.score_hint_only else R.string.score_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -61,7 +67,7 @@ fun ScoreDialog(card: DeckCard, titles: TitleChoice, onConfirm: (Int) -> Unit, o
         },
         confirmButton = {
             TextButton(onClick = { score?.let(onConfirm) }, enabled = score != null) {
-                Text(stringResource(R.string.score_confirm))
+                Text(stringResource(if (onlyScore) R.string.score_confirm_only else R.string.score_confirm))
             }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },

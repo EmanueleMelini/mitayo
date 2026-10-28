@@ -133,7 +133,7 @@ fun CategoriesScreen(
                     }
                 }
             }
-            statusSection(state.statuses, onOpenCategory, onTonight = viewModel::pickTonight, entrance)
+            statusSection(state.statuses, state.unrated, onOpenCategory, onTonight = viewModel::pickTonight, entrance)
             fullWidth("others_title") { SectionTitle(stringResource(R.string.categories_others)) }
             fullWidth("others") {
                 OthersRow(
@@ -183,9 +183,13 @@ private fun LazyGridScope.fullWidth(key: String, content: @Composable () -> Unit
     item(key = key, span = { GridItemSpan(maxLineSpan) }) { content() }
 }
 
-/** The user's own list, one deck per status: to go through it again, change status, give scores. */
+/**
+ * The user's own list, one deck per status: to go through it again, change status, give scores.
+ * Then the deck of the anime still without a score, when there are any.
+ */
 private fun LazyGridScope.statusSection(
     statuses: Map<ListStatus, Int>,
+    unrated: Int,
     onOpenCategory: (Category) -> Unit,
     onTonight: () -> Unit,
     entrance: Modifier.(Int) -> Modifier,
@@ -214,6 +218,19 @@ private fun LazyGridScope.statusSection(
             modifier = Modifier.animateItem().entrance(3 + index),
             countRes = R.plurals.categories_in_list,
         )
+    }
+    if (unrated > 0) {
+        item(key = "unrated") {
+            CountTile(
+                icon = Category.Unrated.icon(),
+                name = Category.Unrated.title(),
+                remainingCount = unrated,
+                countKey = "remaining_${Category.Unrated.key}",
+                onClick = { onOpenCategory(Category.Unrated) },
+                modifier = Modifier.animateItem().entrance(3 + ListStatus.entries.size),
+                countRes = R.plurals.categories_in_list,
+            )
+        }
     }
 }
 

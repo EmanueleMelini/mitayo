@@ -59,6 +59,7 @@ import it.emanuelemelini.mitayo.AppLanguage
 import it.emanuelemelini.mitayo.AppLocale
 import it.emanuelemelini.mitayo.BuildConfig
 import it.emanuelemelini.mitayo.R
+import it.emanuelemelini.mitayo.data.AffinityMethod
 import it.emanuelemelini.mitayo.data.SyncState
 import it.emanuelemelini.mitayo.data.TitleLanguage
 import it.emanuelemelini.mitayo.data.prefs.ThemeMode
@@ -169,6 +170,22 @@ private fun ContentPage(viewModel: ProfileViewModel) {
             body = stringResource(R.string.profile_nsfw_body),
             checked = state.settings.showNsfw,
             onCheckedChange = viewModel::setShowNsfw,
+        )
+    }
+    PageCard {
+        val method = state.settings.affinityMethod
+        ChoiceRow(
+            title = stringResource(R.string.profile_affinity),
+            body = stringResource(R.string.profile_affinity_body),
+            options = AffinityMethod.entries.map { it to affinityLabelRes(it) },
+            selected = method,
+            onSelect = viewModel::setAffinityMethod,
+            note = stringResource(
+                when (method) {
+                    AffinityMethod.SHARED_SCORES -> R.string.affinity_shared_scores_how
+                    AffinityMethod.TASTES -> R.string.affinity_tastes_how
+                }
+            ),
         )
     }
 }
@@ -334,6 +351,11 @@ internal fun themeLabelRes(mode: ThemeMode): Int = when (mode) {
     ThemeMode.SYSTEM -> R.string.profile_theme_system
     ThemeMode.DARK -> R.string.profile_theme_dark
     ThemeMode.LIGHT -> R.string.profile_theme_light
+}
+
+internal fun affinityLabelRes(method: AffinityMethod): Int = when (method) {
+    AffinityMethod.SHARED_SCORES -> R.string.affinity_shared_scores
+    AffinityMethod.TASTES -> R.string.affinity_tastes
 }
 
 internal fun titleLabelRes(language: TitleLanguage): Int = when (language) {

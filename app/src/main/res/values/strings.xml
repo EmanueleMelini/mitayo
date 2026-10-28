@@ -525,4 +525,19 @@
     <string name="share_title">Condividi con</string>
     <string name="share_anime_text">%1$s\n%2$s</string>
     <string name="share_comparison_text">Affinità tra %1$s e %2$s su MyAnimeList: %3$s. Anime in comune: %4$d. Calcolata con Mitayo: %5$s</string>
+    <string name="profile_affinity">Calcolo dell\'affinità</string>
+    <string name="profile_affinity_body">Il numero in cima al confronto di due liste.</string>
+    <string name="affinity_shared_scores">Voti in comune</string>
+    <string name="affinity_tastes">Gusti</string>
+    <string name="affinity_shared_scores_how" formatted="false">Prende gli anime che avete votato entrambi e misura se i voti salgono e scendono insieme (correlazione di Pearson): 100% se si muovono allo stesso modo su ogni anime, anche se uno dei due vota sempre più basso. Servono almeno due anime in comune con il voto.</string>
+    <string name="affinity_tastes_how">Non servono anime in comune. Per ognuno ricava quanto gli piacciono generi, temi, demografica, studi, fonte, classificazione, tipo e decennio, da quanto sopra o sotto la sua media ha votato gli anime che li hanno; poi confronta i due profili. Contano solo i vostri voti, non quello di MAL, e servono almeno 10 anime votati a testa.</string>
+    <string name="profile_summary_content">%1$s · Affinità: %2$s</string>
+    <string name="compare_affinity_tastes">affinità dei gusti: quanto si somigliano generi, temi, studi e altro degli anime che preferite</string>
+    <string name="compare_affinity_tastes_unknown">affinità dei gusti non calcolabile: servono almeno 10 anime votati a testa, con voti diversi tra loro</string>
+    <string name="category_unrated">Da votare</string>
+    <string name="stamp_score">VOTO</string>
+    <string name="guide_rate">Swipe a destra o in alto, o ★: dai il voto (stato ed episodi restano)</string>
+    <string name="history_scored">Voto · ★ %1$d</string>
+    <string name="score_hint_only">Scegli un voto da 1 a 10: stato ed episodi restano come sono su MAL.</string>
+    <string name="score_confirm_only">Salva il voto</string>
 </resources>

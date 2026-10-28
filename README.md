@@ -25,12 +25,18 @@ pick a category and swipe through the anime one at a time. Website and downloads
 - **What to watch?** (home, your list): a random anime of your plan to watch, to start or to change;
 - **your statistics** (Profile): days watched, episodes, statuses, scores and the genres you watch most,
   read from MAL when the page opens; **share** an anime's MAL link or a comparison;
-- a short guide to the swipes the first time a deck opens.
+- a short guide to the swipes the first time a deck opens;
+- **two affinities** for a comparison, chosen in Profile → Content: *shared scores* (Pearson correlation
+  of the scores given to the same anime) or *tastes* (each user's liking of genres, themes,
+  demographics, studios, source, age rating, type and decade, from their own scores against their
+  mean, then the two profiles compared: no anime in common needed; MAL's API has no producers).
 
 Decks show only the anime that aren't in your MAL list at all (and that you didn't skip). Your list has
 its own decks, one per status (watching, completed, on-hold, dropped, plan to watch), to go through it
 again, change status or give scores; there a left swipe only moves on, it doesn't skip, and in the
-Watching deck **+1** adds the episode just seen (at the last one it offers to complete it). The **⋯**
+Watching deck **+1** adds the episode just seen (at the last one it offers to complete it). The **To
+score** deck has the anime seen or started (not plan to watch) without a score: right, up or ★ ask for
+the score only, status and episodes stay. The **⋯**
 button on the card sets the statuses no swipe gives (on-hold, dropped, plan to watch). An anime that is still airing can't be completed, so a right swipe asks the
 episodes watched and sets it as watching.
 

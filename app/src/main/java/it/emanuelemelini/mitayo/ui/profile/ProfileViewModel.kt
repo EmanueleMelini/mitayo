@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import it.emanuelemelini.mitayo.R
+import it.emanuelemelini.mitayo.data.AffinityMethod
 import it.emanuelemelini.mitayo.data.DeckRepository
 import it.emanuelemelini.mitayo.data.InvalidBackupException
 import it.emanuelemelini.mitayo.data.ListRepository
@@ -89,6 +90,10 @@ class ProfileViewModel(
 
     fun setShowNsfw(enabled: Boolean) {
         viewModelScope.launch { settingsRepository.setShowNsfw(enabled) }
+    }
+
+    fun setAffinityMethod(method: AffinityMethod) {
+        viewModelScope.launch { settingsRepository.setAffinityMethod(method) }
     }
 
     fun setNewsNotifications(enabled: Boolean) {

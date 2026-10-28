@@ -41,7 +41,22 @@ data class Comparison(
     val meanDifference: Double?,
     /** Correlation of the scores on the shared anime both scored, -100 to 100; null under 2 or without variation. */
     val affinity: Double?,
-)
+    /** The two profiles of tastes compared, -100 to 100 ([TasteAffinity]). */
+    val tasteAffinity: Double?,
+) {
+    fun affinityBy(method: AffinityMethod): Double? = when (method) {
+        AffinityMethod.SHARED_SCORES -> affinity
+        AffinityMethod.TASTES -> tasteAffinity
+    }
+}
+
+/** How the affinity of a comparison is worked out: a setting, both are always computed. */
+enum class AffinityMethod {
+    /** v1: correlation of the scores given to the same anime. */
+    SHARED_SCORES,
+    /** v2: the tastes of each one, from the attributes of the anime they scored. */
+    TASTES,
+}
 
 object ListComparison {
 
@@ -61,6 +76,7 @@ object ListComparison {
             sharedMeanB = scoredPairs.map { it.second }.averageOrNull(),
             meanDifference = scoredPairs.map { abs(it.first - it.second) }.averageOrNull(),
             affinity = affinity(scoredPairs),
+            tasteAffinity = TasteAffinity.affinity(a, b),
         )
     }
 

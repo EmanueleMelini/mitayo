@@ -88,7 +88,7 @@ internal fun PageCard(modifier: Modifier = Modifier, content: @Composable () -> 
     }
 }
 
-/** A title, a line of explanation and a segmented choice. */
+/** A title, a line of explanation and a segmented choice; [note] goes under the choice. */
 @Composable
 internal fun <T> ChoiceRow(
     title: String,
@@ -96,6 +96,7 @@ internal fun <T> ChoiceRow(
     options: List<Pair<T, Int>>,
     selected: T,
     onSelect: (T) -> Unit,
+    note: String? = null,
 ) {
     Column(Modifier.padding(16.dp)) {
         Text(title, style = MaterialTheme.typography.titleSmall)
@@ -111,6 +112,10 @@ internal fun <T> ChoiceRow(
                     shape = SegmentedButtonDefaults.itemShape(index, options.size),
                 ) { Text(stringResource(label), maxLines = 1) }
             }
+        }
+        if (note != null) {
+            Spacer(Modifier.height(8.dp))
+            Text(note, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

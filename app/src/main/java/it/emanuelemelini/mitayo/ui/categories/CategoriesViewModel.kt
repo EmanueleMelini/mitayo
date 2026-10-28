@@ -2,6 +2,7 @@ package it.emanuelemelini.mitayo.ui.categories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import it.emanuelemelini.mitayo.data.Category
 import it.emanuelemelini.mitayo.data.DeckRepository
 import it.emanuelemelini.mitayo.data.GenreGroup
 import it.emanuelemelini.mitayo.data.GenreGroups
@@ -39,12 +40,16 @@ data class CategoriesUiState(
     val decades: List<DecadeCount> = emptyList(),
     /** How many anime of the user's list each status has, for the decks by status. */
     val statuses: Map<ListStatus, Int> = emptyMap(),
+    /** Seen or started, without a score: the deck to score. */
+    val unrated: Int = 0,
     val sync: SyncState = SyncState.Idle,
     val tonight: TonightState? = null,
     val titles: TitleChoice = TitleChoice(),
 ) {
     val isSyncing: Boolean get() = sync is SyncState.UserList || sync is SyncState.Catalog
 }
+
+private data class ListCounts(val decades: List<DecadeCount>, val statuses: Map<ListStatus, Int>, val unrated: Int)
 
 /** "What do I watch tonight?": [card] null when the plan to watch has nothing to start. */
 data class TonightState(val card: DeckCard?, val started: Boolean = false)
@@ -72,8 +77,12 @@ class CategoriesViewModel(
     }
 
     private val decadesAndStatuses = showNsfw.flatMapLatest { showNsfw ->
-        combine(deckRepository.observeDecadeCounts(showNsfw), deckRepository.observeStatusCounts(showNsfw)) { decades, statuses ->
-            decades to statuses.associate { it.status to it.remaining }
+        combine(
+            deckRepository.observeDecadeCounts(showNsfw),
+            deckRepository.observeStatusCounts(showNsfw),
+            deckRepository.observeRemaining(Category.Unrated, showNsfw),
+        ) { decades, statuses, unrated ->
+            ListCounts(decades, statuses.associate { it.status to it.remaining }, unrated)
         }
     }
 
@@ -83,7 +92,7 @@ class CategoriesViewModel(
         decadesAndStatuses,
         listRepository.completedCount,
         syncManager.state,
-    ) { (settings, tonight), groups, (decades, statuses), completed, sync ->
+    ) { (settings, tonight), groups, (decades, statuses, unrated), completed, sync ->
         CategoriesUiState(
             loaded = true,
             userName = settings.userName,
@@ -93,6 +102,7 @@ class CategoriesViewModel(
             demographics = groups[GenreGroup.DEMOGRAPHIC].orEmpty(),
             decades = decades,
             statuses = statuses,
+            unrated = unrated,
             sync = sync,
             tonight = tonight,
             titles = settings.titles,

@@ -10,6 +10,9 @@ sealed interface Category {
     /** The list comes from MAL as is (and is cached), instead of from the local catalog. */
     val isRemote: Boolean get() = this == Season || this == Upcoming || this == Suggested || this is OfSeason || this is OfUser
 
+    /** The anime of the user's own list: a left swipe only moves on to the next one. */
+    val isOwnList: Boolean get() = this is OfStatus || this == Unrated
+
     data object Popular : Category {
         override val key = "popular"
     }
@@ -84,6 +87,13 @@ sealed interface Category {
         override val key: String get() = "$STATUS_PREFIX${status.apiValue}"
     }
 
+    /** The anime of the list seen or started (not plan to watch) that have no score yet. */
+    data object Unrated : Category {
+        override val key = "unrated"
+
+        val statuses = listOf(ListStatus.WATCHING, ListStatus.COMPLETED, ListStatus.ON_HOLD, ListStatus.DROPPED)
+    }
+
     companion object {
         private const val GENRE_PREFIX = "genre:"
         private const val STATUS_PREFIX = "status:"
@@ -102,6 +112,7 @@ sealed interface Category {
 
         fun fromKey(key: String): Category? =
             specials.firstOrNull { it.key == key }
+                ?: Unrated.takeIf { key == it.key }
                 ?: key.takeIf { it.startsWith(GENRE_PREFIX) }?.removePrefix(GENRE_PREFIX)?.toIntOrNull()?.let(::OfGenre)
                 ?: key.takeIf { it.startsWith(DECADE_PREFIX) }?.removePrefix(DECADE_PREFIX)?.toIntOrNull()
                     ?.takeIf(OfDecade::isValid)?.let(::OfDecade)

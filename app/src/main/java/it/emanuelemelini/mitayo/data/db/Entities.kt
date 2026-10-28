@@ -129,6 +129,8 @@ enum class SwipeAction {
     ON_HOLD,
     DROPPED,
     PLAN_TO_WATCH,
+    /** Only a score, in the deck of the anime without one. */
+    SCORED,
 }
 
 /**

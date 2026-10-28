@@ -151,9 +151,11 @@ fun DeckScreen(categoryKey: String, onBack: () -> Unit) {
     }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     // Your own list: left doesn't skip, it only moves on
-    val leftPasses = category is Category.OfStatus
+    val leftPasses = category.isOwnList
     // The watching deck: ▶ adds the episode just seen
     val addsEpisodes = category == Category.OfStatus(ListStatus.WATCHING)
+    // The deck to score: right and up ask for the score, nothing else
+    val rates = category == Category.Unrated
     var showFilters by rememberSaveable { mutableStateOf(false) }
     val details by viewModel.details.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -315,6 +317,7 @@ fun DeckScreen(categoryKey: String, onBack: () -> Unit) {
                                 otherUser = (category as? Category.OfUser)?.userName,
                                 others = state.others,
                                 leftPasses = leftPasses,
+                                rates = rates,
                                 scope = scope,
                                 onSwiped = { card, direction -> viewModel.swipe(card, direction) },
                                 onTap = viewModel::openDetails,
@@ -330,6 +333,7 @@ fun DeckScreen(categoryKey: String, onBack: () -> Unit) {
                     hasCard = top != null,
                     leftPasses = leftPasses,
                     addsEpisodes = addsEpisodes,
+                    rates = rates,
                     planToWatch = top?.anime?.notYetAired == true,
                     canUndo = state.canUndo,
                     // An anime still airing can't be completed, with or without a score
@@ -367,7 +371,7 @@ fun DeckScreen(categoryKey: String, onBack: () -> Unit) {
                     },
                 )
             }
-            if (state.showGuide && top != null) SwipeGuide(leftPasses, onDismiss = viewModel::onGuideSeen)
+            if (state.showGuide && top != null) SwipeGuide(leftPasses, rates, onDismiss = viewModel::onGuideSeen)
         }
     }
 
@@ -399,6 +403,15 @@ fun DeckScreen(categoryKey: String, onBack: () -> Unit) {
             onDismiss = viewModel::cancelRelatedEpisodes,
         )
     }
+    state.scorePrompt?.let { prompt ->
+        ScoreDialog(
+            card = prompt.card,
+            titles = state.titles,
+            onConfirm = viewModel::confirmScore,
+            onDismiss = viewModel::cancelScore,
+            onlyScore = true,
+        )
+    }
     state.episodesPrompt?.let { prompt ->
         EpisodesDialog(
             prompt = prompt,
@@ -419,6 +432,7 @@ private fun CardStack(
     otherUser: String?,
     others: Map<Int, MalListStatus>,
     leftPasses: Boolean,
+    rates: Boolean,
     scope: CoroutineScope,
     onSwiped: (DeckCard, SwipeDirection) -> Unit,
     onTap: (DeckCard) -> Unit,
@@ -464,7 +478,7 @@ private fun CardStack(
                         },
                         overlay = {
                             if (isTop) {
-                                SwipeStamps(topState, leftPasses, planToWatch = card.anime.notYetAired)
+                                SwipeStamps(topState, leftPasses, planToWatch = card.anime.notYetAired, rates = rates)
                                 CardButtons(
                                     state = topState,
                                     otherStatuses = OTHER_STATUSES.filter { it != card.listStatus },
@@ -537,6 +551,8 @@ private fun ActionBar(
     leftPasses: Boolean,
     /** The watching deck: ▶ is +1, without the card leaving. */
     addsEpisodes: Boolean,
+    /** The deck to score: only "next" and a big ★, which swipes right. */
+    rates: Boolean,
     /** The top card is only announced: right sets plan to watch, ▶ isn't possible. */
     planToWatch: Boolean,
     canUndo: Boolean,
@@ -567,6 +583,17 @@ private fun ActionBar(
             description = stringResource(if (leftPasses) R.string.action_next else R.string.action_skip),
             onClick = { onSwipe(SwipeDirection.LEFT) },
         )
+        if (rates) {
+            ActionButton(
+                icon = Icons.Rounded.Star,
+                color = MitayoColors.Kin,
+                size = 64.dp,
+                progress = topState?.let { maxOf(it.progress(SwipeDirection.RIGHT), it.progress(SwipeDirection.UP)) } ?: 0f,
+                description = stringResource(R.string.action_score),
+                onClick = { onSwipe(SwipeDirection.RIGHT) },
+            )
+            return@Row
+        }
         if (addsEpisodes) {
             // The swipe up still asks the episodes: this button doesn't fill with it
             ActionButton(

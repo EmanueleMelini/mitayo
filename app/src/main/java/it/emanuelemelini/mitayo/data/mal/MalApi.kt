@@ -25,12 +25,13 @@ class MalApi(private val http: OkHttpClient, private val auth: MalAuth) {
 
     /**
      * Anyone's list with the anime themselves, 1000 per page; [userName] "@me" for the user's own.
-     * MAL gives it only when the list is public (404: no such user).
+     * MAL gives it only when the list is public (404: no such user). Studios, source and rating
+     * are for the affinity by tastes.
      */
     suspend fun userAnimeList(userName: String, offset: Int): MalPage<MalUserAnime> = get(
         "users/$userName/animelist",
         mapOf(
-            "fields" to "list_status,$CARD_FIELDS,average_episode_duration",
+            "fields" to "list_status,$CARD_FIELDS,average_episode_duration,studios,source,rating",
             "limit" to "$LIST_PAGE_SIZE",
             "offset" to "$offset",
             "nsfw" to "true",

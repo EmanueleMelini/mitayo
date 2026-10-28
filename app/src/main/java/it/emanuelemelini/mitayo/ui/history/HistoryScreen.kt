@@ -176,4 +176,5 @@ private fun actionLine(record: SwipeRecord): String = when (record.action) {
     SwipeAction.ON_HOLD -> listStatusLabel(ListStatus.ON_HOLD)
     SwipeAction.DROPPED -> listStatusLabel(ListStatus.DROPPED)
     SwipeAction.PLAN_TO_WATCH -> listStatusLabel(ListStatus.PLAN_TO_WATCH)
+    SwipeAction.SCORED -> stringResource(R.string.history_scored, record.score)
 }

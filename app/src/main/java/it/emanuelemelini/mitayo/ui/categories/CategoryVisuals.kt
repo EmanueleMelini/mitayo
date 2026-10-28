@@ -61,6 +61,7 @@ import androidx.compose.material.icons.rounded.SportsMma
 import androidx.compose.material.icons.rounded.SportsMotorsports
 import androidx.compose.material.icons.rounded.SportsSoccer
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.material.icons.rounded.Style
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.TheaterComedy
@@ -91,6 +92,7 @@ fun Category.icon(): ImageVector = when (this) {
     is Category.OfDecade -> Icons.Rounded.History
     is Category.OfUser -> Icons.Rounded.Groups
     is Category.OfStatus -> listStatusIcon(status)
+    Category.Unrated -> Icons.Rounded.StarBorder
 }
 
 /** [genreName]: name of the MAL genre, for [Category.OfGenre]. */
@@ -110,6 +112,7 @@ fun Category.title(genreName: String? = null): String = when (this) {
     is Category.OfGenre -> genreName.orEmpty()
     is Category.OfUser -> stringResource(R.string.category_user, userName)
     is Category.OfStatus -> listStatusLabel(status)
+    Category.Unrated -> stringResource(R.string.category_unrated)
     is Category.OfDecade -> if (start == Category.OfDecade.BEFORE) {
         stringResource(R.string.category_before, Category.OfDecade.FIRST)
     } else {

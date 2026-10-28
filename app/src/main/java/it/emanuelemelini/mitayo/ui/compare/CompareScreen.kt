@@ -72,6 +72,7 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import it.emanuelemelini.mitayo.R
+import it.emanuelemelini.mitayo.data.AffinityMethod
 import it.emanuelemelini.mitayo.data.ListStats
 import it.emanuelemelini.mitayo.data.SharedAnime
 import it.emanuelemelini.mitayo.data.TitleChoice
@@ -166,7 +167,7 @@ fun CompareScreen(onBack: () -> Unit) {
             if (state.loading) return@LazyColumn
             val labelA = label(result.a)
             val labelB = label(result.b)
-            item(key = "header") { ResultHeader(labelA, labelB, result, onShare = { text -> shareComparison(text) }) }
+            item(key = "header") { ResultHeader(labelA, labelB, result, state.affinityMethod, onShare = { text -> shareComparison(text) }) }
             item(key = "tabs") {
                 PrimaryScrollableTabRow(selectedTabIndex = tab.ordinal, edgePadding = 0.dp, containerColor = Color.Transparent) {
                     CompareTab.entries.forEach { entry ->
@@ -299,9 +300,16 @@ private fun NameField(value: String, onChange: (String) -> Unit, imeAction: ImeA
 }
 
 @Composable
-private fun ResultHeader(labelA: String, labelB: String, result: CompareResult, onShare: (String) -> Unit) {
+private fun ResultHeader(
+    labelA: String,
+    labelB: String,
+    result: CompareResult,
+    method: AffinityMethod,
+    onShare: (String) -> Unit,
+) {
     val locale = LocalConfiguration.current.locales[0]
-    val affinityText = result.comparison.affinity?.let { String.format(locale, "%.1f%%", it) } ?: "–"
+    val affinity = result.comparison.affinityBy(method)
+    val affinityText = affinity?.let { String.format(locale, "%.1f%%", it) } ?: "–"
     val shareText = stringResource(
         R.string.share_comparison_text,
         labelA,
@@ -322,14 +330,19 @@ private fun ResultHeader(labelA: String, labelB: String, result: CompareResult, 
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(8.dp))
-            val affinity = result.comparison.affinity
             Text(
                 text = affinityText,
                 style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
             Text(
-                text = stringResource(if (affinity != null) R.string.compare_affinity else R.string.compare_affinity_unknown),
+                text = stringResource(
+                    when (method) {
+                        AffinityMethod.SHARED_SCORES -> if (affinity != null) R.string.compare_affinity else R.string.compare_affinity_unknown
+                        AffinityMethod.TASTES ->
+                            if (affinity != null) R.string.compare_affinity_tastes else R.string.compare_affinity_tastes_unknown
+                    }
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 textAlign = TextAlign.Center,
