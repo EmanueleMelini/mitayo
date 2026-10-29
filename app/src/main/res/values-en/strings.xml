@@ -302,7 +302,7 @@
     <string name="profile_section_privacy">Privacy</string>
     <string name="privacy_consent_title">Statistics and crash reports</string>
     <string name="privacy_consent_text">To improve Mitayo you can send anonymous usage statistics (screens opened, swipes by kind of list, general settings) and crash reports. They go through Google Firebase, tied to a random code of this install and never to who you are.</string>
-    <string name="privacy_never_sent">Your MAL name, your list, anime titles or ids are never sent: nothing that comes from MyAnimeList.</string>
+    <string name="privacy_never_sent">Your MAL or AniList name, your lists, anime titles or ids are never sent: nothing that comes from MyAnimeList or AniList.</string>
     <string name="privacy_consent_change">You can change your mind any time in Profile → Privacy.</string>
     <string name="privacy_consent_notifications">After you answer, Android asks for the permission for Mitayo\'s news notifications.</string>
     <string name="privacy_consent_allow">Allow</string>
@@ -531,4 +531,153 @@
     <string name="history_scored">Score · ★ %1$d</string>
     <string name="score_hint_only">Pick a score from 1 to 10: status and episodes stay as they are on MAL.</string>
     <string name="score_confirm_only">Save the score</string>
+    <string name="profile_section_anilist">AniList</string>
+    <string name="profile_summary_anilist_linked">Linked as %1$s</string>
+    <string name="profile_summary_anilist_expired">Link expired: link it again</string>
+    <string name="profile_summary_anilist_off">Not linked: keep AniList the same as MAL</string>
+    <string name="anilist_account">AniList account · scores %1$s</string>
+    <string name="anilist_format_100">out of 100</string>
+    <string name="anilist_format_10_decimal">out of 10 with decimals</string>
+    <string name="anilist_format_10">out of 10</string>
+    <string name="anilist_format_5">with 5 stars</string>
+    <string name="anilist_format_3">with 3 smileys</string>
+    <string name="anilist_sync_now">Sync now</string>
+    <string name="anilist_syncing">Syncing MAL and AniList…</string>
+    <string name="anilist_pending_body">They leave one every 2 seconds: AniList accepts 30 a minute.</string>
+    <string name="anilist_not_on_anilist_title">Not on AniList</string>
+    <string name="anilist_not_on_anilist_body">AniList doesn\'t have these anime of your MAL list as anime of their own, so they stay on MAL only. Sometimes it includes them in another one: an episode 0, say, or the last episodes inside the main series. Mitayo looks for them again every week. Tap an anime for its details.</string>
+    <string name="anilist_adult_off">Your AniList account has 18+ content off, and AniList hides adult anime from Mitayo too: that\'s why they look missing. Turn it on in AniList\'s settings and sync: Mitayo looks for them right away.</string>
+    <string name="anilist_adult_off_short">18+ content is off on AniList: adult anime look missing.</string>
+    <string name="anilist_not_on_anilist_empty">AniList has every anime of your MAL list.</string>
+    <string name="anilist_not_on_mal_title">Not on MAL</string>
+    <string name="anilist_acknowledge">Got it</string>
+    <string name="anilist_unacknowledge">Put back</string>
+    <string name="anilist_acknowledged_section">Already checked (%1$d)</string>
+    <string name="anilist_acknowledge_body">“Got it” puts aside the ones you\'ve already checked, say because AniList includes them in another one: they stay below, under “Already checked”.</string>
+    <string name="anilist_log_title">Sync log</string>
+    <string name="anilist_log_empty_title">No syncs logged yet</string>
+    <string name="anilist_log_empty_body">Here go the syncs with AniList that change something, the ones that failed and the changes made in the app. Mitayo keeps the last 30 sessions, on this phone only.</string>
+    <string name="anilist_log_last">Last: %1$s</string>
+    <string name="anilist_session_sync">Sync</string>
+    <string name="anilist_session_app">Changes from the app</string>
+    <string name="anilist_session_heading">%1$s · %2$s</string>
+    <string name="anilist_session_running">Running</string>
+    <string name="anilist_session_progress">Running · %1$d of %2$d</string>
+    <string name="anilist_session_done">Done at %1$s</string>
+    <string name="anilist_session_failed">Failed</string>
+    <string name="anilist_session_nothing">No changes</string>
+    <string name="anilist_event_to_anilist">%1$s → AniList</string>
+    <string name="anilist_event_to_mal">%1$s → MAL</string>
+    <string name="anilist_event_removed_anilist">%1$s removed from AniList</string>
+    <string name="anilist_event_removed_mal">%1$s removed from MAL</string>
+    <string name="anilist_event_not_found">%1$s isn\'t on AniList</string>
+    <string name="anilist_event_found">%1$s is on AniList now</string>
+    <string name="anilist_event_conflict">%1$s: MAL and AniList disagree</string>
+    <string name="anilist_event_send_failed">%1$s not sent: AniList answered with error %2$d</string>
+    <string name="anilist_event_waiting_network">No connection: Mitayo tries again by itself</string>
+    <string name="anilist_event_waiting">AniList isn\'t answering (error %1$d): Mitayo tries again by itself</string>
+    <string name="anilist_event_error">Sync stopped: %1$s</string>
+    <string name="anilist_event_unknown_anime">Anime %1$d on MAL</string>
+    <string name="anilist_notice_done">AniList sync done</string>
+    <string name="anilist_notice_done_summary">AniList sync done: %1$s</string>
+    <string name="anilist_notice_done_away">AniList sync done while the app was closed</string>
+    <string name="anilist_notice_done_away_summary">AniList sync done while the app was closed: %1$s</string>
+    <string name="anilist_notice_failed">AniList sync failed: %1$s</string>
+    <string name="anilist_unlink">Unlink AniList</string>
+    <string name="anilist_unlink_title">Unlink AniList?</string>
+    <string name="anilist_unlink_body">Mitayo stops updating AniList and forgets the link. Your AniList list stays as it is.</string>
+    <string name="anilist_link_title">Keep AniList the same as MAL</string>
+    <string name="anilist_link_body">MAL stays your account. With AniList linked, Mitayo keeps the two lists the same: what is on one only goes on the other too, missing episodes and scores are filled in, and every swipe reaches both. When they disagree (a different status or score, an anime removed from one), Mitayo stops and asks which one to keep.</string>
+    <string name="anilist_link_action">Link AniList</string>
+    <string name="anilist_no_browser">You need a browser to sign in to AniList.</string>
+    <string name="anilist_missing_client_id">This build of Mitayo has no AniList link.</string>
+    <string name="anilist_login_failed">AniList didn\'t confirm the sign-in. Try again.</string>
+    <string name="anilist_expired">The AniList link expired: AniList makes it last a year. Link it again.</string>
+    <string name="anilist_error_busy">AniList is refusing requests (too many in a short time, or it\'s under maintenance). Try again in a few minutes.</string>
+    <string name="anilist_error_down">AniList isn\'t answering. Try again later.</string>
+    <string name="anilist_error_code">AniList answered with an error (%1$d).</string>
+    <string name="anilist_status_current">Watching</string>
+    <string name="anilist_status_planning">Planning</string>
+    <string name="anilist_status_completed">Completed</string>
+    <string name="anilist_status_dropped">Dropped</string>
+    <string name="anilist_status_paused">Paused</string>
+    <string name="anilist_status_repeating">Rewatching</string>
+    <string name="conflicts_title">MAL and AniList disagree</string>
+    <string name="conflicts_body">On these anime the two lists say different things. Choose which one to keep: the other follows it. While one is left, the decks wait.</string>
+    <string name="conflicts_all_mal">All as on MAL</string>
+    <string name="conflicts_all_anilist">All as on AniList</string>
+    <string name="conflicts_keep_mal">Keep MAL</string>
+    <string name="conflicts_keep_anilist">Keep AniList</string>
+    <string name="conflicts_mal">MAL</string>
+    <string name="conflicts_anilist">AniList</string>
+    <string name="conflicts_not_in_list">Not in the list</string>
+    <string name="conflicts_unknown_title">MAL anime %1$d</string>
+    <plurals name="anilist_pending">
+        <item quantity="one">%1$d change to send to AniList</item>
+        <item quantity="other">%1$d changes to send to AniList</item>
+    </plurals>
+    <plurals name="anilist_not_on_anilist">
+        <item quantity="one">%1$d anime of your MAL list doesn\'t exist on AniList</item>
+        <item quantity="other">%1$d anime of your MAL list don\'t exist on AniList</item>
+    </plurals>
+    <plurals name="anilist_not_on_anilist_hidden">
+        <item quantity="one">%1$d adult anime is hidden: turn on Adult content in Profile → Content to see it.</item>
+        <item quantity="other">%1$d adult anime are hidden: turn on Adult content in Profile → Content to see them.</item>
+    </plurals>
+    <plurals name="anilist_acknowledged_count">
+        <item quantity="one">%1$d already checked</item>
+        <item quantity="other">%1$d already checked</item>
+    </plurals>
+    <plurals name="anilist_summary_to_anilist">
+        <item quantity="one">%1$d to AniList</item>
+        <item quantity="other">%1$d to AniList</item>
+    </plurals>
+    <plurals name="anilist_summary_to_mal">
+        <item quantity="one">%1$d to MAL</item>
+        <item quantity="other">%1$d to MAL</item>
+    </plurals>
+    <plurals name="anilist_summary_not_found">
+        <item quantity="one">%1$d not on AniList</item>
+        <item quantity="other">%1$d not on AniList</item>
+    </plurals>
+    <plurals name="anilist_summary_found">
+        <item quantity="one">%1$d found</item>
+        <item quantity="other">%1$d found</item>
+    </plurals>
+    <plurals name="anilist_summary_conflicts">
+        <item quantity="one">%1$d conflict</item>
+        <item quantity="other">%1$d conflicts</item>
+    </plurals>
+    <plurals name="anilist_summary_failed">
+        <item quantity="one">%1$d not sent</item>
+        <item quantity="other">%1$d not sent</item>
+    </plurals>
+    <plurals name="anilist_notice_running">
+        <item quantity="one">AniList sync running: %1$d change to send</item>
+        <item quantity="other">AniList sync running: %1$d changes to send</item>
+    </plurals>
+    <plurals name="anilist_notice_not_found">
+        <item quantity="one">%1$d anime isn\'t on AniList</item>
+        <item quantity="other">%1$d anime aren\'t on AniList</item>
+    </plurals>
+    <plurals name="anilist_notice_found">
+        <item quantity="one">%1$d anime is on AniList now</item>
+        <item quantity="other">%1$d anime are on AniList now</item>
+    </plurals>
+    <plurals name="anilist_event_list_read">
+        <item quantity="one">AniList list read: %1$d anime</item>
+        <item quantity="other">AniList list read: %1$d anime</item>
+    </plurals>
+    <plurals name="anilist_event_looked_up">
+        <item quantity="one">Looked up %1$d anime of the MAL list on AniList</item>
+        <item quantity="other">Looked up %1$d anime of the MAL list on AniList</item>
+    </plurals>
+    <plurals name="anilist_not_on_mal">
+        <item quantity="one">%1$d anime of your AniList list doesn\'t exist on MAL</item>
+        <item quantity="other">%1$d anime of your AniList list don\'t exist on MAL</item>
+    </plurals>
+    <plurals name="anilist_unlink_body_pending">
+        <item quantity="one">Mitayo stops updating AniList and forgets the link. Your AniList list stays as it is, without %1$d change not sent yet.</item>
+        <item quantity="other">Mitayo stops updating AniList and forgets the link. Your AniList list stays as it is, without the %1$d changes not sent yet.</item>
+    </plurals>
 </resources>

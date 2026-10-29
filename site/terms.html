@@ -11,7 +11,7 @@
 </head>
 <body>
 <main>
-  <!-- Accepted with the privacy policy: POLICIES_VERSION in ui/AppLinks.kt (3 since 1.1.0), raise it on substantial changes -->
+  <!-- Accepted with the privacy policy: POLICIES_VERSION in ui/AppLinks.kt (4 since 1.4.0), raise it on substantial changes -->
   <div class="top">
     <a class="home" href="/"><img src="/icon.svg" alt="">Mitayo</a>
     <div class="lang" role="group" aria-label="Lingua / Language">
@@ -21,19 +21,19 @@
   </div>
 
   <h1><span class="it">Termini d'uso</span><span class="en">Terms of use</span></h1>
-  <p class="muted"><span class="it">Aggiornati il 24 ottobre 2026 (Mitayo 1.0.0).</span><span class="en">Updated on 24 October 2026 (Mitayo 1.0.0).</span></p>
+  <p class="muted"><span class="it">Aggiornati il 28 ottobre 2026 (Mitayo 1.4.0).</span><span class="en">Updated on 28 October 2026 (Mitayo 1.4.0).</span></p>
 
   <section class="card">
     <div class="it">
       <h2>Cos'è Mitayo</h2>
       <p>Mitayo è un'app Android gratuita e non commerciale, un progetto personale di Emanuele Melini,
-        per aggiornare la propria lista MyAnimeList. Usando l'app accetti questi termini e
+        per aggiornare la propria lista MyAnimeList e, se la colleghi, quella AniList. Usando l'app accetti questi termini e
         l'<a href="/privacy">informativa privacy</a>; se non li accetti, non usarla.</p>
     </div>
     <div class="en">
       <h2>What Mitayo is</h2>
       <p>Mitayo is a free, non-commercial Android app, a personal project by Emanuele Melini, to
-        update your own MyAnimeList list. By using the app you accept these terms and the
+        update your own MyAnimeList list and, if you link it, your AniList one. By using the app you accept these terms and the
         <a href="/privacy">privacy policy</a>; if you don't accept them, don't use it.</p>
     </div>
   </section>
@@ -60,6 +60,24 @@
 
   <section class="card">
     <div class="it">
+      <h2>AniList (facoltativo)</h2>
+      <p>Da Profilo → AniList puoi collegare anche un account AniList, regolato dai
+        <a href="https://anilist.co/terms">termini di AniList</a>. Mitayo non è affiliata ad AniList né
+        approvata da AniList, e usa la sua API. MyAnimeList resta l'account principale: AniList si
+        collega e si scollega quando vuoi, e AniList può cambiare, limitare o togliere l'accesso alla
+        sua API in qualsiasi momento.</p>
+    </div>
+    <div class="en">
+      <h2>AniList (optional)</h2>
+      <p>From Profile → AniList you can also link an AniList account, governed by the
+        <a href="https://anilist.co/terms">AniList terms</a>. Mitayo isn't affiliated with or endorsed
+        by AniList, and uses its API. MyAnimeList stays the main account: you link and unlink AniList
+        whenever you want, and AniList can change, limit or remove access to its API at any time.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="it">
       <h2>Cosa fa alla tua lista</h2>
       <p>Mitayo cambia la tua lista MyAnimeList solo quando lo decidi tu:</p>
       <ul>
@@ -67,6 +85,11 @@
         <li>swipe in alto, o a destra su un anime ancora in onda: l'anime diventa <em>watching</em> con gli episodi che indichi;</li>
         <li>annulla: torna lo stato che l'anime aveva prima dello swipe.</li>
       </ul>
+      <p>Se colleghi AniList, Mitayo rende uguali le due liste e poi le tiene uguali: quello che c'è
+        solo su una va anche sull'altra, episodi e voti mancanti si completano, e ogni modifica fatta
+        nell'app arriva su tutte e due. Quando non sono d'accordo (stato o voto diversi, un anime tolto
+        da una lista) scegli tu quale tenere, e finché non scegli i mazzi aspettano. I voti di AniList
+        diventano voti da 1 a 10 su MyAnimeList, arrotondati se serve.</p>
       <p>Senza connessione le modifiche partono più tardi, appena c'è rete. L'annullamento vale per
         gli ultimi swipe fatti nell'app; tutto il resto lo correggi su MyAnimeList.</p>
     </div>
@@ -78,6 +101,11 @@
         <li>a swipe up, or right on an anime still airing: the anime becomes <em>watching</em> with the episodes you enter;</li>
         <li>undo: the anime gets back the status it had before the swipe.</li>
       </ul>
+      <p>If you link AniList, Mitayo makes the two lists the same and then keeps them so: what is on
+        one only goes on the other too, missing episodes and scores are filled in, and every change
+        made in the app reaches both. When they disagree (a different status or score, an anime
+        removed from one list) you choose which one to keep, and until you do the decks wait.
+        AniList scores become scores from 1 to 10 on MyAnimeList, rounded when needed.</p>
       <p>Without a connection the changes go out later, as soon as there's a network. Undo works for
         the last swipes made in the app; anything else you fix on MyAnimeList.</p>
     </div>
@@ -122,15 +150,15 @@
     <div class="it">
       <h2>Uso consentito</h2>
       <p>Puoi usare Mitayo solo per gestire la tua lista, per uso personale e non commerciale. Non
-        usarla per fare richieste in massa a MyAnimeList, aggirare i loro limiti, automatizzare
-        l'app o violare i termini di MyAnimeList, e non distribuire versioni modificate dell'app
+        usarla per fare richieste in massa a MyAnimeList o ad AniList, aggirare i loro limiti,
+        automatizzare l'app o violare i termini di MyAnimeList o di AniList, e non distribuire versioni modificate dell'app
         presentandole come Mitayo.</p>
     </div>
     <div class="en">
       <h2>Allowed use</h2>
       <p>You may use Mitayo only to manage your own list, for personal, non-commercial use. Don't use
-        it to send mass requests to MyAnimeList, get around their limits, automate the app or break
-        the MyAnimeList terms, and don't distribute modified versions of the app presenting them as
+        it to send mass requests to MyAnimeList or AniList, get around their limits, automate the app
+        or break the MyAnimeList or AniList terms, and don't distribute modified versions of the app presenting them as
         Mitayo.</p>
     </div>
   </section>
@@ -140,13 +168,13 @@
       <h2>Nessuna garanzia</h2>
       <p>Mitayo è fornita gratuitamente così com'è, senza garanzie: può avere errori, funzionare
         male con alcuni dispositivi o smettere di funzionare, e una sincronizzazione può non andare a
-        buon fine. Controlla su MyAnimeList le modifiche che ti stanno a cuore.</p>
+        buon fine. Controlla su MyAnimeList (e su AniList, se lo colleghi) le modifiche che ti stanno a cuore.</p>
     </div>
     <div class="en">
       <h2>No warranty</h2>
       <p>Mitayo is provided free of charge as is, without warranties: it may have bugs, work badly on
-        some devices or stop working, and a sync may fail. Check on MyAnimeList the changes you care
-        about.</p>
+        some devices or stop working, and a sync may fail. Check on MyAnimeList (and on AniList, if
+        you link it) the changes you care about.</p>
     </div>
   </section>
 
@@ -155,14 +183,14 @@
       <h2>Responsabilità</h2>
       <p>Nei limiti consentiti dalla legge, lo sviluppatore non risponde di danni che derivano
         dall'uso di Mitayo o dall'impossibilità di usarla, compresi la perdita o la modifica di dati
-        della tua lista MyAnimeList. Restano salvi i casi di dolo o colpa grave e i diritti che la
+        delle tue liste MyAnimeList e AniList. Restano salvi i casi di dolo o colpa grave e i diritti che la
         legge riconosce ai consumatori e che non si possono escludere.</p>
     </div>
     <div class="en">
       <h2>Liability</h2>
       <p>To the extent allowed by law, the developer isn't liable for damages arising from the use of
         Mitayo or from being unable to use it, including the loss or change of data in your
-        MyAnimeList list. This doesn't apply to wilful misconduct or gross negligence, nor does it
+        MyAnimeList and AniList lists. This doesn't apply to wilful misconduct or gross negligence, nor does it
         limit the rights the law gives consumers that can't be excluded.</p>
     </div>
   </section>

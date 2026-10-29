@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -91,26 +92,33 @@ fun UndoMessagesEffect(messages: Flow<UndoMessage>, snackbarHostState: SnackbarH
 /**
  * An anime in a list (skipped page, search): poster, titles, MAL status and the menu to set a
  * new one. [onRestore]: the "Restore" button of the skipped page; [skipped] marks a skipped anime
- * found by the search.
+ * found by the search. Without [onSetStatus] and [onRestore] the whole row opens the details;
+ * [action] is one more button of the row.
  */
 @Composable
 fun AnimeRow(
     card: DeckCard,
     titles: TitleChoice,
-    onSetStatus: (ListStatus) -> Unit,
+    onSetStatus: ((ListStatus) -> Unit)?,
     modifier: Modifier = Modifier,
     onRestore: (() -> Unit)? = null,
     skipped: Boolean = false,
     /** Tapping the poster opens the details, as ⓘ in a deck. */
     onOpenDetails: (() -> Unit)? = null,
+    action: (@Composable () -> Unit)? = null,
 ) {
     val anime = card.anime
+    val shape = RoundedCornerShape(20.dp)
+    val hasMenu = onSetStatus != null || onRestore != null
+    val hasActions = hasMenu || action != null
     Card(
-        shape = RoundedCornerShape(20.dp),
+        shape = shape,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .then(if (!hasMenu && onOpenDetails != null) Modifier.clip(shape).clickable(onClick = onOpenDetails) else Modifier),
     ) {
-        Row(Modifier.padding(start = 12.dp, end = 12.dp, top = 12.dp)) {
+        Row(Modifier.padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = if (hasActions) 0.dp else 12.dp)) {
             AsyncImage(
                 model = anime.pictureUrl,
                 contentDescription = null,
@@ -119,7 +127,7 @@ fun AnimeRow(
                     .size(width = 60.dp, height = 86.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                    .then(if (onOpenDetails != null) Modifier.clickable(onClick = onOpenDetails) else Modifier),
+                    .then(if (hasMenu && onOpenDetails != null) Modifier.clickable(onClick = onOpenDetails) else Modifier),
             )
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -153,38 +161,45 @@ fun AnimeRow(
                         color = MaterialTheme.colorScheme.primary,
                     )
                 }
-                if (skipped) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Rounded.VisibilityOff,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(14.dp),
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Text(
-                            text = stringResource(R.string.search_skipped),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                if (skipped) SkippedLabel()
+            }
+        }
+        if (hasActions) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp, bottom = 8.dp),
+            ) {
+                if (onRestore != null) {
+                    TextButton(onClick = onRestore) {
+                        Icon(Icons.Rounded.Restore, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text(stringResource(R.string.skipped_restore))
                     }
                 }
+                action?.invoke()
+                if (onSetStatus != null) StatusMenu(card.listStatus, canComplete = !card.anime.isAiring, onSetStatus = onSetStatus)
             }
         }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp, bottom = 8.dp),
-        ) {
-            if (onRestore != null) {
-                TextButton(onClick = onRestore) {
-                    Icon(Icons.Rounded.Restore, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(6.dp))
-                    Text(stringResource(R.string.skipped_restore))
-                }
-            }
-            StatusMenu(card.listStatus, canComplete = !card.anime.isAiring, onSetStatus = onSetStatus)
-        }
+    }
+}
+
+/** "Skipped" with its icon: an anime swiped left, out of the decks. */
+@Composable
+fun SkippedLabel(style: TextStyle = MaterialTheme.typography.labelMedium) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            Icons.Rounded.VisibilityOff,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(14.dp),
+        )
+        Spacer(Modifier.width(4.dp))
+        Text(
+            text = stringResource(R.string.search_skipped),
+            style = style,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 

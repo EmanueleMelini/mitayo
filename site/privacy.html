@@ -11,7 +11,7 @@
 </head>
 <body>
 <main>
-  <!-- Accepted with the terms of use: POLICIES_VERSION in ui/AppLinks.kt (3 since 1.1.0), raise it on substantial changes -->
+  <!-- Accepted with the terms of use: POLICIES_VERSION in ui/AppLinks.kt (4 since 1.4.0), raise it on substantial changes -->
   <div class="top">
     <a class="home" href="/"><img src="/icon.svg" alt="">Mitayo</a>
     <div class="lang" role="group" aria-label="Lingua / Language">
@@ -21,26 +21,26 @@
   </div>
 
   <h1><span class="it">Informativa sulla privacy</span><span class="en">Privacy policy</span></h1>
-  <p class="muted"><span class="it">Aggiornata il 28 ottobre 2026 (Mitayo 1.3.0).</span><span class="en">Updated on 28 October 2026 (Mitayo 1.3.0).</span></p>
+  <p class="muted"><span class="it">Aggiornata il 28 ottobre 2026 (Mitayo 1.4.0).</span><span class="en">Updated on 28 October 2026 (Mitayo 1.4.0).</span></p>
 
   <section class="card">
     <div class="it">
       <h2>In breve</h2>
       <p>Mitayo non ha account né server suoi. Accedi con il tuo account MyAnimeList sulla pagina di
         MyAnimeList, e tutto quello che l'app usa (la tua lista e gli anime ignorati) resta sul
-        telefono. L'app comunica con MyAnimeList, con GitHub per gli aggiornamenti e con Google
-        Firebase per le notifiche delle novità. Le statistiche d'uso e i report dei crash partono
+        telefono. L'app comunica con MyAnimeList, con AniList se lo colleghi (è facoltativo), con
+        GitHub per gli aggiornamenti e con Google Firebase per le notifiche delle novità. Le statistiche d'uso e i report dei crash partono
         spenti e si attivano solo se acconsenti; non contengono mai la tua lista, i titoli o il tuo
-        nome MyAnimeList. Niente pubblicità.</p>
+        nome MyAnimeList o AniList. Niente pubblicità.</p>
     </div>
     <div class="en">
       <h2>In short</h2>
       <p>Mitayo has no accounts and no servers of its own. You log in with your MyAnimeList account
         on MyAnimeList's own page, and everything the app uses (your list and the skipped anime)
-        stays on the phone. The app talks to MyAnimeList, to GitHub for updates and to Google
-        Firebase for the news notifications. Usage statistics and crash reports start off and are
+        stays on the phone. The app talks to MyAnimeList, to AniList if you link it (it's optional),
+        to GitHub for updates and to Google Firebase for the news notifications. Usage statistics and crash reports start off and are
         turned on only if you agree; they never contain your list, the titles or your MyAnimeList
-        name. No ads.</p>
+        or AniList name. No ads.</p>
     </div>
   </section>
 
@@ -48,14 +48,14 @@
     <div class="it">
       <h2>Chi gestisce Mitayo</h2>
       <p>Mitayo è un progetto personale, gratuito e non commerciale di Emanuele Melini. Non è
-        affiliata a MyAnimeList: usa l'API ufficiale di MyAnimeList secondo il loro accordo per gli
-        sviluppatori.</p>
+        affiliata a MyAnimeList né ad AniList: usa l'API ufficiale di MyAnimeList secondo il loro
+        accordo per gli sviluppatori e, se colleghi AniList, l'API di AniList secondo i suoi termini.</p>
     </div>
     <div class="en">
       <h2>Who runs Mitayo</h2>
       <p>Mitayo is a personal, free and non-commercial project by Emanuele Melini. It isn't
-        affiliated with MyAnimeList: it uses the official MyAnimeList API under their developer
-        agreement.</p>
+        affiliated with MyAnimeList or AniList: it uses the official MyAnimeList API under their
+        developer agreement and, if you link AniList, the AniList API under its terms.</p>
     </div>
   </section>
 
@@ -76,10 +76,34 @@
 
   <section class="card">
     <div class="it">
+      <h2>Collegamento ad AniList (facoltativo)</h2>
+      <p>Da Profilo → AniList puoi collegare anche un account AniList. L'accesso avviene sulla pagina
+        di AniList, aperta nel browser (OAuth 2.0): Mitayo non vede né salva la tua password, riceve
+        solo un token di accesso che conserva sul telefono cifrato come quello di MyAnimeList. AniList
+        lo fa durare un anno e non si rinnova: dopo, l'app ti chiede di collegarlo di nuovo.</p>
+    </div>
+    <div class="en">
+      <h2>AniList link (optional)</h2>
+      <p>From Profile → AniList you can also link an AniList account. You sign in on AniList's page,
+        opened in the browser (OAuth 2.0): Mitayo neither sees nor stores your password, it only gets
+        an access token, which it keeps on the phone encrypted like the MyAnimeList one. AniList
+        makes it last a year and it can't be renewed: then the app asks you to link it again.</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="it">
       <h2>Quali dati usa</h2>
       <ul>
         <li><strong>Dal tuo account MyAnimeList</strong>: nome utente, immagine del profilo e la tua
           lista anime (stato ed episodi visti di ogni anime).</li>
+        <li><strong>Dal tuo account AniList</strong>, se lo colleghi: nome utente, immagine del profilo,
+          il formato dei voti che hai scelto, se hai acceso i contenuti 18+ e la tua lista anime (stato, episodi visti e voto di ogni
+          anime, con il suo ID su MyAnimeList). Per ogni anime resta sul telefono com'era sulle due
+          liste all'ultima sincronizzazione, per capire da che parte è cambiato, e restano gli anime su
+          cui le liste non sono d'accordo, finché non scegli. Restano anche il registro dei sync (le
+          ultime 30 sessioni: cosa è stato copiato, trovato o non trovato, e gli errori) e gli anime
+          che hai segnato come già controllati nella pagina «Non su AniList».</li>
         <li><strong>Dal catalogo pubblico di MyAnimeList</strong>: titoli, immagini, generi, voti,
           episodi, stagioni e orario di uscita settimanale degli anime, gli anime in arrivo, e i
           suggerimenti che MyAnimeList calcola per te.</li>
@@ -106,6 +130,13 @@
       <ul>
         <li><strong>From your MyAnimeList account</strong>: username, profile picture and your anime
           list (status and episodes watched for each anime).</li>
+        <li><strong>From your AniList account</strong>, if you link it: username, profile picture, the
+          score format you chose, whether you turned on 18+ content and your anime list (status, episodes watched and score of each anime,
+          with its MyAnimeList id). For each anime the phone keeps how it was on the two lists at the
+          last sync, to tell which side changed, and the anime the lists disagree on, until you
+          choose. The sync log stays too (the last 30 sessions: what was copied, found or not found,
+          and the errors), with the anime you marked as already checked on the "Not on AniList"
+          page.</li>
         <li><strong>From MyAnimeList's public catalog</strong>: titles, pictures, genres, scores,
           episodes, seasons and weekly airing time of the anime, the upcoming anime, and the
           suggestions MyAnimeList makes for you.</li>
@@ -156,9 +187,19 @@
         anime con trailer, le anteprime dei video arrivano da <code>i.ytimg.com</code>, e un video
         toccato si apre nell'app YouTube o nel browser, con le regole di Google. La tua lista cambia solo quando lo decidi
         tu: swipe a destra, swipe in alto con gli episodi visti, +1 nel mazzo Watching, un voto nel
-        mazzo Da votare, "Lo inizio" in Cosa guardo?, uno stato scelto o l'annullamento di uno swipe. Quello che
+        mazzo Da votare, "Lo inizio" in Cosa guardo?, uno stato scelto o l'annullamento di uno swipe, e, se colleghi
+        AniList, quello che Mitayo ci copia dalla tua lista AniList. Quello che
         MyAnimeList fa con i tuoi dati è regolato dalla
         <a href="https://myanimelist.net/about/privacy_policy">privacy policy di MyAnimeList</a>.</p>
+      <p><strong>AniList</strong>, solo se lo colleghi: <code>anilist.co</code> per l'accesso,
+        <code>graphql.anilist.co</code> per leggere la tua lista AniList, per cercare su AniList gli
+        anime della tua lista MyAnimeList (con i loro ID MyAnimeList) e per modificare la lista
+        AniList. Collegandolo, Mitayo copia su AniList quello che c'è solo nella tua lista
+        MyAnimeList (stato, episodi visti, voto) e su MyAnimeList quello che c'è solo in quella
+        AniList, completa episodi e voti mancanti, e poi manda ogni modifica fatta nell'app a tutte e
+        due; le differenze che non si risolvono da sole (stato o voto diversi, un anime tolto da una
+        lista) aspettano la tua scelta. A Firebase non arriva nulla di AniList. Quello che AniList fa
+        con i tuoi dati è regolato dai <a href="https://anilist.co/terms">termini di AniList</a>.</p>
       <p><strong>Condividi</strong>: il link MyAnimeList di un anime o il risultato di un confronto
         passano all'app che scegli tu dal menu di Android; Mitayo non manda nulla da sé.</p>
       <p><strong>GitHub</strong>, per gli aggiornamenti: al massimo una volta al giorno l'app chiede a
@@ -198,8 +239,8 @@
           codice in cui l'app si è fermata, modello del telefono, versioni e stato della memoria.</li>
       </ul>
       <p>Tutto è legato a un codice casuale dell'installazione, mai al tuo account. Non vengono mai
-        inviati il tuo nome MyAnimeList, la tua lista, i titoli, gli ID degli anime o dei generi, né
-        il token di accesso. L'ID pubblicitario non viene raccolto e i dati non sono usati per la
+        inviati il tuo nome MyAnimeList o AniList, le tue liste, i titoli, gli ID degli anime o dei
+        generi, né i token di accesso. L'ID pubblicitario non viene raccolto e i dati non sono usati per la
         pubblicità. Google tratta questi dati per conto di Mitayo e può trasferirli fuori dall'Unione
         europea con le garanzie previste dal GDPR: vedi
         <a href="https://firebase.google.com/support/privacy">Privacy e sicurezza in Firebase</a>.</p>
@@ -219,9 +260,19 @@
         anime with trailers, the video previews come from <code>i.ytimg.com</code>, and a video you tap
         opens in the YouTube app or in the browser, under Google's terms. Your list changes only when you decide
         so: a right swipe, a swipe up with the episodes watched, +1 in the Watching deck, a score in the
-        To score deck, "Start it" in What to watch?, a status you pick or undoing a swipe. What MyAnimeList does
+        To score deck, "Start it" in What to watch?, a status you pick or undoing a swipe, and, if you link
+        AniList, what Mitayo copies to it from your AniList list. What MyAnimeList does
         with your data is governed by
         <a href="https://myanimelist.net/about/privacy_policy">MyAnimeList's privacy policy</a>.</p>
+      <p><strong>AniList</strong>, only if you link it: <code>anilist.co</code> for the sign-in,
+        <code>graphql.anilist.co</code> to read your AniList list, to look up on AniList the anime of
+        your MyAnimeList list (by their MyAnimeList ids) and to change the AniList list. Once linked,
+        Mitayo copies to AniList what is only in your MyAnimeList list (status, episodes watched,
+        score) and to MyAnimeList what is only in the AniList one, fills in missing episodes and
+        scores, and then sends every change made in the app to both; the differences that don't
+        solve themselves (a different status or score, an anime removed from one list) wait for your
+        choice. Nothing about AniList reaches Firebase. What AniList does with your data is governed
+        by the <a href="https://anilist.co/terms">AniList terms</a>.</p>
       <p><strong>Share</strong>: an anime's MyAnimeList link or a comparison result go to the app you
         pick from Android's menu; Mitayo sends nothing by itself.</p>
       <p><strong>GitHub</strong>, for updates: at most once a day the app asks
@@ -260,7 +311,8 @@
           the app stopped, phone model, versions and memory state.</li>
       </ul>
       <p>Everything is tied to a random code of the install, never to your account. Your MyAnimeList
-        name, your list, the titles, anime or genre ids and the access token are never sent. The
+        or AniList name, your lists, the titles, anime or genre ids and the access tokens are never
+        sent. The
         advertising id isn't collected and the data aren't used for ads. Google processes these data
         on Mitayo's behalf and may transfer them outside the European Union with the safeguards of
         the GDPR: see <a href="https://firebase.google.com/support/privacy">Privacy and Security in
@@ -277,8 +329,11 @@
       <h2>Per quanto tempo</h2>
       <ul>
         <li>Finché resti collegato. Con <strong>Esci</strong> (Profilo) si cancellano dal telefono
-          il token, la lista, gli ignorati, gli ultimi swipe e le modifiche non ancora inviate;
-          resta solo il catalogo pubblico degli anime.</li>
+          il token, la lista, gli ignorati, gli ultimi swipe, le modifiche non ancora inviate e il
+          collegamento ad AniList; resta solo il catalogo pubblico degli anime.</li>
+        <li>Collegamento ad AniList: finché non lo scolleghi (Profilo → AniList) o non scade, dopo un
+          anno. Scollegandolo si cancellano dal telefono il token AniList, tutto quello che Mitayo sa
+          della lista AniList e il registro dei sync; la tua lista su AniList resta com'è.</li>
         <li>Disinstallando l'app si cancella tutto quello che è sul telefono.</li>
         <li>Statistiche d'uso: i dati legati all'installazione restano su Firebase al massimo 2 mesi
           dall'ultimo utilizzo, poi solo in forma aggregata. Report dei crash: 90 giorni.</li>
@@ -293,8 +348,11 @@
       <h2>How long</h2>
       <ul>
         <li>As long as you stay logged in. <strong>Log out</strong> (Profile) deletes from the phone
-          the token, the list, the skipped anime, the last swipes and the changes not sent yet; only
-          the public anime catalog stays.</li>
+          the token, the list, the skipped anime, the last swipes, the changes not sent yet and the
+          AniList link; only the public anime catalog stays.</li>
+        <li>AniList link: until you unlink it (Profile → AniList) or it expires, after a year.
+          Unlinking deletes from the phone the AniList token, everything Mitayo knows of the AniList
+          list and the sync log; your list on AniList stays as it is.</li>
         <li>Uninstalling the app deletes everything that is on the phone.</li>
         <li>Usage statistics: the data tied to the install stay on Firebase at most 2 months after the
           last use, then only in aggregate form. Crash reports: 90 days.</li>
@@ -312,7 +370,7 @@
       <h2>I tuoi diritti</h2>
       <p>I dati di Mitayo sono sul tuo telefono: li vedi nell'app e li cancelli con Esci o
         disinstallando l'app. Per i dati salvati su MyAnimeList (account e lista) rivolgiti a
-        MyAnimeList. Per usare Mitayo serve un account MyAnimeList, quindi valgono anche i loro
+        MyAnimeList, per quelli su AniList ad AniList. Per usare Mitayo serve un account MyAnimeList, quindi valgono anche i loro
         requisiti di età. I contenuti per adulti sono nascosti finché non li attivi.</p>
       <p>Il consenso alle statistiche e ai report dei crash si può dare da soli dai 14 anni (in Italia;
         altrove dall'età prevista nel tuo paese). Se sei più piccolo serve l'autorizzazione di un
@@ -328,7 +386,7 @@
       <h2>Your rights</h2>
       <p>Mitayo's data are on your phone: you see them in the app and delete them with Log out or by
         uninstalling the app. For the data stored on MyAnimeList (account and list) contact
-        MyAnimeList. Mitayo needs a MyAnimeList account, so their age requirements apply too. Adult
+        MyAnimeList, for those on AniList contact AniList. Mitayo needs a MyAnimeList account, so their age requirements apply too. Adult
         content is hidden until you turn it on.</p>
       <p>You can consent to statistics and crash reports on your own from 14 (in Italy; elsewhere
         from the age set by your country). If you're younger you need a parent's permission: without

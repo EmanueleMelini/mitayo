@@ -166,7 +166,7 @@ class DeckViewModel(
     private val episodeMutex = Mutex()
 
     /** The details sheet: also opened from a comparison, so it lives in its own class. */
-    private val detailsController = AnimeDetailsController(viewModelScope, catalogRepository, listRepository, statusEditor, telemetry)
+    private val detailsController = AnimeDetailsController(viewModelScope, catalogRepository, listRepository, deckRepository, statusEditor, telemetry)
     val details: StateFlow<DetailsState?> = detailsController.details
     val relatedPrompt: StateFlow<DeckCard?> = detailsController.relatedPrompt
 

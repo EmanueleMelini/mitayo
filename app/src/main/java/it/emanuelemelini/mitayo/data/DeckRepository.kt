@@ -10,6 +10,7 @@ import it.emanuelemelini.mitayo.data.db.GenreCount
 import it.emanuelemelini.mitayo.data.db.SkippedAnime
 import it.emanuelemelini.mitayo.data.db.StatusCount
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /** The decks to swipe and the skipped anime. */
 class DeckRepository(private val database: AppDatabase) {
@@ -19,6 +20,9 @@ class DeckRepository(private val database: AppDatabase) {
     val skippedCount: Flow<Int> = skippedDao.observeCount()
 
     val skipped: Flow<List<DeckCard>> = skippedDao.observeCards()
+
+    /** Which of these anime are skipped. */
+    fun observeSkipped(animeIds: List<Int>): Flow<Set<Int>> = skippedDao.observeIds(animeIds).map { it.toSet() }
 
     /** The first [limit] cards; the flow updates after every swipe. [shuffleSeed]: see [DeckQuery.cards]. */
     fun observeCards(

@@ -63,7 +63,7 @@ jobs:
         run: echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/mitayo-release.jks"
 
       # app/build.gradle.kts reads these instead of local.properties; a signed build without the
-      # MAL client ID fails on purpose
+      # MAL client ID fails on purpose, one without the AniList client ID has the AniList link off
       - name: Build the signed APK
         env:
           MITAYO_KEYSTORE_PATH: ${{ runner.temp }}/mitayo-release.jks
@@ -71,6 +71,7 @@ jobs:
           MITAYO_KEY_ALIAS: ${{ secrets.MITAYO_KEY_ALIAS }}
           MITAYO_KEY_PASSWORD: ${{ secrets.MITAYO_KEY_PASSWORD }}
           MITAYO_MAL_CLIENT_ID: ${{ secrets.MITAYO_MAL_CLIENT_ID }}
+          MITAYO_ANILIST_CLIENT_ID: ${{ secrets.MITAYO_ANILIST_CLIENT_ID }}
         run: ./gradlew testDebugUnitTest assembleRelease
 
       # The certificate fingerprint goes in the run summary: it must stay the same in every release,

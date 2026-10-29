@@ -63,7 +63,7 @@ class SkippedViewModel(
 ) : ViewModel() {
 
     /** The same details sheet as the decks, from the poster of a skipped anime. */
-    val details = AnimeDetailsController(viewModelScope, catalogRepository, listRepository, statusEditor, telemetry)
+    val details = AnimeDetailsController(viewModelScope, catalogRepository, listRepository, deckRepository, statusEditor, telemetry)
 
     private val query = MutableStateFlow("")
     private val filter = MutableStateFlow<StatusFilter>(StatusFilter.All)

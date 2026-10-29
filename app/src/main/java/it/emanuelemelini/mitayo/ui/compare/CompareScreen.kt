@@ -112,6 +112,7 @@ fun CompareScreen(onBack: () -> Unit) {
             container.telemetry,
             container.catalogRepository,
             container.listRepository,
+            container.deckRepository,
         )
     }
     val state by viewModel.uiState.collectAsStateWithLifecycle()

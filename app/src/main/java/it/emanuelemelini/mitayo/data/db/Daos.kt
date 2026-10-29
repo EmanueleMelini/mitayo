@@ -215,6 +215,9 @@ interface SkippedDao {
     @Query("SELECT COUNT(*) FROM skipped")
     fun observeCount(): Flow<Int>
 
+    @Query("SELECT animeId FROM skipped WHERE animeId IN (:animeIds)")
+    fun observeIds(animeIds: List<Int>): Flow<List<Int>>
+
     /** Skipped anime still in the catalog, the last skipped first. */
     @Query(
         """

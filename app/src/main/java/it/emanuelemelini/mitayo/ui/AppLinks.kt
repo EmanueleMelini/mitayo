@@ -8,9 +8,9 @@ import it.emanuelemelini.mitayo.BuildConfig
  * Version of the terms of use and the privacy policy (site/terms.html, site/privacy.html),
  * accepted together before the login: raise it when either changes in substance, and the app
  * asks every user to accept them again. 2: updates from GitHub, statistics and news (1.0.0).
- * 3: other users' lists and YouTube video previews (1.1.0).
+ * 3: other users' lists and YouTube video previews (1.1.0). 4: the optional AniList link (1.4.0).
  */
-const val POLICIES_VERSION = 3
+const val POLICIES_VERSION = 4
 
 /** Public pages: the site (site/, Cloudflare Pages) and the GitHub repository. */
 object AppLinks {

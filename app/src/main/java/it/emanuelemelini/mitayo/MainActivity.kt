@@ -12,6 +12,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import it.emanuelemelini.mitayo.data.anilist.AniListLogin
 import it.emanuelemelini.mitayo.data.prefs.Settings
 import it.emanuelemelini.mitayo.data.prefs.ThemeMode
 import it.emanuelemelini.mitayo.data.telemetry.FirebaseSupport
@@ -19,6 +20,7 @@ import it.emanuelemelini.mitayo.ui.LaunchRequest
 import it.emanuelemelini.mitayo.ui.MitayoNavHost
 import it.emanuelemelini.mitayo.ui.POLICIES_VERSION
 import it.emanuelemelini.mitayo.ui.PoliciesUpdateDialog
+import it.emanuelemelini.mitayo.ui.anilist.ConflictsScreen
 import it.emanuelemelini.mitayo.ui.login.LoginScreen
 import it.emanuelemelini.mitayo.ui.privacy.PrivacyConsent
 import it.emanuelemelini.mitayo.ui.theme.MitayoTheme
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity() {
             val settings: Settings? by container.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
             val loggedIn: Boolean? by container.session.isLoggedIn.collectAsStateWithLifecycle(initialValue = null)
             val launchRequest by launchRequests.collectAsStateWithLifecycle()
+            val aniListConflicts by container.aniListSync.conflictCount.collectAsStateWithLifecycle(initialValue = 0)
             // Until preferences and session are loaded (a few ms) the window background stays visible
             val current = settings ?: return@setContent
             val session = loggedIn ?: return@setContent
@@ -73,7 +76,12 @@ class MainActivity : AppCompatActivity() {
             MitayoTheme(darkTheme = darkTheme) {
                 if (session) {
                     LaunchedEffect(Unit) { container.syncManager.syncIfStale() }
-                    MitayoNavHost(launchRequest = launchRequest, onLaunchHandled = { launchRequests.value = null })
+                    // MAL and AniList disagree: nothing else until the user chooses
+                    if (aniListConflicts > 0) {
+                        ConflictsScreen()
+                    } else {
+                        MitayoNavHost(launchRequest = launchRequest, onLaunchHandled = { launchRequests.value = null })
+                    }
                 } else {
                     LoginScreen()
                 }
@@ -118,6 +126,9 @@ class MainActivity : AppCompatActivity() {
         if (uri.scheme == "mitayo" && uri.host == "oauth") {
             container.session.handleRedirect(uri)
             // Consumed: a recreation must not send the same code again
+            intent.data = null
+        } else if (uri.scheme == "mitayo" && uri.host == AniListLogin.REDIRECT_HOST) {
+            container.aniListSync.handleRedirect(uri)
             intent.data = null
         }
     }

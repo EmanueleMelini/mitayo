@@ -29,6 +29,7 @@ import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Storage
+import androidx.compose.material.icons.rounded.SyncAlt
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -69,6 +70,8 @@ enum class ProfilePage(@StringRes val titleRes: Int, val icon: ImageVector) {
     APPEARANCE(R.string.profile_section_appearance, Icons.Rounded.Palette),
     CONTENT(R.string.profile_section_content, Icons.Rounded.Tune),
     NOTIFICATIONS(R.string.profile_section_notifications, Icons.Rounded.Notifications),
+    /** Only when the build has the AniList client ID. */
+    ANILIST(R.string.profile_section_anilist, Icons.Rounded.SyncAlt),
     DATA(R.string.profile_section_data, Icons.Rounded.Storage),
     PRIVACY(R.string.profile_section_privacy, Icons.Rounded.Shield),
     ABOUT(R.string.profile_section_about, Icons.Rounded.Info),
@@ -101,6 +104,7 @@ fun ProfileScreen(onOpenPage: (ProfilePage) -> Unit, onOpenStats: () -> Unit) {
     val viewModel = profileViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val updateState by container.appUpdater.state.collectAsStateWithLifecycle()
+    val aniList by container.aniListSync.info.collectAsStateWithLifecycle(initialValue = null)
     var confirmLogout by rememberSaveable { mutableStateOf(false) }
     val settings = state.settings
 
@@ -178,6 +182,11 @@ fun ProfileScreen(onOpenPage: (ProfilePage) -> Unit, onOpenStats: () -> Unit) {
                     stringResource(affinityLabelRes(settings.affinityMethod)),
                 ),
                 ProfilePage.NOTIFICATIONS to notificationsSummary(settings),
+                ProfilePage.ANILIST to when {
+                    aniList?.account != null -> stringResource(R.string.profile_summary_anilist_linked, aniList?.account?.name.orEmpty())
+                    aniList?.expired == true -> stringResource(R.string.profile_summary_anilist_expired)
+                    else -> stringResource(R.string.profile_summary_anilist_off)
+                },
                 ProfilePage.PRIVACY to privacySummary(settings),
                 ProfilePage.DATA to if (state.syncInfo.listSyncedAt > 0) {
                     stringResource(R.string.profile_last_sync, formatTime(state.syncInfo.listSyncedAt))
@@ -190,7 +199,7 @@ fun ProfileScreen(onOpenPage: (ProfilePage) -> Unit, onOpenStats: () -> Unit) {
                     stringResource(R.string.profile_version, BuildConfig.VERSION_NAME)
                 },
             )
-            ProfilePage.entries.forEachIndexed { index, page ->
+            ProfilePage.entries.filter { it != ProfilePage.ANILIST || container.aniListSync.enabled }.forEachIndexed { index, page ->
                 if (index > 0) HorizontalDivider()
                 ListItem(
                     leadingContent = { Icon(page.icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },

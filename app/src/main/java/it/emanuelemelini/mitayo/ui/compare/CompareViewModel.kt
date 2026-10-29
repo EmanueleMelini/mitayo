@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import it.emanuelemelini.mitayo.R
 import it.emanuelemelini.mitayo.data.AffinityMethod
 import it.emanuelemelini.mitayo.data.CatalogRepository
+import it.emanuelemelini.mitayo.data.DeckRepository
 import it.emanuelemelini.mitayo.data.Comparison
 import it.emanuelemelini.mitayo.data.ListComparison
 import it.emanuelemelini.mitayo.data.ListRepository
@@ -80,13 +81,14 @@ class CompareViewModel(
     private val telemetry: Telemetry,
     catalogRepository: CatalogRepository,
     listRepository: ListRepository,
+    deckRepository: DeckRepository,
 ) : ViewModel() {
 
     private val local = MutableStateFlow(CompareUiState())
     private var job: Job? = null
 
     /** The same details sheet as the decks, from the poster of any anime of the comparison. */
-    private val detailsController = AnimeDetailsController(viewModelScope, catalogRepository, listRepository, statusEditor, telemetry)
+    private val detailsController = AnimeDetailsController(viewModelScope, catalogRepository, listRepository, deckRepository, statusEditor, telemetry)
     val details: StateFlow<DetailsState?> = detailsController.details
     val relatedPrompt: StateFlow<DeckCard?> = detailsController.relatedPrompt
 

@@ -21,10 +21,11 @@ sealed interface SyncState {
     data class Failed(val error: Throwable) : SyncState
 }
 
-/** Brings the user's list and the catalog up to date, one request at a time. */
+/** Brings the user's list and the catalog up to date, one request at a time; then the [mirror] list follows. */
 class SyncManager(
     private val api: MalApi,
     private val listRepository: ListRepository,
+    private val mirror: ListMirror,
     private val catalogRepository: CatalogRepository,
     private val settingsRepository: SettingsRepository,
     private val scope: CoroutineScope,
@@ -57,6 +58,8 @@ class SyncManager(
                     settingsRepository.setUser(user.name, user.picture)
                     catalogRepository.saveListAnime(listRepository.syncFromMal())
                     settingsRepository.setListSyncedAt(now)
+                    // On its own: AniList is slower, the catalog doesn't wait for it
+                    mirror.onListSynced()
                 }
                 if (info.catalogNextOffset == 0 || now - info.catalogSyncedAt > CATALOG_MAX_AGE_MS) {
                     _state.value = SyncState.Catalog(0, CatalogRepository.INITIAL_SIZE)

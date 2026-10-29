@@ -24,6 +24,13 @@ fun localValue(env: String, property: String): String? =
  */
 val malClientId: String = localValue("MITAYO_MAL_CLIENT_ID", "mal.client.id").orEmpty()
 
+/**
+ * Client ID of the AniList API client (anilist.co/settings/developer, redirect mitayo://anilist;
+ * the implicit grant needs no secret). Optional in every build: without it the AniList link is
+ * off and hidden, which is also how it's switched off again in a release.
+ */
+val anilistClientId: String = localValue("MITAYO_ANILIST_CLIENT_ID", "anilist.client.id").orEmpty()
+
 val releaseKeystore: String? = localValue("MITAYO_KEYSTORE_PATH", "mitayo.keystore.path")
 if (releaseKeystore != null && malClientId.isEmpty()) {
     throw GradleException("Signed builds need mal.client.id in local.properties (or MITAYO_MAL_CLIENT_ID)")
@@ -57,6 +64,7 @@ android {
         versionName = "1.3.0"
 
         buildConfigField("String", "MAL_CLIENT_ID", "\"$malClientId\"")
+        buildConfigField("String", "ANILIST_CLIENT_ID", "\"$anilistClientId\"")
         buildConfigField("String", "SITE_URL", "\"https://$siteHost\"")
         buildConfigField("boolean", "FIREBASE", "$firebaseConfigured")
     }

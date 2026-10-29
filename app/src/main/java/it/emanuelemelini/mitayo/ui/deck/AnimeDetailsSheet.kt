@@ -59,6 +59,7 @@ import it.emanuelemelini.mitayo.data.db.ListStatus
 import it.emanuelemelini.mitayo.data.mal.MalVideo
 import it.emanuelemelini.mitayo.data.telemetry.ShareKind
 import it.emanuelemelini.mitayo.ui.appContainer
+import it.emanuelemelini.mitayo.ui.components.SkippedLabel
 import it.emanuelemelini.mitayo.ui.components.StatusMenu
 import it.emanuelemelini.mitayo.ui.components.listStatusLine
 import it.emanuelemelini.mitayo.ui.components.metaLine
@@ -250,7 +251,7 @@ private fun VideoThumbnail(video: MalVideo, onClick: () -> Unit) {
     }
 }
 
-/** A sequel, prequel...: relation, title, status in the list and the menu to set it. */
+/** A sequel, prequel...: relation, title, status in the list (or skipped) and the menu to set it. */
 @Composable
 private fun RelatedRow(related: RelatedAnime, busy: Boolean, onSetStatus: (ListStatus) -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -279,6 +280,7 @@ private fun RelatedRow(related: RelatedAnime, busy: Boolean, onSetStatus: (ListS
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            if (related.skipped) SkippedLabel(style = MaterialTheme.typography.labelSmall)
         }
         Spacer(Modifier.width(8.dp))
         if (busy) {

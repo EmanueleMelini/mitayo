@@ -67,6 +67,7 @@ import it.emanuelemelini.mitayo.data.update.ChangelogEntry
 import it.emanuelemelini.mitayo.data.update.UpdateState
 import it.emanuelemelini.mitayo.ui.AppLinks
 import it.emanuelemelini.mitayo.ui.appContainer
+import it.emanuelemelini.mitayo.ui.anilist.AniListPage
 import it.emanuelemelini.mitayo.ui.openInBrowser
 import it.emanuelemelini.mitayo.ui.toUiText
 import it.emanuelemelini.mitayo.ui.update.ChangelogDialog
@@ -77,7 +78,14 @@ import kotlinx.coroutines.launch
 /** One page of the Profile, opened from its menu. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfilePageScreen(page: ProfilePage, onBack: () -> Unit, onOpenSkipped: () -> Unit, onOpenHistory: () -> Unit) {
+fun ProfilePageScreen(
+    page: ProfilePage,
+    onBack: () -> Unit,
+    onOpenSkipped: () -> Unit,
+    onOpenHistory: () -> Unit,
+    onOpenNotOnAniList: () -> Unit,
+    onOpenAniListLog: () -> Unit,
+) {
     val viewModel = profileViewModel()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -108,6 +116,7 @@ fun ProfilePageScreen(page: ProfilePage, onBack: () -> Unit, onOpenSkipped: () -
                 ProfilePage.APPEARANCE -> AppearancePage(viewModel)
                 ProfilePage.CONTENT -> ContentPage(viewModel)
                 ProfilePage.NOTIFICATIONS -> NotificationsPage(viewModel)
+                ProfilePage.ANILIST -> AniListPage(onOpenNotOnAniList, onOpenAniListLog)
                 ProfilePage.PRIVACY -> PrivacyPage(viewModel)
                 ProfilePage.DATA -> DataPage(viewModel, onOpenSkipped, onOpenHistory)
                 ProfilePage.ABOUT -> AboutPage()

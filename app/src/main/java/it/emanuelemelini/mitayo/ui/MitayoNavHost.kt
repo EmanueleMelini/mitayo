@@ -11,8 +11,11 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.GridView
@@ -25,9 +28,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -43,6 +48,10 @@ import it.emanuelemelini.mitayo.ui.categories.CategoriesScreen
 import it.emanuelemelini.mitayo.ui.compare.CompareScreen
 import it.emanuelemelini.mitayo.ui.compare.UserDeckScreen
 import it.emanuelemelini.mitayo.ui.deck.DeckScreen
+import it.emanuelemelini.mitayo.ui.anilist.NotOnAniListScreen
+import it.emanuelemelini.mitayo.ui.anilist.SyncLogScreen
+import it.emanuelemelini.mitayo.ui.anilist.SyncNoticeHost
+import it.emanuelemelini.mitayo.ui.anilist.SyncSessionScreen
 import it.emanuelemelini.mitayo.ui.history.HistoryScreen
 import it.emanuelemelini.mitayo.ui.profile.ProfilePage
 import it.emanuelemelini.mitayo.ui.profile.ProfilePageScreen
@@ -83,6 +92,15 @@ object HistoryRoute
 
 @Serializable
 object StatsRoute
+
+@Serializable
+object NotOnAniListRoute
+
+@Serializable
+object AniListLogRoute
+
+@Serializable
+data class AniListSessionRoute(val sessionId: Long)
 
 private enum class TopLevel(val route: Any, @StringRes val labelRes: Int, val icon: ImageVector) {
     CATEGORIES(CategoriesRoute, R.string.nav_categories, Icons.Rounded.GridView),
@@ -132,72 +150,101 @@ fun MitayoNavHost(launchRequest: LaunchRequest?, onLaunchHandled: () -> Unit) {
     ) { padding ->
         // Material shared axis: a new screen comes in from the right, Back goes the other way;
         // between the bottom bar tabs only a fade
-        NavHost(
-            navController = navController,
-            startDestination = CategoriesRoute,
-            modifier = Modifier.padding(padding).consumeWindowInsets(padding),
-            enterTransition = {
-                if (isTabSwitch()) fadeIn(navTween()) else slideInHorizontally(navTween()) { it / SLIDE_FRACTION } + fadeIn(navTween())
-            },
-            exitTransition = {
-                if (isTabSwitch()) fadeOut(navTween()) else slideOutHorizontally(navTween()) { -it / SLIDE_FRACTION } + fadeOut(navTween())
-            },
-            popEnterTransition = {
-                if (isTabSwitch()) fadeIn(navTween()) else slideInHorizontally(navTween()) { -it / SLIDE_FRACTION } + fadeIn(navTween())
-            },
-            popExitTransition = {
-                if (isTabSwitch()) fadeOut(navTween()) else slideOutHorizontally(navTween()) { it / SLIDE_FRACTION } + fadeOut(navTween())
-            },
-        ) {
-            composable<CategoriesRoute> {
-                CategoriesScreen(
-                    onOpenCategory = { navController.navigate(DeckRoute(it.key)) },
-                    onOpenSearch = { navController.navigate(SearchRoute) },
-                    onOpenCompare = { navController.navigate(CompareRoute) },
-                    onOpenUserDeck = { navController.navigate(UserDeckRoute) },
-                )
+        Box(Modifier.fillMaxSize()) {
+            NavHost(
+                navController = navController,
+                startDestination = CategoriesRoute,
+                modifier = Modifier.padding(padding).consumeWindowInsets(padding),
+                enterTransition = {
+                    if (isTabSwitch()) fadeIn(navTween()) else slideInHorizontally(navTween()) { it / SLIDE_FRACTION } + fadeIn(navTween())
+                },
+                exitTransition = {
+                    if (isTabSwitch()) fadeOut(navTween()) else slideOutHorizontally(navTween()) { -it / SLIDE_FRACTION } + fadeOut(navTween())
+                },
+                popEnterTransition = {
+                    if (isTabSwitch()) fadeIn(navTween()) else slideInHorizontally(navTween()) { -it / SLIDE_FRACTION } + fadeIn(navTween())
+                },
+                popExitTransition = {
+                    if (isTabSwitch()) fadeOut(navTween()) else slideOutHorizontally(navTween()) { it / SLIDE_FRACTION } + fadeOut(navTween())
+                },
+            ) {
+                composable<CategoriesRoute> {
+                    CategoriesScreen(
+                        onOpenCategory = { navController.navigate(DeckRoute(it.key)) },
+                        onOpenSearch = { navController.navigate(SearchRoute) },
+                        onOpenCompare = { navController.navigate(CompareRoute) },
+                        onOpenUserDeck = { navController.navigate(UserDeckRoute) },
+                    )
+                }
+                composable<ProfileRoute> {
+                    ProfileScreen(
+                        onOpenPage = { navController.navigate(ProfilePageRoute(it.name)) },
+                        onOpenStats = { navController.navigate(StatsRoute) },
+                    )
+                }
+                composable<ProfilePageRoute> { entry ->
+                    ProfilePageScreen(
+                        page = ProfilePage.valueOf(entry.toRoute<ProfilePageRoute>().page),
+                        onBack = { navController.popBackStack() },
+                        onOpenSkipped = { navController.navigate(SkippedRoute) },
+                        onOpenHistory = { navController.navigate(HistoryRoute) },
+                        onOpenNotOnAniList = { navController.navigate(NotOnAniListRoute) },
+                        onOpenAniListLog = { navController.navigate(AniListLogRoute) },
+                    )
+                }
+                composable<HistoryRoute> {
+                    HistoryScreen(onBack = { navController.popBackStack() })
+                }
+                composable<NotOnAniListRoute> {
+                    NotOnAniListScreen(onBack = { navController.popBackStack() })
+                }
+                composable<AniListLogRoute> {
+                    SyncLogScreen(
+                        onBack = { navController.popBackStack() },
+                        onOpenSession = { navController.navigate(AniListSessionRoute(it)) },
+                    )
+                }
+                composable<AniListSessionRoute> { entry ->
+                    SyncSessionScreen(
+                        sessionId = entry.toRoute<AniListSessionRoute>().sessionId,
+                        onBack = { navController.popBackStack() },
+                    )
+                }
+                composable<StatsRoute> {
+                    StatsScreen(onBack = { navController.popBackStack() })
+                }
+                composable<SkippedRoute> {
+                    SkippedScreen(onBack = { navController.popBackStack() })
+                }
+                composable<SearchRoute> {
+                    SearchScreen(onBack = { navController.popBackStack() })
+                }
+                composable<CompareRoute> {
+                    CompareScreen(onBack = { navController.popBackStack() })
+                }
+                composable<UserDeckRoute> {
+                    UserDeckScreen(
+                        onBack = { navController.popBackStack() },
+                        onOpenDeck = { navController.navigate(DeckRoute(it.key)) },
+                    )
+                }
+                composable<DeckRoute> { entry ->
+                    DeckScreen(
+                        categoryKey = entry.toRoute<DeckRoute>().categoryKey,
+                        onBack = { navController.popBackStack() },
+                    )
+                }
             }
-            composable<ProfileRoute> {
-                ProfileScreen(
-                    onOpenPage = { navController.navigate(ProfilePageRoute(it.name)) },
-                    onOpenStats = { navController.navigate(StatsRoute) },
-                )
-            }
-            composable<ProfilePageRoute> { entry ->
-                ProfilePageScreen(
-                    page = ProfilePage.valueOf(entry.toRoute<ProfilePageRoute>().page),
-                    onBack = { navController.popBackStack() },
-                    onOpenSkipped = { navController.navigate(SkippedRoute) },
-                    onOpenHistory = { navController.navigate(HistoryRoute) },
-                )
-            }
-            composable<HistoryRoute> {
-                HistoryScreen(onBack = { navController.popBackStack() })
-            }
-            composable<StatsRoute> {
-                StatsScreen(onBack = { navController.popBackStack() })
-            }
-            composable<SkippedRoute> {
-                SkippedScreen(onBack = { navController.popBackStack() })
-            }
-            composable<SearchRoute> {
-                SearchScreen(onBack = { navController.popBackStack() })
-            }
-            composable<CompareRoute> {
-                CompareScreen(onBack = { navController.popBackStack() })
-            }
-            composable<UserDeckRoute> {
-                UserDeckScreen(
-                    onBack = { navController.popBackStack() },
-                    onOpenDeck = { navController.navigate(DeckRoute(it.key)) },
-                )
-            }
-            composable<DeckRoute> { entry ->
-                DeckScreen(
-                    categoryKey = entry.toRoute<DeckRoute>().categoryKey,
-                    onBack = { navController.popBackStack() },
-                )
-            }
+            // Over every screen, above the bottom bar when there is one
+            SyncNoticeHost(
+                onOpenAniList = { navController.navigate(ProfilePageRoute(ProfilePage.ANILIST.name)) { launchSingleTop = true } },
+                onOpenSession = { navController.navigate(AniListSessionRoute(it)) { launchSingleTop = true } },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(padding)
+                    .then(if (showBottomBar) Modifier else Modifier.navigationBarsPadding())
+                    .padding(bottom = 16.dp),
+            )
         }
         // After the NavHost: its graph is set
         LaunchedEffect(launchRequest) {
@@ -228,6 +275,9 @@ private fun screenName(destination: NavDestination): String = when {
     destination.hasRoute(UserDeckRoute::class) -> "user_deck"
     destination.hasRoute(HistoryRoute::class) -> "history"
     destination.hasRoute(StatsRoute::class) -> "stats"
+    destination.hasRoute(NotOnAniListRoute::class) -> "anilist_missing"
+    destination.hasRoute(AniListLogRoute::class) -> "anilist_log"
+    destination.hasRoute(AniListSessionRoute::class) -> "anilist_session"
     destination.hasRoute(DeckRoute::class) -> "deck"
     else -> "other"
 }

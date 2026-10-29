@@ -1,6 +1,7 @@
 package it.emanuelemelini.mitayo.ui.deck
 
 import it.emanuelemelini.mitayo.data.CatalogRepository
+import it.emanuelemelini.mitayo.data.DeckRepository
 import it.emanuelemelini.mitayo.data.ListRepository
 import it.emanuelemelini.mitayo.data.StatusEditor
 import it.emanuelemelini.mitayo.data.db.DeckCard
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -43,6 +45,8 @@ data class RelatedAnime(
     /** MAL's relation_type: sequel, prequel, side_story... */
     val relation: String,
     val entry: ListEntry? = null,
+    /** Swiped left in a deck: it's out of the decks even when it isn't in the list. */
+    val skipped: Boolean = false,
 )
 
 /**
@@ -55,20 +59,24 @@ class AnimeDetailsController(
     private val scope: CoroutineScope,
     private val catalogRepository: CatalogRepository,
     listRepository: ListRepository,
+    deckRepository: DeckRepository,
     private val statusEditor: StatusEditor,
     private val telemetry: Telemetry,
 ) {
     private val _details = MutableStateFlow<DetailsState?>(null)
 
-    /** The details with the list status of the related anime, which changes from the sheet itself. */
+    /**
+     * The details with the list status of the related anime and whether they're skipped, which
+     * change from the sheet itself.
+     */
     val details: StateFlow<DetailsState?> = _details.flatMapLatest { state ->
         val ids = state?.related?.map { it.id }.orEmpty()
         if (state == null || ids.isEmpty()) {
             flowOf(state)
         } else {
-            listRepository.observeEntries(ids).map { entries ->
+            combine(listRepository.observeEntries(ids), deckRepository.observeSkipped(ids)) { entries, skipped ->
                 val byId = entries.associateBy { it.animeId }
-                state.copy(related = state.related.map { it.copy(entry = byId[it.id]) })
+                state.copy(related = state.related.map { it.copy(entry = byId[it.id], skipped = it.id in skipped) })
             }
         }
     }.stateIn(scope, SharingStarted.Eagerly, null)

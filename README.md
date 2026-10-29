@@ -29,7 +29,11 @@ pick a category and swipe through the anime one at a time. Website and downloads
 - **two affinities** for a comparison, chosen in Profile → Content: *shared scores* (Pearson correlation
   of the scores given to the same anime) or *tastes* (each user's liking of genres, themes,
   demographics, studios, source, age rating, type and decade, from their own scores against their
-  mean, then the two profiles compared: no anime in common needed; MAL's API has no producers).
+  mean, then the two profiles compared: no anime in common needed; MAL's API has no producers);
+- **AniList too** (optional, Profile → AniList): MAL stays the main account; once AniList is linked the
+  two lists are made the same and then kept so, and every swipe reaches both. When they disagree the
+  app stops on a page where you choose which list to keep. A sync log shows what each sync did, live
+  while it runs, and short notices in the app say when one starts and ends.
 
 Decks show only the anime that aren't in your MAL list at all (and that you didn't skip). Your list has
 its own decks, one per status (watching, completed, on-hold, dropped, plan to watch), to go through it
@@ -76,6 +80,21 @@ The app is in Italian and English, with dark and light themes.
     to swipe), a weekly one on Sundays and, every evening, the anime you're watching that aired a new
     episode in the last day (from MAL's weekly broadcast time, in Japan time). Window alarms (no exact-alarm permission), handed to
     WorkManager when they need the network, scheduled again after a reboot.
+- **AniList** (optional, `data/anilist`): implicit grant in a Custom Tab, redirect `mitayo://anilist`,
+  a token that lasts a year (no refresh), encrypted like the MAL one. The GraphQL API is used one
+  request at a time, 2.1 seconds apart (AniList allows 30 a minute for now). Anime are matched by
+  MAL id (AniList's `idMal`), never by title. After every MAL list sync, `Reconciler` compares each
+  anime with how both lists had it at the last sync: a change on one side goes to the other; the
+  first time, and when both changed, the lists are merged in positive (what's on one side only is
+  added, the most episodes win, a missing score is filled); different statuses or scores and
+  removals become conflicts, which block the decks until the user chooses. Scores: MAL × 10 =
+  AniList's 0-100, back rounded half up; compared on the coarser of the two scales, so 8.5 and 9 or
+  7 and 4 stars don't bounce. A rewatch (REPEATING) counts as completed. Changes for AniList have
+  their own outbox. Builds without the AniList client ID have the link off and hidden, and an update
+  without it drops an existing link: that's how it's switched off. Every sync that changes something
+  (or fails) is a session of the log (`AniListLog.kt`, last 30, on the phone only), the changes it
+  sends carry its id; swipes go in "changes from the app" sessions, half an hour apart. The in-app
+  notices (`SyncNotices.kt`) remember per session what they already said.
 - **Statistics and crash reports** (Firebase Analytics and Crashlytics) are off at install (manifest
   flags) and start only if the user agrees in the question after the first login; Profile → Privacy
   changes the choice. Only fixed names of screens, decks and actions are sent (`Telemetry`), never MAL
@@ -99,13 +118,23 @@ The app is in Italian and English, with dark and light themes.
    ```
 
    Without it a debug build still runs and the login screen says it's missing; a signed build stops.
-3. Optional, for news, statistics and crash reports: create a Firebase project, add an Android app
+3. Optional, for the AniList link: create a client on
+   [anilist.co/settings/developer](https://anilist.co/settings/developer) with the redirect URL
+   `mitayo://anilist` (it must match `AniListLogin.REDIRECT_HOST` and the manifest) and put its ID in
+   `local.properties`:
+
+   ```properties
+   anilist.client.id=<YOUR_ANILIST_CLIENT_ID>
+   ```
+
+   Without it every build works with the AniList link off and hidden.
+4. Optional, for news, statistics and crash reports: create a Firebase project, add an Android app
    with the application id (`applicationId` in `app/build.gradle.kts`, `<your.application.id>` in a fork), download
    `google-services.json` into `app/` (never committed). In the Firebase console:
    - Analytics → Data settings → Data retention: **2 months** (what the privacy policy says);
    - in the Google Cloud console, restrict the API key of the file to the Android app (package and
      SHA-1 of the release and debug keys): the key ends up in the APK anyway.
-4. Build with JDK 21: `./gradlew assembleDebug`.
+5. Build with JDK 21: `./gradlew assembleDebug`.
 
 For a signed release build on your machine, add to `local.properties`:
 
@@ -143,6 +172,7 @@ Repository secrets (Settings → Secrets and variables → Actions):
 | `MITAYO_KEY_ALIAS` | key alias |
 | `MITAYO_KEY_PASSWORD` | key password, only if it differs from the keystore one |
 | `MITAYO_MAL_CLIENT_ID` | the MAL Client ID |
+| `MITAYO_ANILIST_CLIENT_ID` | the AniList client ID; optional, without it the release has the AniList link off |
 | `MITAYO_GOOGLE_SERVICES_JSON` | the content of `app/google-services.json` (raw JSON, not base64) |
 
 With the GitHub CLI (`gh` asks for the value without showing it):
@@ -238,6 +268,7 @@ Static HTML in Italian and English (language from the browser, IT/EN switch in `
 |---|---|
 | `data/auth` | MAL OAuth, PKCE, encrypted tokens, session (login/logout) |
 | `data/mal` | REST client of the MAL API v2 and JSON models |
+| `data/anilist`, `ui/anilist` | the optional AniList link: GraphQL client, login, sync with MAL, its outbox, conflicts |
 | `data/db` | Room: catalog, genres, local copy of the MAL list, skipped, outbox, swipe history |
 | `data` | repositories, deck queries, sync, outbox and its worker |
 | `ui/categories` | categories: special lists, other seasons, genres, themes, demographics, "What to watch?" |
@@ -264,7 +295,8 @@ Latin, punctuation and kana (`res/font/`, `site/fonts/`), SIL Open Font License 
 `licenses/M_PLUS_Rounded_1c-OFL.txt`.
 
 Bugs and abuse reports: [GitHub Issues](https://github.com/EmanueleMelini/mitayo/issues).
-Mitayo uses the official MyAnimeList API and isn't affiliated with MyAnimeList.
+Mitayo uses the official MyAnimeList API and the AniList API, and isn't affiliated with MyAnimeList or
+AniList.
 
 ## License
 

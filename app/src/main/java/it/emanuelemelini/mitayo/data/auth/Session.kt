@@ -3,6 +3,7 @@ package it.emanuelemelini.mitayo.data.auth
 import android.net.Uri
 import androidx.room.withTransaction
 import it.emanuelemelini.mitayo.data.Category
+import it.emanuelemelini.mitayo.data.ListMirror
 import it.emanuelemelini.mitayo.data.Outbox
 import it.emanuelemelini.mitayo.data.SyncManager
 import it.emanuelemelini.mitayo.data.db.AppDatabase
@@ -25,6 +26,7 @@ class Session(
     private val auth: MalAuth,
     private val database: AppDatabase,
     private val outbox: Outbox,
+    private val mirror: ListMirror,
     private val syncManager: SyncManager,
     private val settingsRepository: SettingsRepository,
     private val telemetry: Telemetry,
@@ -69,11 +71,12 @@ class Session(
         }
     }
 
-    /** Everything of this user goes (list, skipped, swipe history, unsent changes); the catalog stays. */
+    /** Everything of this user goes (list, skipped, swipe history, unsent changes, the AniList link); the catalog stays. */
     fun logout() {
         scope.launch {
             syncManager.cancel()
             outbox.clear()
+            mirror.clear()
             auth.logout()
             database.withTransaction {
                 database.listDao().clear()

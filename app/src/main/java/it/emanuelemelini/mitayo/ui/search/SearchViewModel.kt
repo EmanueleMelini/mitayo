@@ -73,7 +73,7 @@ class SearchViewModel(
 ) : ViewModel() {
 
     /** The same details sheet as the decks, from the poster of a result. */
-    val details = AnimeDetailsController(viewModelScope, catalogRepository, listRepository, statusEditor, telemetry)
+    val details = AnimeDetailsController(viewModelScope, catalogRepository, listRepository, deckRepository, statusEditor, telemetry)
 
     private val query = MutableStateFlow("")
     private val malSearch = MutableStateFlow<MalSearch>(MalSearch.Idle)

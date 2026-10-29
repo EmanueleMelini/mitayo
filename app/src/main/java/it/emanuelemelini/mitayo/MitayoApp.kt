@@ -13,6 +13,9 @@ import it.emanuelemelini.mitayo.data.StatusEditor
 import it.emanuelemelini.mitayo.data.Outbox
 import it.emanuelemelini.mitayo.data.SwipeHistory
 import it.emanuelemelini.mitayo.data.SyncManager
+import it.emanuelemelini.mitayo.data.anilist.AniListApi
+import it.emanuelemelini.mitayo.data.anilist.AniListStore
+import it.emanuelemelini.mitayo.data.anilist.AniListSync
 import it.emanuelemelini.mitayo.data.auth.MalAuth
 import it.emanuelemelini.mitayo.data.auth.Session
 import it.emanuelemelini.mitayo.data.auth.TokenStore
@@ -47,6 +50,7 @@ class MitayoApp : Application() {
         container = AppContainer(this)
         // Changes saved offline (or before the app was closed) leave at the first chance
         container.outbox.schedule()
+        container.applicationScope.launch { container.aniListSync.onAppStart() }
         container.reminderNotifier.createChannels()
         container.applicationScope.launch { container.reminderScheduler.rescheduleAll() }
         val settings = container.settingsRepository.settings
@@ -79,7 +83,16 @@ class AppContainer(context: Context) {
     private val auth = MalAuth(httpClient, TokenStore(context))
     val api = MalApi(httpClient, auth)
     val outbox = Outbox(context, database.outboxDao())
-    val listRepository = ListRepository(database, api, outbox)
+    private val aniListStore = AniListStore(context)
+    val aniListSync = AniListSync(
+        context,
+        AniListApi(httpClient, aniListStore::token),
+        aniListStore,
+        database,
+        outbox,
+        applicationScope,
+    )
+    val listRepository = ListRepository(database, api, outbox, aniListSync)
     val catalogRepository = CatalogRepository(database, api, settingsRepository) { pictures ->
         // Posters of anime removed from the catalog leave the image cache too
         val imageLoader = SingletonImageLoader.get(context)
@@ -93,8 +106,8 @@ class AppContainer(context: Context) {
     val swipeHistory = SwipeHistory(database, listRepository, deckRepository)
     val skippedBackup = SkippedBackup(context, database.skippedDao())
     val otherLists = OtherLists(api)
-    val syncManager = SyncManager(api, listRepository, catalogRepository, settingsRepository, applicationScope)
-    val session = Session(auth, database, outbox, syncManager, settingsRepository, telemetry, applicationScope)
+    val syncManager = SyncManager(api, listRepository, aniListSync, catalogRepository, settingsRepository, applicationScope)
+    val session = Session(auth, database, outbox, aniListSync, syncManager, settingsRepository, telemetry, applicationScope)
     private val releasesClient = GitHubReleasesClient(httpClient)
     val appUpdater = AppUpdater(
         releasesClient,

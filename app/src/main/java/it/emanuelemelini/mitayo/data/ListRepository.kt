@@ -9,11 +9,15 @@ import it.emanuelemelini.mitayo.data.mal.MalAnime
 import it.emanuelemelini.mitayo.data.mal.MalApi
 import kotlinx.coroutines.flow.Flow
 
-/** The user's MAL list: changed locally at once, sent to MAL through the [Outbox]. */
+/**
+ * The user's MAL list: changed locally at once, sent to MAL through the [Outbox] and to the
+ * [mirror] list (AniList, when linked).
+ */
 class ListRepository(
     private val database: AppDatabase,
     private val api: MalApi,
     private val outbox: Outbox,
+    private val mirror: ListMirror,
 ) {
     private val listDao = database.listDao()
 
@@ -77,6 +81,7 @@ class ListRepository(
     suspend fun restore(animeId: Int, previous: ListEntry?) {
         applyLocally(animeId, previous?.status, previous?.episodesWatched ?: 0, previous?.score)
         outbox.enqueue(animeId, previous?.status, previous?.episodesWatched ?: 0, previous?.score)
+        mirror.mirror(animeId, previous?.status, previous?.episodesWatched ?: 0, previous?.score)
     }
 
     /** [score] null keeps the one already in the list. */
@@ -84,6 +89,7 @@ class ListRepository(
         val previous = listDao.get(animeId)
         applyLocally(animeId, status, episodesWatched, score)
         outbox.enqueue(animeId, status, episodesWatched, score)
+        mirror.mirror(animeId, status, episodesWatched, score)
         return previous
     }
 
